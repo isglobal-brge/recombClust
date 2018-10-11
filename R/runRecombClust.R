@@ -1,4 +1,4 @@
-#' Main function to run all the LDclassifier pipeline
+#' Main function to run all the recumbClust pipeline
 #'
 #' This function takes as input phased chromosomes and returns the responsibilities
 #' PCA and the cluster classification of the samples.

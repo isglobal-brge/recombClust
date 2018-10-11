@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 #' Reestimate linkage block frequencies
 #'
 #' @param Resp Numerical with the responsibilities for linkage population
