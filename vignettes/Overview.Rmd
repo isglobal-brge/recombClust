@@ -1,0 +1,137 @@
+---
+title: "Introduction to recombClust"
+author: "Carlos Ruiz"
+date: "`r Sys.Date()`"
+output: 
+  BiocStyle::html_document:
+    number_sections: true
+    toc: yes
+    fig_caption: yes
+    toc_float: true
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+`recombClust` is a R package that classifies chromosomes in different subpopulations based on recombination patterns. `recombClust` works with chromosomes, so we need phased data. To start, we will load the chromosomes from a VCF file into a `SnpMatrix`. recombClust does not include any function to do this, but you can use the following code:
+
+```{r}
+## Packages to load SNP data
+library(VariantAnnotation)
+library(GenomicRanges)
+
+
+## Function to load a VCF file, convert it to a snpMatrix and removing SNPs with a low MAF
+getVCFmatrixChr <- function(range = NULL, samples = NULL, snps.names = NULL, minmaf = 0.1, Remove.Granges = NULL, ...){
+  vcf <- loadVCFrange(range, samples, ...)
+
+  snpsVCF <- genotypeToSnpMatrix(vcf)
+  snpsVCF$genotypes <- snpsVCF$genotypes[, !snpsVCF$map$ignore]
+  sums <- col.summary(snpsVCF$genotypes)
+  snps <- colnames(snpsVCF$genotypes)[sums$MAF > minmaf]
+  
+  vcf <- vcf[snps, ]
+  geno <- geno(vcf)$GT
+  phase <- lapply(1:ncol(geno), function(x){
+    chr1 <- as.numeric(sapply(geno[, x], substring, 1, 1))
+    chr2 <- as.numeric(sapply(geno[, x], substring, 3, 3))
+    matrix(c(chr1, chr2), nrow = 2, byrow = TRUE)
+  })
+  phase <- Reduce(function(...) rbind(...), phase)
+  rownames(phase) <- paste(rep(colnames(geno), each = 2), 1:2, sep = "_")
+  colnames(phase) <- rownames(geno)
+  snpsVCF <- list(genotypes = new("SnpMatrix", 2*phase + 1), map = data.frame(name = colnames(phase)))
+  ## Conversion from VCF to SNP matrix produces some SNPs to be NA (multiallelic or bigger than 1)
+  snpsVCF$map$position <- start(rowRanges(vcf))
+  snpsVCF$map$chromosome <- as.character(seqnames(rowRanges(vcf)))
+  snpsVCF$map$allele.2 <- unlist(snpsVCF$map$allele.2)
+  rownames(snpsVCF$map) <- rownames(geno)
+  snpsVCF
+}
+
+## Load VCF selecting samples 
+loadVCFrange <- function(range = NULL, samples = NULL, 
+                         vcffile = paste0("ALL.chr", as.character(seqnames(range)), ".phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.vcf.gz")){
+  vcfsamples <- samples(scanVcfHeader(vcffile))
+  if (!is.null(samples)){
+    samples <- vcfsamples[vcfsamples %in% samples]
+  } else{
+    samples <- vcfsamples
+  }
+  if (!is.null(range)){
+      param <- ScanVcfParam(samples = samples, which = range)
+  } else {
+      param <- ScanVcfParam(samples = samples)
+  }
+  vcf <- readVcf(vcffile, "hg19", param)
+  vcf
+}
+```
+
+Once we have loaded these functions in our workspace, we are ready to load SNP data. In this example, we will use example data from scoreInvHap package:
+
+```{r}
+## Get vcf path
+vcf_file <- system.file("extdata", "example.vcf", package = "scoreInvHap")
+
+## Load vcf file
+snps <- getVCFmatrixChr(vcf = vcf_file)
+```
+
+`snps` is a list that has two elements: genotypes and map. genotypes is a `SnpMatrix` object that contains the SNP data. Chromosomes are in rows and SNPs in columns. Each individual has two chromosomes, so row names have the id number followed by _1 or _2:
+
+```{r}
+snps$genotypes
+```
+
+You can have a look at the data by coercing it to a numeric matrix. Chromosomes having the reference allele have a 0, and those having the alternative allele a 2:
+
+```{r}
+as(snps$genotypes, "numeric")[1:10, 1:5]
+```
+
+Map contains the name, chromosome and position of the SNPs: 
+
+```{r}
+head(snps$map)
+```
+
+You should convert them to a GenomicRanges prior passing them to recombClust:
+
+```{r}
+GRsnps <- makeGRangesFromDataFrame(snps$map, start.field = "position", 
+                                   end.field = "position")
+GRsnps
+```
+
+Now, we are ready to run recombClust. runRecombClust applies the LDmixture model to each SNP-block pair, selects pairs having a recombination plot, computes the probabilities matrix and clusters the individuals. runRecombClust requires the matrix with SNP data and the annotation in a GRanges. Notice that the matrix is divided by 2 to have a matrix with only 0s and 1s (0: reference allele, 1: alternative allele):
+
+```{r}
+## Create matrix with snps
+snpMat <- as(snps$genotypes, "numeric")/2 ## Divide by 2 to have 0 as reference and 1 as alternative
+snpMat[1:10, 1:5]
+
+## Pass snpMat and GRanges to runRecombClust
+res <- runRecombClust(snpMat, annot = GRsnps)
+```
+
+runRecombClust might take a long time to finish. res is a list with two elements: class (cluster classification of each chromosome) and pc (PCA of the probabilities matrix). 
+
+
+runRecombClust has three main parts, as you can see in the function code (see runRecombClust.R): (1) call runLDmixture, (2) make probabilities matrix, (3) cluster individuals by similarity in the probabilities matrix. 
+
+runLDmixture is a function that applies LDmixture model to each pair of SNP blocks. If you see this function, you have two main parts (see runLDmixtureModel.R): (A) Make SNP-block pairs, (B) run LDmixture model to each SNP-block pair. Part B is really slow and needs optimization as it consumes most of the time of runRecombClust function. 
+
+Part B is based on inversionModel function (defined in inversionModel.R). This function has as input the genotypes for a SNP-block pair. Therefore, this matrix has two columns, corresponding to the two SNP blocks, and the rows are the chromosomes. inversionModel implements a Expectation-Maximization algorithm to estimate the parameters of the LDmixture model (see paper). This function and the functions to compute the recomb and linkage models (defined in newFreqBase.R -recomb model- and newFreqLD.R -linkage model-) are implemented in R, so they are very slow. All these functions might be implemented in C or C++, which will result in a great reduction in computation time. 
+
+Part 3 of runRecombClust is an other step that might be improved. Right now, we run a PCA on probabilities matrix and we compute k-means on the first 2 components, trying to define two clusters. This procedure worked because we were studying chromosomal inversions and we expect to have two subpopulations. However, we are planning to extend our method to other situations and we might need a better clustering strategy.
+
+The probabilities matrix is a matrix with the probability of each chromosomes of belonging to the recomb population in each recombination point. Thus, rows are chromosomes, columns are recombination points (i.e. SNP-block pairs where the LDmixture model fits well the data) and values are between 0 and 1. New clustering strategies might use directly the probabilities matrix or can keep using the first components of the PCA matrix. In any case, we would need a clustering strategy that is able to select the optimum number of clusters, including clustering all samples in a group when there is no good clustering in the data. 

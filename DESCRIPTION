@@ -19,3 +19,6 @@ Imports: GenomicRanges,
     S4Vectors,
     gtools,
     stats
+Suggests: knitr,
+    rmarkdown
+VignetteBuilder: knitr
