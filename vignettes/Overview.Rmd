@@ -17,13 +17,17 @@ vignette: >
 ```{r setup, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>"
+  comment = "#>",
+  warning = FALSE,
+  message = FALSE
 )
 ```
 
 `recombClust` is a R package that classifies chromosomes in different subpopulations based on recombination patterns. `recombClust` works with chromosomes, so we need phased data. To start, we will load the chromosomes from a VCF file into a `SnpMatrix`. recombClust does not include any function to do this, but you can use the following code:
 
 ```{r}
+library(recombClust)
+
 ## Packages to load SNP data
 library(VariantAnnotation)
 library(GenomicRanges)
@@ -112,18 +116,25 @@ GRsnps <- makeGRangesFromDataFrame(snps$map, start.field = "position",
 GRsnps
 ```
 
-Now, we are ready to run recombClust. runRecombClust applies the LDmixture model to each SNP-block pair, selects pairs having a recombination plot, computes the probabilities matrix and clusters the individuals. runRecombClust requires the matrix with SNP data and the annotation in a GRanges. Notice that the matrix is divided by 2 to have a matrix with only 0s and 1s (0: reference allele, 1: alternative allele):
+Now, we are ready to run recombClust. runRecombClust applies the LDmixture model to each SNP-block pair, selects pairs having a recombination plot, computes the probabilities matrix and clusters the individuals. runRecombClust requires the matrix with SNP data and the annotation in a GRanges. Notice that the matrix is divided by 2 to have a matrix with only 0s and 1s (0: reference allele, 1: alternative allele). To speed up the example, we will include only the first 20 SNPs:
 
-```{r}
+```{r, cache=TRUE}
 ## Create matrix with snps
 snpMat <- as(snps$genotypes, "numeric")/2 ## Divide by 2 to have 0 as reference and 1 as alternative
 snpMat[1:10, 1:5]
 
 ## Pass snpMat and GRanges to runRecombClust
-res <- runRecombClust(snpMat, annot = GRsnps)
+res <- runRecombClust(snpMat[, 1:20], annot = GRsnps[1:20])
 ```
 
 runRecombClust might take a long time to finish. res is a list with two elements: class (cluster classification of each chromosome) and pc (PCA of the probabilities matrix). 
+
+```{r}
+table(res$class)
+res$pc$x[1:7, 1:5]
+
+plot(res$pc$x, col = res$class)
+```
 
 
 runRecombClust has three main parts, as you can see in the function code (see runRecombClust.R): (1) call runLDmixture, (2) make probabilities matrix, (3) cluster individuals by similarity in the probabilities matrix. 
