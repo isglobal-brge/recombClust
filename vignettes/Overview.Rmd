@@ -1,6 +1,6 @@
 ---
 title: "Introduction to recombClust"
-author: "Carlos Ruiz"
+author: "Carlos Ruiz, Alejandro Caceres, Juan R Gonzalez"
 date: "`r Sys.Date()`"
 output: 
   BiocStyle::html_document:
@@ -90,7 +90,7 @@ vcf_file <- system.file("extdata", "example.vcf", package = "scoreInvHap")
 snps <- getVCFmatrixChr(vcf = vcf_file)
 ```
 
-`snps` is a list that has two elements: genotypes and map. genotypes is a `SnpMatrix` object that contains the SNP data. Chromosomes are in rows and SNPs in columns. Each individual has two chromosomes, so row names have the id number followed by _1 or _2:
+`snps` is a list that has two elements: genotypes and map. genotypes is a `SnpMatrix` object that contains the SNP data. Chromosomes are in rows and SNPs in columns. Each individual has two chromosomes, so row names have the id number followed by '_1' or '_2':
 
 ```{r}
 snps$genotypes
