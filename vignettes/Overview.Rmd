@@ -23,9 +23,11 @@ knitr::opts_chunk$set(
 )
 ```
 
+# Overview
+
 `recombClust` is a R package that classifies chromosomes in different subpopulations based on recombination patterns. `recombClust` works with chromosomes, so we need phased data. To start, we will load the chromosomes from a VCF file into a `SnpMatrix`. recombClust does not include any function to do this, but you can use the following code:
 
-```{r}
+```{r get_functions}
 library(recombClust)
 
 ## Packages to load SNP data
@@ -80,9 +82,11 @@ loadVCFrange <- function(range = NULL, samples = NULL,
 }
 ```
 
+# Getting data
+
 Once we have loaded these functions in our workspace, we are ready to load SNP data. In this example, we will use example data from scoreInvHap package:
 
-```{r}
+```{r get_vcf_data}
 ## Get vcf path
 vcf_file <- system.file("extdata", "example.vcf", package = "scoreInvHap")
 
@@ -92,33 +96,35 @@ snps <- getVCFmatrixChr(vcf = vcf_file)
 
 `snps` is a list that has two elements: genotypes and map. genotypes is a `SnpMatrix` object that contains the SNP data. Chromosomes are in rows and SNPs in columns. Each individual has two chromosomes, so row names have the id number followed by '_1' or '_2':
 
-```{r}
+```{r show_genotypes}
 snps$genotypes
 ```
 
 You can have a look at the data by coercing it to a numeric matrix. Chromosomes having the reference allele have a 0, and those having the alternative allele a 2:
 
-```{r}
+```{r show_genotypes2}
 as(snps$genotypes, "numeric")[1:10, 1:5]
 ```
 
 Map contains the name, chromosome and position of the SNPs: 
 
-```{r}
+```{r show_annot}
 head(snps$map)
 ```
 
 You should convert them to a GenomicRanges prior passing them to recombClust:
 
-```{r}
+```{r make_GR}
 GRsnps <- makeGRangesFromDataFrame(snps$map, start.field = "position", 
                                    end.field = "position")
 GRsnps
 ```
 
+# Main function
+
 Now, we are ready to run recombClust. runRecombClust applies the LDmixture model to each SNP-block pair, selects pairs having a recombination plot, computes the probabilities matrix and clusters the individuals. runRecombClust requires the matrix with SNP data and the annotation in a GRanges. Notice that the matrix is divided by 2 to have a matrix with only 0s and 1s (0: reference allele, 1: alternative allele). To speed up the example, we will include only the first 20 SNPs:
 
-```{r, cache=TRUE}
+```{r run_recombClust, cache=TRUE}
 ## Create matrix with snps
 snpMat <- as(snps$genotypes, "numeric")/2 ## Divide by 2 to have 0 as reference and 1 as alternative
 snpMat[1:10, 1:5]
@@ -129,13 +135,15 @@ res <- runRecombClust(snpMat[, 1:20], annot = GRsnps[1:20])
 
 runRecombClust might take a long time to finish. res is a list with two elements: class (cluster classification of each chromosome) and pc (PCA of the probabilities matrix). 
 
-```{r}
+```{r plot_recom}
 table(res$class)
 res$pc$x[1:7, 1:5]
 
-plot(res$pc$x, col = res$class)
+plot(res$pc$x, col = res$class, pch=16)
 ```
 
+
+# Improvement
 
 runRecombClust has three main parts, as you can see in the function code (see runRecombClust.R): (1) call runLDmixture, (2) make probabilities matrix, (3) cluster individuals by similarity in the probabilities matrix. 
 
