@@ -5,7 +5,7 @@
 \title{Run LDmixtureModel to a dataset}
 \usage{
 runLDmixtureModel(haplos, annot, blockSize = 2, distance = 1e+05,
-  BPPARAM = BiocParallel::SerialParam(1))
+  BPPARAM = BiocParallel::SerialParam())
 }
 \arguments{
 \item{haplos}{Matrix with the haplotypes (SNPs in rows, samples in columns)}

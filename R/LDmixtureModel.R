@@ -15,28 +15,28 @@
 #'  \item{"r1"}{Responsibilities for recomb population of each chromosomes. It is
 #'  only available for selected models (BIC > 10, pval > 0.05)}
 #' }
-inversionModel <- function(dat, maxSteps = 1000, prob0 = 0.5) {
+LDmixtureModel <- function(dat, maxSteps = 1000, prob0 = 0.5) {
   #reduce data to haplotype frequencies for block b1b2 and b3b4
   inds <- apply(dat, 1, paste, collapse = "+")
   r1 <- rep(1, length(inds))
 
   nSNP <- (nchar(inds[1]) - 1)/2
 
-  propsNorm <- newFreqBase(r1, inds)
-  propsLD <- newFreqLD(r1, inds)
+  propsRecomb <- recombFreq(r1, inds)
+  propsLink <- linkageFreq(r1, inds)
 
   #compute likelihood of no inversion model first
-  r1 <- propsNorm[inds]
-  LoglikeNor<-sum(log(r1))
+  r1 <- propsRecomb[inds]
+  LoglikeRecomb <-sum(log(r1))
 
-  r2 <- propsLD[inds]
-  LoglikeLD <- sum(log(r2))
+  r2 <- propsLink[inds]
+  LoglikeLinkage <- sum(log(r2))
 
-  r1 <- prob0*propsNorm[inds]
-  r2<-(1-prob0)*propsLD[inds]
+  r1 <- prob0*propsRecomb[inds]
+  r2<-(1-prob0)*propsLink[inds]
 
 
-  params <- list(r1 = r1, r2 = r2, props1 = propsNorm, props2 = propsLD,
+  params <- list(r1 = r1, r2 = r2, props1 = propsRecomb, props2 = propsLink,
                  prob0 = prob0, inds = inds)
 
   #EM loop
@@ -48,7 +48,7 @@ inversionModel <- function(dat, maxSteps = 1000, prob0 = 0.5) {
   while(tol > MINTOL & steps <= maxSteps)
   {
 
-    newparams <- updateModel(params, newFreqBase, newFreqLD)
+    newparams <- updateModel(params, recombFreq, linkageFreq)
 
     tol<-sqrt((params$props1 - newparams$props1)%*%(params$props1 - newparams$props1) +
                 (params$props2 - newparams$props2)%*%(params$props2 - newparams$props2) +
@@ -64,8 +64,8 @@ inversionModel <- function(dat, maxSteps = 1000, prob0 = 0.5) {
   LoglikeMix <- sum(log(r1 + r2))
   R1 <- r1/(r1 + r2)
 
-  bicLD <- -2*LoglikeLD + log(length(params$inds))*(nSNP-1)
-  bicNoLD <- -2*LoglikeNor + log(length(params$inds))*(nSNP-1)^2
+  bicLD <- -2*LoglikeLinkage + log(length(params$inds))*(nSNP-1)
+  bicNoLD <- -2*LoglikeRecomb + log(length(params$inds))*(nSNP-1)^2
   bicMix <- -2*LoglikeMix + log(length(params$inds))*((nSNP-1) + (nSNP-1)^2 + 1)
   bicDiff <- min(c(bicLD, bicNoLD)) - bicMix
 
@@ -78,8 +78,8 @@ inversionModel <- function(dat, maxSteps = 1000, prob0 = 0.5) {
   chp.val <- stats::chisq.test(datProps, p = modelProps)$p.value
 
 
-  ans <- list(logMix = LoglikeMix, logLD = LoglikeLD,
-              logNoLD = LoglikeNor,
+  ans <- list(logMix = LoglikeMix, logLD = LoglikeLinkage,
+              logNoLD = LoglikeRecomb,
               bic = bicDiff, prob = params$prob0, steps = steps,
               pval = chp.val, r1 = R1)
 

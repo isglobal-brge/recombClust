@@ -48,7 +48,7 @@ runLDmixtureModel <- function(haplos, annot, blockSize = 2, distance = 1e5,
     bl2 <- S4Vectors::to(overlaps)[ind]
     ind1 <- GRblocks$Ind[[bl1]]
     ind2 <- GRblocks$Ind[[bl2]]
-    res <- inversionModel(cbind(
+    res <- LDmixtureModel(cbind(
       apply(haplos[, ind1], 1, function(x) paste(x, collapse = "")),
       apply(haplos[, ind2], 1, function(x) paste(x, collapse = ""))
     ))

@@ -3,7 +3,7 @@
 #' @param Resp Numerical with the responsibilities for recomb population
 #' @param Block Character with the blocks genotypes
 #' @return Numerical with the new block frequencies for recomb population
-newFreqBase <- function(Resp, Block)
+recombFreq <- function(Resp, Block)
 {
   nSNP <- (nchar(Block[1]) - 1)/2
 

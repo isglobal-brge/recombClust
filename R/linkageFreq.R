@@ -3,7 +3,7 @@
 #' @param Resp Numerical with the responsibilities for linkage population
 #' @param Block Character with the blocks genotypes
 #' @return Numerical with the new block frequencies for linkage population
-newFreqLD <-function(Resp, Block)
+linkageFreq <-function(Resp, Block)
 {
   nSNP <- (nchar(Block[1]) - 1)/2
 

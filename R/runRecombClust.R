@@ -27,6 +27,7 @@ runRecombClust <- function(haplos, annot, clusters = 2, PCs = 1, ...){
 
   ## Run PCA on individuals responsibilities
   pc <- stats::prcomp(indsmat)
+  rownames(pc$x) <- rownames(haplos)
 
   ## Get classification with k-means
   class <- stats::kmeans(pc$x[, seq_len(PCs)], centers = clusters, nstart = 1000)$cluster
