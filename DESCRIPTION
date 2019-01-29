@@ -1,6 +1,6 @@
 Package: recombClust
 Title: Group chromosomes by recombination history
-Version: 0.99.4
+Version: 0.99.5
 Authors@R: c(person("Carlos", "Ruiz-Arenas", , "carlos.ruiz@isglobal.org", role = c("aut", "cre")),
   person("Alejandro", "Caceres", ,"alejandro.caceres@isglobal.org", role = "aut"),
   person("Juan R.", "Gonzalez", ,"juanr.gonzalez@isglobal.org", role = "aut"))

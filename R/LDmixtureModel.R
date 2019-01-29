@@ -56,6 +56,11 @@ LDmixtureModel <- function(dat, maxSteps = 1000, prob0 = 0.5) {
 
     params <- newparams
     steps <- steps+1
+
+    ## If one of the populations have all samples, leave the loop
+    if (newparams$prob0 == 1 | newparams$prob0 == 0){
+      break
+    }
   }
 
   #get last values to compute likelihood of the complete inversion model
