@@ -11,6 +11,8 @@
 #' @param distance Numeric with the maximum distance in bases to pair two blocks. (Default: 1e5)
 #' @param BPPARAM  An object from \code{BiocParallelParam}. It allow running the models
 #' in parallel. By default, the models are run in serial.
+#' @param filt_resp Logical. Should responsibility of models not following the mixture
+#' be returned? (Default: TRUE)
 #' @return A list with the results of the LDmixture models. Each element is a model
 #' and contains the following items:
 #' \itemize{
@@ -25,7 +27,8 @@
 #'  only available for selected models (BIC > 10, pval > 0.05)}
 #' }
 runLDmixtureModel <- function(haplos, annot, blockSize = 2, distance = 1e5,
-                              BPPARAM = BiocParallel::SerialParam()){
+                              BPPARAM = BiocParallel::SerialParam(),
+                              filt_resp = TRUE){
 
   # Make list of SNP pairs to test
   GRblocks <- GenomicRanges::GRanges(
@@ -54,8 +57,10 @@ runLDmixtureModel <- function(haplos, annot, blockSize = 2, distance = 1e5,
     ))
     res$annot <- c(start = GenomicRanges::start(GRblocks[bl1]),
                    end = GenomicRanges::start(GRblocks[bl2]))
-    if (res$bic < 10 | res$pval < 0.05) {
-      res$r1 <- NULL
+    if (filt_resp){
+      if (res$bic < 10 | res$pval < 0.05) {
+        res$r1 <- NULL
+      }
     }
     res
   }, BPPARAM = BPPARAM)
