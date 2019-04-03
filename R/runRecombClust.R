@@ -14,8 +14,10 @@
 #' \itemize{
 #'  \item{"class"}{Cluster classification of the chromosomes}
 #'  \item{"pc"}{Responsibilities PCA}
+#'  \item{"mat"}{Responsibilities matrix}
+#'  \item{"models"}{List of models}
 #' }
-runRecombClust <- function(haplos, annot, clusters = 2, PCs = 1, ...){
+runRecombClust <- function(haplos, annot, clusters = 2, PCs = 3, ...){
   # Get models
   models <- runLDmixtureModel(haplos, annot, ...)
 
@@ -24,9 +26,10 @@ runRecombClust <- function(haplos, annot, clusters = 2, PCs = 1, ...){
   goodModels <- vapply(models, class, character(1)) == "list"
   ## Create matrix of chromosome responsibilities
   indsmat <- do.call(cbind, lapply(models[goodModels], `[[`, "r1"))
+  rownames(indsmat) <- rownames(haplos)
 
   ## Run PCA on individuals responsibilities
-  pc <- stats::prcomp(indsmat)
+  pc <- stats::prcomp(indsmat, rank. = PCs)
   rownames(pc$x) <- rownames(haplos)
 
   ## Get classification with k-means
@@ -34,5 +37,5 @@ runRecombClust <- function(haplos, annot, clusters = 2, PCs = 1, ...){
   names(class) <- colnames(haplos)
 
   ## TO DO: create an object to encapsulate results
-  return(list(class = class, pc = pc))
+  return(list(class = class, pc = pc, mat = indsmat, models = models))
 }

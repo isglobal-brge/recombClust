@@ -4,7 +4,7 @@
 \alias{runRecombClust}
 \title{Main function to run all the recumbClust pipeline}
 \usage{
-runRecombClust(haplos, annot, clusters = 2, PCs = 1, ...)
+runRecombClust(haplos, annot, clusters = 2, PCs = 3, ...)
 }
 \arguments{
 \item{haplos}{Matrix with the haplotypes (SNPs in rows, samples in columns)}
@@ -22,6 +22,8 @@ A list with two elements:
 \itemize{
  \item{"class"}{Cluster classification of the chromosomes}
  \item{"pc"}{Responsibilities PCA}
+ \item{"mat"}{Responsibilities matrix}
+ \item{"models"}{List of models}
 }
 }
 \description{

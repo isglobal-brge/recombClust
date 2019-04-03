@@ -26,7 +26,7 @@
 #'  \item{"r1"}{Responsibilities for recomb population of each chromosomes. It is
 #'  only available for selected models (BIC > 10, pval > 0.05)}
 #' }
-runLDmixtureModel <- function(haplos, annot, blockSize = 2, distance = 1e5,
+runLDmixtureModel <- function(haplos, annot, blockSize = 2, distance = 1e4,
                               BPPARAM = BiocParallel::SerialParam(),
                               filt_resp = TRUE){
 
