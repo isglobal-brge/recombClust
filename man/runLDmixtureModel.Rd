@@ -5,7 +5,7 @@
 \title{Run LDmixtureModel to a dataset}
 \usage{
 runLDmixtureModel(haplos, annot, blockSize = 2, distance = 10000,
-  BPPARAM = BiocParallel::SerialParam(), filt_resp = TRUE)
+  BPPARAM = BiocParallel::SerialParam())
 }
 \arguments{
 \item{haplos}{Matrix with the haplotypes (SNPs in rows, samples in columns)}
@@ -18,9 +18,6 @@ runLDmixtureModel(haplos, annot, blockSize = 2, distance = 10000,
 
 \item{BPPARAM}{An object from \code{BiocParallelParam}. It allow running the models
 in parallel. By default, the models are run in serial.}
-
-\item{filt_resp}{Logical. Should responsibility of models not following the mixture
-be returned? (Default: TRUE)}
 }
 \value{
 A list with the results of the LDmixture models. Each element is a model
