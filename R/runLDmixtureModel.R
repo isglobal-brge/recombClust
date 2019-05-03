@@ -5,7 +5,7 @@
 #'
 #' @export
 #'
-#' @param haplos Matrix with the haplotypes (SNPs in rows, samples in columns)
+#' @param haplos Matrix with the haplotypes (SNPs in columns, samples in rows)
 #' @param annot GenomicRanges with the SNPs annotation
 #' @param blockSize Numeric with the size of the SNP block (Default: 2)
 #' @param distance Numeric with the maximum distance in bases to pair two blocks. (Default: 1e5)

@@ -34,7 +34,7 @@ runRecombClust <- function(haplos, annot, clusters = 2, PCs = 3, ...){
 
   ## Get classification with k-means
   class <- stats::kmeans(pc$x[, seq_len(PCs)], centers = clusters, nstart = 1000)$cluster
-  names(class) <- colnames(haplos)
+  names(class) <- rownames(haplos)
 
   ## TO DO: create an object to encapsulate results
   return(list(class = class, pc = pc, mat = indsmat, models = models))
