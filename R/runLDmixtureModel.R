@@ -21,8 +21,7 @@
 #'  \item{"prob"}{Proportion of chromosomes belonging to recomb model}
 #'  \item{"steps"}{Number of iterations until converge of the EM algorithm}
 #'  \item{"pval"}{P-value of the Chi-square test}
-#'  \item{"r1"}{Responsibilities for recomb population of each chromosomes. It is
-#'  only available for selected models (BIC > 10, pval > 0.05)}
+#'  \item{"r1"}{Responsibilities for recomb population of each chromosomes.}
 #' }
 runLDmixtureModel <- function(haplos, annot, blockSize = 2, distance = 1e4,
                               BPPARAM = BiocParallel::SerialParam()){

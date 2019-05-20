@@ -18,6 +18,17 @@
 #'  \item{"models"}{List of models}
 #' }
 runRecombClust <- function(haplos, annot, clusters = 2, PCs = 3, ...){
+
+  # Tareas generales a mejorar
+  ## Hacer los tests (http://r-pkgs.had.co.nz/tests.html)
+  ### Comprobar un caso básico para que funcione
+  ### Comprobar errores comunes (funciones altas)
+  ## Aceptar missings (al menos 5% de individuos con missings)
+  ### Individuos con missings, tienen un NA como resultados.
+  ## Chequear missings al principio de la función (maximo 5% individuos y SNPs)
+  ### Error y parar (stop)
+  ## Comprobar que los SNPs en haplos son los mismos en annot
+
   # Get models
   models <- runLDmixtureModel(haplos, annot, ...)
 

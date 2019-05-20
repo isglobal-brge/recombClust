@@ -25,7 +25,6 @@ LDmixtureModel <- function(dat, maxSteps = 1000, prob0 = 0.5) {
   propsRecomb <- recombFreq(r1, inds)
   propsLink <- linkageFreq(r1, inds)
 
-  #compute likelihood of no inversion model first
   r1 <- propsRecomb[inds]
   LoglikeRecomb <-sum(log(r1))
 
@@ -48,7 +47,10 @@ LDmixtureModel <- function(dat, maxSteps = 1000, prob0 = 0.5) {
   while(tol > MINTOL & steps <= maxSteps)
   {
 
+
+    ## El código de updateModel se puede poner directamente dentro del bucle
     newparams <- updateModel(params, recombFreq, linkageFreq)
+
 
     tol<-sqrt((params$props1 - newparams$props1)%*%(params$props1 - newparams$props1) +
                 (params$props2 - newparams$props2)%*%(params$props2 - newparams$props2) +
@@ -69,24 +71,9 @@ LDmixtureModel <- function(dat, maxSteps = 1000, prob0 = 0.5) {
   LoglikeMix <- sum(log(r1 + r2))
   R1 <- r1/(r1 + r2)
 
-  bicLD <- -2*LoglikeLinkage + log(length(params$inds))*(nSNP-1)
-  bicNoLD <- -2*LoglikeRecomb + log(length(params$inds))*(nSNP-1)^2
-  bicMix <- -2*LoglikeMix + log(length(params$inds))*((nSNP-1) + (nSNP-1)^2 + 1)
-  bicDiff <- min(c(bicLD, bicNoLD)) - bicMix
-
-  haplos <- names(params$props2)
-  modelProps <- ((1 - params$prob0)*params$props2)[haplos] + (params$prob0*params$props1)[haplos]
-  datProps <- table(inds)[names(modelProps)]
-  datProps[is.na(datProps)] <- 0
-  names(datProps) <- names(modelProps)
-
-  chp.val <- stats::chisq.test(datProps, p = modelProps)$p.value
-
-
-  ans <- list(logMix = LoglikeMix, logLD = LoglikeLinkage,
-              logNoLD = LoglikeRecomb,
-              bic = bicDiff, prob = params$prob0, steps = steps,
-              pval = chp.val, r1 = R1)
+  ans <- list(logNoLD = LoglikeRecomb,
+              prob = params$prob0,
+              r1 = R1)
 
   ans
 }
