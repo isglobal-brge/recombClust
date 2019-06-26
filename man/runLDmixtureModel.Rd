@@ -8,7 +8,7 @@ runLDmixtureModel(haplos, annot, blockSize = 2, distance = 10000,
   BPPARAM = BiocParallel::SerialParam())
 }
 \arguments{
-\item{haplos}{Matrix with the haplotypes (SNPs in rows, samples in columns)}
+\item{haplos}{Matrix with the haplotypes (SNPs in columns, samples in rows)}
 
 \item{annot}{GenomicRanges with the SNPs annotation}
 
@@ -30,8 +30,7 @@ and contains the following items:
  \item{"prob"}{Proportion of chromosomes belonging to recomb model}
  \item{"steps"}{Number of iterations until converge of the EM algorithm}
  \item{"pval"}{P-value of the Chi-square test}
- \item{"r1"}{Responsibilities for recomb population of each chromosomes. It is
- only available for selected models (BIC > 10, pval > 0.05)}
+ \item{"r1"}{Responsibilities for recomb population of each chromosomes.}
 }
 }
 \description{
