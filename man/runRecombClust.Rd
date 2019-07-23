@@ -2,7 +2,7 @@
 % Please edit documentation in R/runRecombClust.R
 \name{runRecombClust}
 \alias{runRecombClust}
-\title{Main function to run all the recumbClust pipeline}
+\title{Main function to run all the recombClust pipeline}
 \usage{
 runRecombClust(haplos, annot, clusters = 2, PCs = 3, ...)
 }
@@ -18,12 +18,12 @@ runRecombClust(haplos, annot, clusters = 2, PCs = 3, ...)
 \item{...}{Further arguments passed to runLDmixtureModel}
 }
 \value{
-A list with two elements:
+A list with four elements:
 \itemize{
- \item{"class"}{Cluster classification of the chromosomes}
- \item{"pc"}{Responsibilities PCA}
- \item{"mat"}{Responsibilities matrix}
- \item{"models"}{List of models}
+ \item{class: Cluster classification of the chromosomes}
+ \item{pc: Responsibilities PCA}
+ \item{mat: Responsibilities matrix}
+ \item{models: List of models}
 }
 }
 \description{

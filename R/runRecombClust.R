@@ -1,4 +1,4 @@
-#' Main function to run all the recumbClust pipeline
+#' Main function to run all the recombClust pipeline
 #'
 #' This function takes as input phased chromosomes and returns the responsibilities
 #' PCA and the cluster classification of the samples.
@@ -10,12 +10,12 @@
 #' @param clusters Numeric with the clusters used in k-means
 #' @param PCs Numeric with the number of PCA components used to make the clustering.
 #' @param ... Further arguments passed to runLDmixtureModel
-#' @return A list with two elements:
+#' @return A list with four elements:
 #' \itemize{
-#'  \item{"class"}{Cluster classification of the chromosomes}
-#'  \item{"pc"}{Responsibilities PCA}
-#'  \item{"mat"}{Responsibilities matrix}
-#'  \item{"models"}{List of models}
+#'  \item{class: Cluster classification of the chromosomes}
+#'  \item{pc: Responsibilities PCA}
+#'  \item{mat: Responsibilities matrix}
+#'  \item{models: List of models}
 #' }
 runRecombClust <- function(haplos, annot, clusters = 2, PCs = 3, ...){
 
