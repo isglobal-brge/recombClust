@@ -64,8 +64,7 @@ getVCFmatrixChr <- function(range = NULL, samples = NULL, snps.names = NULL, min
 }
 
 ## Load VCF selecting samples 
-loadVCFrange <- function(range = NULL, samples = NULL, 
-                         vcffile = paste0("ALL.chr", as.character(seqnames(range)), ".phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.vcf.gz")){
+loadVCFrange <- function(range = NULL, samples = NULL, vcffile){
   vcfsamples <- samples(scanVcfHeader(vcffile))
   if (!is.null(samples)){
     samples <- vcfsamples[vcfsamples %in% samples]
@@ -88,7 +87,7 @@ Once we have loaded these functions in our workspace, we are ready to load SNP d
 
 ```{r get_vcf_data}
 ## Get vcf path
-vcf_file <- system.file("extdata", "example.vcf", package = "scoreInvHap")
+vcf_file <- system.file("extdata", "example.vcf", package = "recombClust")
 
 ## Load vcf file
 snps <- getVCFmatrixChr(vcf = vcf_file)

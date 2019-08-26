@@ -23,6 +23,6 @@ recombClust can be installed from github repository using devtools package:
 devtools::install_github("isglobal-brge/recombClust")
 ```
 
-# Usage
+### Usage
 
 In the folder vignettes, overview.Rmd contains an example on how to apply recombClust to a dataset. 
