@@ -25,7 +25,7 @@ knitr::opts_chunk$set(
 
 # Overview
 
-`recombClust` is a R package that classifies chromosomes in different subpopulations based on recombination patterns. `recombClust` works with chromosomes, so we need phased data. To start, we will load the chromosomes from a VCF file into a `SnpMatrix`. recombClust does not include any function to do this, but you can use the following code:
+`recombClust` is a R package that classifies chromosomes in different subpopulations based on recombination patterns. `recombClust` works with chromosomes, so we need phased data. To start, we will load the chromosomes from a VCF file into a `SnpMatrix`. To get recombClust input, we need to run some preprocessing steps:
 
 ```{r get_functions}
 library(recombClust)
@@ -133,24 +133,11 @@ snpMat[1:10, 1:5]
 res <- runRecombClust(snpMat[, 1:20], annot = GRsnps[1:20])
 ```
 
-runRecombClust might take a long time to finish. res is a list with two elements: class (cluster classification of each chromosome) and pc (PCA of the probabilities matrix). 
+runRecombClust might take a long time to finish. res is a list with two main elements: class (cluster classification of each chromosome) and pc (PCA of the probabilities matrix). 
 
 ```{r plot_recom}
 table(res$class)
-res$pc$x[1:7, 1:5]
-
-plot(res$pc$x, col = res$class, pch=16)
+plot(res$pc$x, col = res$class, pch = 16)
 ```
 
 
-# Improvement
-
-runRecombClust has three main parts, as you can see in the function code (see runRecombClust.R): (1) call runLDmixture, (2) make probabilities matrix, (3) cluster individuals by similarity in the probabilities matrix. 
-
-runLDmixture is a function that applies LDmixture model to each pair of SNP blocks. If you see this function, you have two main parts (see runLDmixtureModel.R): (A) Make SNP-block pairs, (B) run LDmixture model to each SNP-block pair. Part B is really slow and needs optimization as it consumes most of the time of runRecombClust function. 
-
-Part B is based on inversionModel function (defined in LDmixtureModel.R). This function has as input the genotypes for a SNP-block pair. Therefore, this matrix has two columns, corresponding to the two SNP blocks, and the rows are the chromosomes. inversionModel implements a Expectation-Maximization algorithm to estimate the parameters of the LDmixture model (see paper). This function and the functions to compute the recomb and linkage models (defined in recombFreq.R -recomb model- and linkageFreq.R -linkage model-) are implemented in R, so they are very slow. All these functions might be implemented in C or C++, which will result in a great reduction in computation time. 
-
-Part 3 of runRecombClust is an other step that might be improved. Right now, we run a PCA on probabilities matrix and we compute k-means on the first 2 components, trying to define two clusters. This procedure worked because we were studying chromosomal inversions and we expect to have two subpopulations. However, we are planning to extend our method to other situations and we might need a better clustering strategy.
-
-The probabilities matrix is a matrix with the probability of each chromosomes of belonging to the recomb population in each recombination point. Thus, rows are chromosomes, columns are recombination points (i.e. SNP-block pairs where the LDmixture model fits well the data) and values are between 0 and 1. New clustering strategies might use directly the probabilities matrix or can keep using the first components of the PCA matrix. In any case, we would need a clustering strategy that is able to select the optimum number of clusters, including clustering all samples in a group when there is no good clustering in the data. 
