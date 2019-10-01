@@ -31,6 +31,7 @@ List cLDmixtureModel( RObject dat, Nullable<int> maxSteps = R_NilValue, Nullable
     HG00101_2 "00" "00"
     HG00102_1 "11" "11"
     HG00102_2 "00" "01"
+    ...
 */
    
    int imaxSteps, iblocksize;
@@ -135,86 +136,25 @@ List cLDmixtureModel( RObject dat, Nullable<int> maxSteps = R_NilValue, Nullable
 
 
 
-
-
-
- /***  
-params <- list(r1 = r1, r2 = r2, props1 = propsRecomb, props2 = propsLink,  prob0 = prob0, inds = inds)
-#EM loop
-#control while loop
-   tol<- 1
-   MINTOL<- .000000001
-   steps<-1
-   
-   while(tol > MINTOL & steps <= maxSteps)
-   {
-      
-      
-## El código de updateModel se puede poner directamente dentro del bucle
-      newparams <- updateModel(params, recombFreq, linkageFreq)
-         
-         
-         tol<-sqrt((params$props1 - newparams$props1)%*%(params$props1 - newparams$props1) +
-            (params$props2 - newparams$props2)%*%(params$props2 - newparams$props2) +
-            abs(params$prob0 - newparams$prob0) )
-         
-         params <- newparams
-         steps <- steps+1
-      
-## If one of the populations have all samples, leave the loop
-      if (newparams$prob0 == 1 | newparams$prob0 == 0){
-         break
-      }
-   }
-   
-
-   
-   
-#get last values to compute likelihood of the complete inversion model
-   r1 <- params$prob0*params$props1[params$inds]
-   r2 <- (1 - params$prob0)*params$props2[params$inds]
-   LoglikeMix <- sum(log(r1 + r2))
-      R1 <- r1/(r1 + r2)
-      
-      ans <- list(logNoLD = LoglikeRecomb,
-                  prob = params$prob0,
-                  r1 = R1)
-      
-      ans
-  ***/      
-   
-   
-   
-   
-   
-
-
-
-// You can include R code blocks in C++ files processed with sourceCpp
-// (useful for testing and development). The R code will be automatically 
-// run after the compilation.
-//
-
 /*** R
-timesTwo(42)
 
 a <- cLDmixtureModel(dat)
 
 
 library(microbenchmark)
-res <- microbenchmark( a <- cLDmixtureModel(dat),
-                       ans1 <- LDmixtureModel(dat),
+res <- microbenchmark( C <- cLDmixtureModel(dat),
+                       R <- LDmixtureModel(dat),
                        times = 1L, unit = "s")
 print(summary(res)[, c(1:7)],digits=3)
 
 
 
-ans1$logNoLD
-a$logNoLD
-ans1$prob
-a$prob
-ans1$r1
-a$r1
+R$logNoLD
+C$logNoLD
+R$prob
+C$prob
+R$r1
+C$r1
 
 
 */
