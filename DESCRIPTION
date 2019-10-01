@@ -18,7 +18,11 @@ Imports: GenomicRanges,
     BiocParallel,
     S4Vectors,
     gtools,
-    stats
+    stats,
+    Rcpp,
+    RcppEigen (>= 0.3.3.5.0)
+LinkingTo: Rcpp, RcppEigen (>= 0.3.3.5.0)
+SystemRequirements: C++14
 Suggests: knitr,
     rmarkdown
 VignetteBuilder: knitr

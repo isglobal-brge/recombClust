@@ -9,9 +9,13 @@
 #' @docType package
 #' @name RecombClust
 #'
+#' @useDynLib recombClust
 #' @importFrom BiocParallel bplapply
 #' @importFrom GenomicRanges seqnames start end findOverlaps resize
 #' @importFrom gtools permutations
 #' @importFrom S4Vectors from to
 #' @importFrom stats chisq.test kmeans prcomp
+#' @importFrom Rcpp evalCpp
+#' @import RcppEigen
+#' @exportPattern("^[[:alpha:]]+")
 NULL
