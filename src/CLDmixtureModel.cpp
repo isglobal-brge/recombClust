@@ -2,6 +2,8 @@
 
 using namespace Rcpp;
 
+
+
 //' Run LDmixture model to a pair of SNP-blocks
 //'
 //' @param dat Matrix with the genotype data
@@ -46,13 +48,9 @@ List cLDmixtureModel( RObject dat, Nullable<int> maxSteps = R_NilValue, Nullable
    if(prob0.isNotNull())  dprob0 = as<double> (prob0);
    else    dprob0 = 0.5;
    
-   if(blocksize.isNotNull())  iblocksize = as<int> (blocksize);
+   if(blocksize.isNotNull())  iblocksize = as<int>(blocksize);
    else    iblocksize = 2;
 
-/* Volem obtenir ins :
-    HG00100_1 HG00100_2 HG00101_1 HG00101_2 HG00102_1 HG00102_2 HG00103_1 
-    "00+00"   "11+11"   "00+00"   "00+00"   "11+11"   "00+01"   "00+00" 
-*/
    int nSNP = cdat(0,0).size();
    StringVector cnames = colnames(cdat);
    StringVector inds = concatenate( cdat(0,_), cdat(1,_), "+" );
@@ -62,7 +60,6 @@ List cLDmixtureModel( RObject dat, Nullable<int> maxSteps = R_NilValue, Nullable
    
    NumericVector propsRecomb = CRecombFreq(r1, inds, iblocksize);
    NumericVector propsLink = CLinkageFreq(r1, inds, iblocksize);
-   
   
    r1 = getNumericVectorfromStringVector( VectortoOrderedMap(propsRecomb), inds );
    NumericVector r2 = getNumericVectorfromStringVector( VectortoOrderedMap(propsLink), inds );
@@ -80,18 +77,16 @@ List cLDmixtureModel( RObject dat, Nullable<int> maxSteps = R_NilValue, Nullable
    List params =  List::create(Named("r1") = r1,  Named("r2") = r2,  
                                Named("props1") = propsRecomb, Named("props2") = propsLink,
                                Named("prob0") = dprob0, Named("inds") = inds, Named("blocksize") = iblocksize);
-  
  
    // EM loop
    double tol =  1;
    int steps = 1;
    double MINTOL = .000000001;
-   
+
    while(tol > MINTOL & steps <= imaxSteps)
    {
-      // El código de updateModel se puede poner directamente dentro del bucle
       List newparams = CupdateModel(params);
-
+      
       NumericVector parprops1 = as<NumericVector>(params["props1"]);
       NumericVector nparprops1 = as<NumericVector>(newparams["props1"]);
       
@@ -110,51 +105,57 @@ List cLDmixtureModel( RObject dat, Nullable<int> maxSteps = R_NilValue, Nullable
       steps = steps+1;
       
       // If one of the populations have all samples, leave the loop
-      if (as<double>(newparams["prob0"]) == 1 || as<double>(newparams["prob0"]) == 0){
+      if (as<double>(newparams["prob0"]) == 1 || as<double>(newparams["prob0"]) == 0) {
          break;
       }
    }
-      
-
-   //get last values to compute likelihood of the complete inversion model
    
+   //get last values to compute likelihood of the complete inversion model
    r1 = as<double>(params["prob0"]) * getNumericVectorfromStringVector( VectortoOrderedMap(as<NumericVector>(params["props1"])), inds );
    r2 = (1 - as<double>(params["prob0"])) * getNumericVectorfromStringVector( VectortoOrderedMap(as<NumericVector>(params["props2"])), inds );
-
    double LoglikeMix = sum(log(r1 + r2));
+   
    NumericVector R1 = r1/(r1 + r2);
+   
    R1.attr("names") = inds;
-         
          
    return  List::create(Named("logNoLD") = LoglikeRecomb,  
                         Named("prob") = as<double>(params["prob0"]),
                         Named("r1") = R1);
    
-
-   
 }   
 
 
 
+
+
+
+   
+   
+
+
+
+// You can include R code blocks in C++ files processed with sourceCpp
+// (useful for testing and development). The R code will be automatically 
+// run after the compilation.
+//
+
 /*** R
 
-a <- cLDmixtureModel(dat)
 
 
 library(microbenchmark)
-res <- microbenchmark( C <- cLDmixtureModel(dat),
-                       R <- LDmixtureModel(dat),
+res <- microbenchmark( C <- CrunRecombClust(snpMat[, 1:20], annot = GRsnps[1:20]),
+                       R <- runRecombClust(snpMat[, 1:20], annot = GRsnps[1:20]),
                        times = 1L, unit = "s")
 print(summary(res)[, c(1:7)],digits=3)
 
+stopifnot(all.equal(C$class, R$class))
+stopifnot(all.equal(C$pc, R$pc))
+stopifnot(all.equal(C$mat, R$mat))
+stopifnot(all.equal(C$models[[5]], R$models[[5]]))
 
 
-R$logNoLD
-C$logNoLD
-R$prob
-C$prob
-R$r1
-C$r1
 
 
 */

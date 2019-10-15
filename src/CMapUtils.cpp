@@ -5,25 +5,46 @@ using namespace Rcpp;
 // Convert NumericVector with names to map (key:names - value: v.value)
 std::map<std::string, double> VectortoOrderedMap(NumericVector v)
 {
-   std::vector<std::string> namesv = v.names(); 
-   std::map<std::string, double> mapv;
+   try 
+   {
+      StringVector namesv = v.names();
+      std::map<std::string, double> mapv;
+      
+      for (size_t i = 0; i < namesv.size(); ++i)  
+         mapv[(std::string)namesv[i]] = v[i];
+      
+      return mapv;
+      
+   } catch(std::exception &ex) {	
+      forward_exception_to_r(ex);
+   } catch(...) { 
+      ::Rf_error("c++ exception (unknown reason)"); 
+   }
    
-   for (size_t i = 0; i < namesv.size(); ++i)  
-      mapv[(std::string)namesv[i]] = v[i];
-   return mapv;
 }
 
 
 // Assign numerical values to vector vased on map
 NumericVector getNumericVectorfromStringVector(std::map<std::string, double> mapv, StringVector strvalues )
 {
-   size_t vsize = strvalues.length();
-   NumericVector v(vsize);
+   try 
+   {
+      int vsize = strvalues.length();
+      NumericVector v(vsize);
+
+      for(int i=0; i < vsize; i++) {
+         double valor = mapv[(std::string)strvalues[i]];
+         v[i] = valor;
+      }
+         
+      return v;
    
-   for(size_t i=0; i<vsize; i++)
-      v[i] = mapv[(std::string)strvalues[i]];
+   } catch(std::exception &ex) {	
+      forward_exception_to_r(ex);
+   } catch(...) { 
+      ::Rf_error("c++ exception (unknown reason)"); 
+   }
    
-   return v;
 }
 
 

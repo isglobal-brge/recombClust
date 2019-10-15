@@ -3,14 +3,23 @@
 using namespace Rcpp;
 
 // Concatenate two string vectors position by position with par string in the middle.
-CharacterVector concatenate( Rcpp::CharacterVector x, Rcpp::CharacterVector y, std::string par)
+CharacterVector concatenate( Rcpp::StringVector x, Rcpp::StringVector y, std::string par)
 {
    CharacterVector res(x.size());
-   for (int i=0; i < x.size(); i++)
-   {
-      res[i] = ((Rcpp::as<std::string>(x[i]) + par) + Rcpp::as<std::string>(y[i]));
+   
+   try {
+      
+      for (int i=0; i < x.size(); i++)
+         res[i] = ((Rcpp::as<std::string>(x[i]) + par) + Rcpp::as<std::string>(y[i]));
+      
+      return (res);
+      
+   } catch(std::exception &ex) {	
+      forward_exception_to_r(ex);
+   } catch(...) { 
+      ::Rf_error("c++ exception (unknown reason)"); 
    }
-   return (res);
+   
 }
 
 // Duplicate array content by block of x vector

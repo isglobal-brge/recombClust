@@ -10,9 +10,8 @@
    #include "CLinkageFreq.h"
 
    // [[Rcpp::plugins(cpp11)]]
+   using namespace Rcpp;
    
    Rcpp::List CupdateModel( Rcpp::List par);
-
-
 
 #endif

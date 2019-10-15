@@ -7,6 +7,8 @@
    #include "CLinkageFreq.h"
    #include "CMapUtils.h"
    #include "CUpdateModel.h"
+   #include "CMapUtils.h"
+
 
    using namespace Rcpp;
    

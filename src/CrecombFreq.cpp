@@ -18,13 +18,13 @@ Rcpp::NumericVector CRecombFreq( NumericVector Resp, Rcpp::StringVector Block, i
    // Get frequencies
    freqs = getFreqSum(Resp, Block, 0, sizeblock);
 
-   // Get combinations and frequency sorted by freq descending
+   // Get combinations and frequency sorted by freq descending 
    freqLeft = getFreqAllCombs(Resp, Block, 0, nSNP);
    freqRight = getFreqAllCombs(Resp, Block, nSNP+1, nSNP);
    
    // solve linear algebra to find new frequency values
    NumericMatrix AA (2*ncombs, 2*ncombs);
-   NumericMatrix bb (1,2*ncombs);
+   NumericMatrix bb (1, 2*ncombs);
    
    StringVector names(2*ncombs);
    
@@ -42,7 +42,7 @@ Rcpp::NumericVector CRecombFreq( NumericVector Resp, Rcpp::StringVector Block, i
    NumericVector ansf = flatmatcm( wrap(ans));
    ansf.attr("names") = namesf;
    for(NumericVector::iterator i = ansf.begin(); i != ansf.end(); ++i)
-      *i = round( *i * 100000000.0 ) / 100000000.0;
+      *i = round( *i * 1000000000000000.0 ) / 1000000000000000.0;
 
 
    return ansf;
