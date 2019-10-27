@@ -128,18 +128,6 @@ List cLDmixtureModel( RObject dat, Nullable<int> maxSteps = R_NilValue, Nullable
 
 
 
-
-
-   
-   
-
-
-
-// You can include R code blocks in C++ files processed with sourceCpp
-// (useful for testing and development). The R code will be automatically 
-// run after the compilation.
-//
-
 /*** R
 
 
@@ -156,6 +144,19 @@ stopifnot(all.equal(C$mat, R$mat))
 stopifnot(all.equal(C$models[[5]], R$models[[5]]))
 
 
+# Prova amb fitxers : 
 
+Cres.file <- CrunRecombClust("inst/extdata/example.vcf",1, 20)
+
+res <- microbenchmark( C.file <- CrunRecombClust("inst/extdata/example.vcf",1, 20),
+                       R <- runRecombClust(snpMat[, 1:20], annot = GRsnps[1:20]),
+                       times = 1L, unit = "s")
+
+print(summary(res)[, c(1:7)],digits=3)
+
+C.file$class
+R$class
+C.file$mat[1:5,1:12]
+R$mat[1:5,1:12]
 
 */

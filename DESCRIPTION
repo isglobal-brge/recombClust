@@ -9,7 +9,7 @@ Description: Recombination history is based on a mixture model that, given a pai
   and low recombination (linkage) and another with low LD and high recombination. The 
   method use the classification of several SNP-block pairs in a region to group chromosomes
   in clusters with different recombination history. This package takes as input genotype phased data. 
-Depends: R (>= 3.3.0)
+Depends: R (>= 3.3.0), gdsfmt (>= 1.8.3)
 License: Artistic-2.0
 Encoding: UTF-8
 LazyData: true
@@ -21,8 +21,8 @@ Imports: GenomicRanges,
     stats,
     Rcpp,
     RcppEigen (>= 0.3.3.5.0)
-LinkingTo: Rcpp, RcppEigen (>= 0.3.3.5.0)
-SystemRequirements: C++14
+LinkingTo: Rcpp, RcppEigen (>= 0.3.3.5.0), gdsfmt
+SystemRequirements: C++11
 Suggests: knitr,
     rmarkdown
 VignetteBuilder: knitr
