@@ -2,14 +2,17 @@
 #define CLDmixtureModel
 
    #include <RcppEigen.h>
+   #include <fstream>
+   #include <sys/stat.h>
    #include "CUtils.h"
    #include "CrecombFreq.h"
    #include "CLinkageFreq.h"
    #include "CMapUtils.h"
    #include "CUpdateModel.h"
    #include "CMapUtils.h"
-
-
+   #include "CFileUtils.h"
+   
+   
    using namespace Rcpp;
    
    

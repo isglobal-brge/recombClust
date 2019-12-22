@@ -52,7 +52,9 @@ CrunLDmixtureModel <- function(haplos, annot, blockSize = 2, distance = 1e4,
        apply(haplos[, ind1], 1, function(x) paste(x, collapse = "")),
        apply(haplos[, ind2], 1, function(x) paste(x, collapse = ""))
     ))
-     
+    
+    CWriteResults( c("start","end"), cbind(GenomicRanges::end(GRblocks[bl1]), GenomicRanges::start(GRblocks[bl2])), "./test/annot.txt")
+    
     res$annot <- c(start = GenomicRanges::start(GRblocks[bl1]),
                     end = GenomicRanges::start(GRblocks[bl2]))
     res

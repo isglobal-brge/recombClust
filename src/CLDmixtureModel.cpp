@@ -117,8 +117,12 @@ List cLDmixtureModel( RObject dat, Nullable<int> maxSteps = R_NilValue, Nullable
    
    NumericVector R1 = r1/(r1 + r2);
    
-   R1.attr("names") = inds;
-         
+   CWriteResults(inds, R1, "./test/models.txt");
+   
+   // S'hauria de revisar el que es passa perquè ara mateix potser no caldria que es passes tot perquè
+   // s'escriu en un fitxer....
+   R1.attr("names") = inds; 
+   
    return  List::create(Named("logNoLD") = LoglikeRecomb,  
                         Named("prob") = as<double>(params["prob0"]),
                         Named("r1") = R1);
@@ -128,6 +132,14 @@ List cLDmixtureModel( RObject dat, Nullable<int> maxSteps = R_NilValue, Nullable
 
 
 
+
+
+
+// You can include R code blocks in C++ files processed with sourceCpp
+// (useful for testing and development). The R code will be automatically 
+// run after the compilation.
+//
+
 /*** R
 
 
@@ -135,7 +147,7 @@ List cLDmixtureModel( RObject dat, Nullable<int> maxSteps = R_NilValue, Nullable
 library(microbenchmark)
 res <- microbenchmark( C <- CrunRecombClust(snpMat[, 1:20], annot = GRsnps[1:20]),
                        R <- runRecombClust(snpMat[, 1:20], annot = GRsnps[1:20]),
-                       times = 1L, unit = "s")
+                       times = 2L, unit = "s")
 print(summary(res)[, c(1:7)],digits=3)
 
 stopifnot(all.equal(C$class, R$class))
@@ -144,19 +156,6 @@ stopifnot(all.equal(C$mat, R$mat))
 stopifnot(all.equal(C$models[[5]], R$models[[5]]))
 
 
-# Prova amb fitxers : 
 
-Cres.file <- CrunRecombClust("inst/extdata/example.vcf",1, 20)
-
-res <- microbenchmark( C.file <- CrunRecombClust("inst/extdata/example.vcf",1, 20),
-                       R <- runRecombClust(snpMat[, 1:20], annot = GRsnps[1:20]),
-                       times = 1L, unit = "s")
-
-print(summary(res)[, c(1:7)],digits=3)
-
-C.file$class
-R$class
-C.file$mat[1:5,1:12]
-R$mat[1:5,1:12]
 
 */
