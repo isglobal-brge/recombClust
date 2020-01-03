@@ -28,3 +28,6 @@ vignettes/*.pdf
 .Rproj.user
 inst/doc
 *.Rproj
+# Compiled files
+*.o
+*.so
