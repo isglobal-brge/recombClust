@@ -3,7 +3,6 @@
 \docType{package}
 \name{RecombClust}
 \alias{RecombClust}
-\alias{RecombClust-package}
 \title{RecombClust: Group chromosomes by recombination history}
 \description{
 RecombClust infers recombination history based on a mixture model that, given a pair

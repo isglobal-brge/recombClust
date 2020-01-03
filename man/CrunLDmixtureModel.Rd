@@ -4,8 +4,13 @@
 \alias{CrunLDmixtureModel}
 \title{Run LDmixtureModel to a dataset}
 \usage{
-CrunLDmixtureModel(haplos, annot, blockSize = 2, distance = 10000,
-  BPPARAM = BiocParallel::SerialParam())
+CrunLDmixtureModel(
+  haplos,
+  annot,
+  blockSize = 2,
+  distance = 10000,
+  BPPARAM = BiocParallel::SerialParam()
+)
 }
 \arguments{
 \item{haplos}{Matrix with the haplotypes (SNPs in columns, samples in rows)}
