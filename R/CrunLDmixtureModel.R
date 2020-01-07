@@ -40,7 +40,21 @@ CrunLDmixtureModel <- function(haplos, annot, blockSize = 2, distance = 1e4,
 
   ## Remove overlapping pairs of blocks
   overlaps <- overlaps[!S4Vectors::`%in%`(overlaps, autoOverlaps)]
+  
+  # get overlap length 
+  # get haplos length
+  nhaplos <- dim(haplos)[1]
+  rownames(haplos)
 
+  
+##.. 2020/01/06 (Ini) ..##
+  # cteate a GDS file
+  f <- createfn.gds("test/test.gds")
+  models <- addfolder.gdsn(f, "LDMixtureModels")
+  model <- add.gdsn(models, "models", matrix( 0.0, nrow = nhaplos, ncol=length(overlaps)))
+  annot <- add.gdsn(models, "annotations", matrix( 0.0, nrow = length(overlaps), ncol=2))
+## 2020/01/06 .. (Fi) ..##
+  
   # Run model over the SNP-block pairs
   models <- BiocParallel::bplapply(seq_len(length(overlaps)), function(ind){
     bl1 <- S4Vectors::from(overlaps)[ind]
@@ -53,12 +67,35 @@ CrunLDmixtureModel <- function(haplos, annot, blockSize = 2, distance = 1e4,
        apply(haplos[, ind2], 1, function(x) paste(x, collapse = ""))
     ))
     
-    CWriteResults( c("start","end"), cbind(GenomicRanges::end(GRblocks[bl1]), GenomicRanges::start(GRblocks[bl2])), "./test/annot.txt")
+    # Write corresponding ind annotations and models to gdsfile
+    ##.old -> writes data in txt file .## CWriteResults( c("start","end"), cbind(GenomicRanges::end(GRblocks[bl1]), GenomicRanges::start(GRblocks[bl2])), "./test/annot.txt")
+    write.gdsn(annot, val = c( GenomicRanges::end(GRblocks[bl1]), GenomicRanges::start(GRblocks[bl2]) ), start = c(ind,1), count = c(1,2)  )
+    # write models in columns
+    write.gdsn(model, val =  res$r1 , start = c(1,ind), count = c(nhaplos,1)  )
+    # adds haplops names to haplosname variable in gdsfile
+    if(ind==1) { add.gdsn(models, "haplosname", names(res$r1))  }
     
     res$annot <- c(start = GenomicRanges::start(GRblocks[bl1]),
                     end = GenomicRanges::start(GRblocks[bl2]))
     res
    }, BPPARAM = BPPARAM)
    
+
+  # close gds file
+  closefn.gds(f)
+  
   models
 }
+
+
+#
+# C.file <- CRecombClust("inst/extdata/example.vcf", 7, "54301673", "54306217"  )
+# f <- openfn.gds("test/test.gds")
+# f
+# read.gdsn(index.gdsn(f, "LDMixtureModels/models"))
+# read.gdsn(index.gdsn(f, "LDMixtureModels/annotations"))
+# read.gdsn(index.gdsn(f, "LDMixtureModels/haplosname"))
+# closefn.gds(f)
+# # Tancar tots els fitxers gds oberts
+# # showfile.gds(closeall=TRUE)
+

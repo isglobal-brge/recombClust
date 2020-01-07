@@ -117,10 +117,10 @@ List cLDmixtureModel( RObject dat, Nullable<int> maxSteps = R_NilValue, Nullable
    
    NumericVector R1 = r1/(r1 + r2);
    
-   CWriteResults(inds, R1, "./test/models.txt");
+   //.. old -> writes data in txt file ..//  CWriteResults(inds, R1, "./test/models.txt");
    
    // S'hauria de revisar el que es passa perquè ara mateix potser no caldria que es passes tot perquè
-   // s'escriu en un fitxer....
+   // s'età escrivint en un fitxer i per tant tote saquestes dades son innecessàries i es descarrega la memòria....
    R1.attr("names") = inds; 
    
    return  List::create(Named("logNoLD") = LoglikeRecomb,  

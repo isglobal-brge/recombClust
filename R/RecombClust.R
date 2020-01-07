@@ -11,7 +11,7 @@
 #'
 #' @useDynLib recombClust
 #' @importFrom BiocParallel bplapply
-#' @importFrom GenomicRanges seqnames start end findOverlaps resize
+#' @importFrom GenomicRanges seqnames start end findOverlaps resize makeGRangesFromDataFrame
 #' @importFrom SeqArray seqOpen seqClose seqSetFilterCond
 #' @importFrom gtools permutations
 #' @importFrom S4Vectors from to
