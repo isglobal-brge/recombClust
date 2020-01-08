@@ -43,7 +43,7 @@ List cLDmixtureModel( RObject dat, Nullable<int> maxSteps = R_NilValue, Nullable
    
    // Variable initialization default values
    if(maxSteps.isNotNull())  imaxSteps = as<int> (maxSteps);
-   else    imaxSteps = 1000;
+   else    imaxSteps = 100;
    
    if(prob0.isNotNull())  dprob0 = as<double> (prob0);
    else    dprob0 = 0.5;
@@ -81,7 +81,7 @@ List cLDmixtureModel( RObject dat, Nullable<int> maxSteps = R_NilValue, Nullable
    // EM loop
    double tol =  1;
    int steps = 1;
-   double MINTOL = .000000001;
+   double MINTOL = .00001;
 
    while(tol > MINTOL & steps <= imaxSteps)
    {
