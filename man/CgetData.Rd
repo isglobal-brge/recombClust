@@ -2,7 +2,8 @@
 % Please edit documentation in R/CgetData.R
 \name{CgetData}
 \alias{CgetData}
-\title{Main function to run all the recombClust pipeline}
+\title{This function takes a file as input, converts file to gds format
+and get data ready to be processed}
 \usage{
 CgetData(filename, minmaf = 0.1)
 }
@@ -10,22 +11,11 @@ CgetData(filename, minmaf = 0.1)
 \item{filename}{character string with file path}
 
 \item{minmaf}{minimum MAF, default 0.01}
-
-\item{start}{position of first SNP to be treated, default 1}
-
-\item{end}{position of last SNP to be treated, default all SNP's}
 }
 \value{
-A list with four elements:
-\itemize{
- \item{class: Cluster classification of the chromosomes}
- \item{pc: Responsibilities PCA}
- \item{mat: Responsibilities matrix}
- \item{models: List of models}
-}
+data ready to be processed
 }
 \description{
-This function takes a file as input and runs RecombClust that gets as 
-input phased chromosomes and returns the responsibilities
-PCA and the cluster classification of the samples.
+This function takes a file as input, converts file to gds format
+and get data ready to be processed
 }

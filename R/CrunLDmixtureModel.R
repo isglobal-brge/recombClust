@@ -48,11 +48,14 @@ CrunLDmixtureModel <- function(haplos, annot, blockSize = 2, distance = 1e4,
 
   
 ##.. 2020/01/06 (Ini) ..##
+  #..#  cat("OVERLAPS : ", length(overlaps),"\n")
+  #..#  cat("COLUMNES : ", dim(haplos)[1],"\n")
   # cteate a GDS file
   f <- createfn.gds("test/test.gds")
   models <- addfolder.gdsn(f, "LDMixtureModels")
   model <- add.gdsn(models, "models", matrix( 0.0, nrow = nhaplos, ncol=length(overlaps)))
   annot <- add.gdsn(models, "annotations", matrix( 0.0, nrow = length(overlaps), ncol=2))
+  
 ## 2020/01/06 .. (Fi) ..##
   
   # Run model over the SNP-block pairs
@@ -80,15 +83,18 @@ CrunLDmixtureModel <- function(haplos, annot, blockSize = 2, distance = 1e4,
     res
    }, BPPARAM = BPPARAM)
    
-
-  # close gds file
+  # Write sample names to gds file
+  #..#write.gdsn(sampname, val = rownames(haplos), start = c(1), count = c(dim(haplos)[1]))
+  
+  
+  # delete the temporary file
   closefn.gds(f)
   
   models
 }
 
 
-#
+#### PROVES !!!
 # C.file <- CRecombClust("inst/extdata/example.vcf", 7, "54301673", "54306217"  )
 # f <- openfn.gds("test/test.gds")
 # f
@@ -98,4 +104,3 @@ CrunLDmixtureModel <- function(haplos, annot, blockSize = 2, distance = 1e4,
 # closefn.gds(f)
 # # Tancar tots els fitxers gds oberts
 # # showfile.gds(closeall=TRUE)
-

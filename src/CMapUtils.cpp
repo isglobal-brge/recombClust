@@ -23,6 +23,55 @@ std::map<std::string, double> VectortoOrderedMap(NumericVector v)
    
 }
 
+// Convert 2dMatrix like 
+//  (1,1,1,1,1,2,2,2,2,2)(1,2,3,4,5,1,2,3,4)
+// to map of vectors (key:int - value: vector of values)
+std::map<double, std::vector<double>> d2MatrixtoOrderedMap(Eigen::MatrixXd m)
+{
+   try 
+   {
+      std::map<double, std::vector<double>> mapv;
+      
+      for( size_t i=0; i< m.rows(); ++i )  {
+         mapv[(double)m(i,0)].push_back(m(i,1));
+      }
+      
+      //mapv[(double)actelem] = vd;
+      
+      return mapv;
+      
+   } catch(std::exception &ex) {	
+      forward_exception_to_r(ex);
+   } catch(...) { 
+      ::Rf_error("c++ exception (unknown reason)"); 
+   }
+   
+}
+
+
+// Convert 2 Vectors with same length to map of vectors.
+//  key : (1,1,1,1,1,2,2,2,2,2)  values: (1,2,3,4,5,1,2,3,4,5)
+// to map of vectors (key:int - value: vector of values)
+std::map<double, std::vector<int>> VectorstoOrderedMap(Eigen::VectorXd key, Eigen::VectorXd val)
+{
+   try 
+   {
+      std::map<double, std::vector<int>> mapv;
+      
+      for( size_t i=0; i< key.size(); ++i )  {
+         mapv[(double)key(i)].push_back(val(i));
+      }
+      
+      return mapv;
+      
+   } catch(std::exception &ex) {	
+      forward_exception_to_r(ex);
+   } catch(...) { 
+      ::Rf_error("c++ exception (unknown reason)"); 
+   }
+   
+}
+
 
 // Assign numerical values to vector vased on map
 NumericVector getNumericVectorfromStringVector(std::map<std::string, double> mapv, StringVector strvalues )

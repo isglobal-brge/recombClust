@@ -1,7 +1,6 @@
 #'
 #' This function get index position from genomic coordinates
 #'
-#' @export
 #'
 #' @param filename character string with file path
 #' @param chrom chromosome
@@ -9,6 +8,7 @@
 #' @param gcend genomic coordinates - end
 #' @param minmaf minimum MAF, default 0.01
 #' @return data ready to be processed
+#' @export
 CgetIndexfromGenCoord <- function(filename, chrom, gcstart=NULL, gcend=NULL, minmaf = 0.1) 
 {
    
@@ -22,6 +22,8 @@ CgetIndexfromGenCoord <- function(filename, chrom, gcstart=NULL, gcend=NULL, min
    if( is.null(chrom))
       stop("chromosome not indicated!")
    
+   
+   ## Tornar els noms enllocs de la posició !!!
    if( is.null(gcstart)) 
       ipos <- min(which(SeqArray::seqGetData(gds, "chromosome")==chrom))
    else
@@ -32,7 +34,9 @@ CgetIndexfromGenCoord <- function(filename, chrom, gcstart=NULL, gcend=NULL, min
    else
       epos <- which(SeqArray::seqGetData(gds, "chromosome")==chrom & SeqArray::seqGetData(gds, "position")==gcend)
    
+   workSNPs <- SeqArray::seqGetData(gds,"annotation/id")[ipos:epos]
+      
    seqClose(gds)
    
-   return(list(istart = ipos, iend = epos))
+   return(list(SNPs = workSNPs, istart = ipos, iend = epos))
 }

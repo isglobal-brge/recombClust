@@ -10,7 +10,8 @@
    #include<RcppEigen.h>
    #include"CUtils.h"
    #include"CQRSolve.h"
-   #include"CFlatMat.h"
+   //#include"CFlatMat.h"
+   #include "matrix_utilities.h"
    #include"CgetMatrixFromMap.h"
    
 
