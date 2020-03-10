@@ -29,7 +29,7 @@ std::vector<std::string> get_Unique_Values(StringVector vect)
 
 
 /* Get first position of each element in a string vector from a vector of unique element*/
-std::vector<int> get_Position_Elements( std::vector<std::string> v, StringVector vtocount )
+std::vector<int> get_Position_Elements( std::vector<std::string> v, StringVector vtocount, int offset )
 {
    std::vector<int> positions;
    std::vector<std::string> vsearchpos = as<std::vector<std::string> >(vtocount);
@@ -38,7 +38,7 @@ std::vector<int> get_Position_Elements( std::vector<std::string> v, StringVector
    {
       // Find element in vector
       std::vector<std::string>::iterator it = std::find(vsearchpos.begin(), vsearchpos.end(), v[i]);
-      positions.push_back( distance(vsearchpos.begin(), it));
+      positions.push_back( distance(vsearchpos.begin(), it + offset));
    }
    
    return(positions);
@@ -59,6 +59,27 @@ std::vector<int> count_Elements_Value( std::vector<std::string> v, StringVector 
    }
    
    return(counts);
+}
+
+
+void addRCtoCorrelationMatrix( Eigen::MatrixXd* matcor, int diff )
+{
+   int rmatcor =  matcor->rows(),
+      cmatcor = matcor->cols();
+   
+   matcor->conservativeResize( rmatcor + diff, cmatcor + diff );
+   for(size_t i=0; i<diff; i++)
+   {
+      Eigen::VectorXd rowzero = Eigen::VectorXd::Zero( matcor->cols() );
+      Eigen::VectorXd colzero = Eigen::VectorXd::Zero( matcor->rows() );
+      
+      matcor->row( rmatcor + i ) = rowzero;
+      matcor->col( cmatcor + i ) = colzero;
+      Eigen::MatrixXd ione(1,1);
+      ione << 1;
+      matcor->block( rmatcor + i , cmatcor + i,1,1) = ione;
+   }
+   
 }
 
 
@@ -87,18 +108,11 @@ extern "C" {
             DataSpace dataspace(RANK2, dims);
             
             std::vector<double> matHiCValues = Rcpp::as<std::vector<double> >(hiCDatasetValues);
-            /*
-            double matHiCValues[dims[0]][dims[1]];
-            
-            for(int i=0;i<dims[0]; i++)
-               for(int j=0; j<dims[1]; j++)
-                  matHiCValues[i][j] = as<NumericMatrix>(hiCDatasetValues)(i,j);
-            */
-            
+
             DataSet dataset = file.createDataSet(hiCDatasetName, PredType::NATIVE_DOUBLE, dataspace);
             dataset = file.openDataSet(hiCDatasetName);
             // dataset.write( matHiCValues, PredType::NATIVE_DOUBLE);
-            dataset.write( &matHiCValues[0], PredType::NATIVE_DOUBLE);
+            dataset.write( &matHiCValues[0]  , PredType::NATIVE_DOUBLE);
             
             
          } 
@@ -241,6 +255,57 @@ extern "C" {
             dataset->write( s1, dataType );
 
          }
+         else if ( is<String>(hiCDatasetValues))
+         {
+            
+            Rcpp::Rcout<<"\n Ara resulta que no es mes que un String : "<< hiCDatasetName<<"\n";
+            
+            char chr[MAXSTRING];
+            
+            int datarows = as<StringVector>(hiCDatasetValues).size();
+            
+            
+            String wchrom = as<String>(hiCDatasetValues);
+            std::string word = wchrom.get_cstring();
+            
+            size_t j;
+            
+            for( j=0; j < word.size() && j < (MAXSTRING-1); j++ )
+               chr[j] = word[j];
+            
+            chr[j] = '\0'; // insert hdf5 end of string
+            /*  
+            // Create dataspace
+            DataSpace dataspace = DataSpace(H5S_SCALAR);
+            
+            // Create the memory datatype.
+            H5::StrType strdatatype(PredType::C_S1, MAXSTRING);
+            
+            // Create the dataset.
+            DataSet* dataset;
+            dataset = new DataSet(file.createDataSet(hiCDatasetName, strdatatype, dataspace));
+            
+            dataset->wri
+            dataset->write(chr, dataspace);
+            
+            // Release resources
+            delete dataset;
+            
+           */
+          
+          // Create the memory datatype.
+          H5::StrType h5stringType(H5::PredType::C_S1, MAXSTRING + 1); // + 1 for trailing zero
+          // H5::DataSet ds = fg.createDataSet(hiCDatasetName, h5stringType, H5::DataSpace(H5S_SCALAR));
+          // Create the dataset.
+          DataSet* dataset;
+          dataset = new DataSet(file.createDataSet(hiCDatasetName, h5stringType, H5::DataSpace(H5S_SCALAR)));
+          
+          dataset->write(chr, h5stringType);
+          
+          // Release resources
+          delete dataset;
+            
+         }
       }  
       catch(FileIException error) { // catch failure caused by the H5File operations
          error.printErrorStack();
@@ -272,13 +337,13 @@ extern "C" {
       /* Structure and dataset */
       typedef struct range {
          char chr[MAXSTRING];
-         double start;
-         double end;
+         int start;
+         int end;
       } range;
       
       
       StringVector chr;
-      NumericVector start, end;
+      IntegerVector start, end;
       int datarows = as<DataFrame>(hiCDatasetValues).nrows();
       
       
@@ -336,8 +401,8 @@ extern "C" {
          // Create the memory datatype.
          H5::CompType mtype(sizeof(range));
          mtype.insertMember(member_chr, HOFFSET(range, chr), H5::StrType(H5::PredType::C_S1, MAXSTRING ));
-         mtype.insertMember(member_start, HOFFSET(range, start), H5::PredType::NATIVE_DOUBLE);
-         mtype.insertMember(member_end, HOFFSET(range, end), H5::PredType::NATIVE_DOUBLE);
+         mtype.insertMember(member_start, HOFFSET(range, start), H5::PredType::NATIVE_INT32);
+         mtype.insertMember(member_end, HOFFSET(range, end), H5::PredType::NATIVE_INT32);
          
          // Create the dataset.
          DataSet* dataset;
@@ -364,6 +429,118 @@ extern "C" {
       return 0;
       
    }
+   
+   
+   
+   /* Creates a hdf5 dataset from dataframe with columns (String column - Numeric Column - Numeric Column) 
+    * specific for bintable (ranges) with chromosome (name, start, end)
+    */
+   int create_HiCBrick_dataset_chrominfo(H5std_string filename, const std::string hiCDatasetName, RObject hiCDatasetValues)
+   {
+      
+      const std::string member_chr("chr");
+      const std::string member_nrow("nrow");
+      const std::string member_size("size");
+      
+      /* Structure and dataset */
+      typedef struct range {
+         char chr[MAXSTRING];
+         int nrow;
+         int size;
+      } range;
+      
+      
+      StringVector chr;
+      NumericVector nrow, size;
+      int datarows = as<DataFrame>(hiCDatasetValues).nrows();
+      
+      
+      if(is<DataFrame>(hiCDatasetValues))
+      {
+         if( Rf_isFactor(as<DataFrame>(hiCDatasetValues)[0]) )
+            chr = as<DataFrame>(hiCDatasetValues)[0];
+         else
+            throw std::range_error("First column must be a string chromosome name");
+         
+         if(Rf_isNumeric(as<DataFrame>(hiCDatasetValues)[1]) && Rf_isNumeric(as<DataFrame>(hiCDatasetValues)[2]) )
+         {
+            nrow = as<DataFrame>(hiCDatasetValues)[1];
+            size = as<DataFrame>(hiCDatasetValues)[2];
+         }
+         else
+            throw std::range_error("Column 2 and 3 must be numerical nrow and size positions");
+      }else
+         throw std::range_error("bintable must be a dataframe");
+      
+      try
+      {
+         
+         Exception::dontPrint();
+         
+         // Convert Dataframe to range list
+         range ranges_list[datarows]; 
+         
+         for(int i=0; i< datarows; i++ )
+         {
+            range rng;
+            String wchrom = chr(i);
+            std::string word = wchrom.get_cstring();
+            
+            int j=0;
+            for( j=0; j < word.size() && j < (MAXSTRING-1); j++ )
+               ranges_list[i].chr[j] = word[j];
+            
+            ranges_list[i].chr[j] = '\0'; // insert hdf5 size of string
+            
+            ranges_list[i].nrow = nrow[i];
+            ranges_list[i].size = size[i];
+         }
+         
+         // the array of each length of multidimentional data.
+         hsize_t dim[1];
+         dim[0] = datarows;
+         
+         //Preparation of a dataset and a file.
+         DataSpace dataspace(RANK1, dim);
+         
+         // Open file
+         H5File* file = new H5File( filename, H5F_ACC_RDWR );
+         
+         // Create the memory datatype.
+         H5::CompType mtype(sizeof(range));
+         mtype.insertMember(member_chr, HOFFSET(range, chr), H5::StrType(H5::PredType::C_S1, MAXSTRING ));
+         mtype.insertMember(member_nrow, HOFFSET(range, nrow), H5::PredType::NATIVE_INT32);
+         mtype.insertMember(member_size, HOFFSET(range, size), H5::PredType::NATIVE_INT32);
+         
+         // Create the dataset.
+         DataSet* dataset;
+         dataset = new DataSet(file->createDataSet(hiCDatasetName, mtype, dataspace));
+         
+         dataset->write(ranges_list, mtype);
+         
+         // Release resources
+         delete dataset;
+         delete file;
+         
+      }  
+      catch(FileIException error) { // catch failure caused by the H5File operations
+         error.printErrorStack();
+         return -1;
+      } catch(DataSetIException error) { // catch failure caused by the DataSet operations
+         error.printErrorStack();
+         return -1;
+      } catch(DataSpaceIException error) { // catch failure caused by the DataSpace operations
+         error.printErrorStack();
+         return -1;
+      }
+      
+      return 0;
+      
+   }
+   
+   
+   
+   
    
    
    /* Create hdf5 dataset from 2 columns Dataframe (String column - Numeric Column) */
@@ -564,4 +741,63 @@ extern "C" {
       return 0;  // successfully terminated
       
    }
+   
+   
+   int create_HiCBrick_String(H5std_string filename, const std::string hiCDatasetName, RObject hiCDatasetValues)
+   {
+      // Try block to detect exceptions raised by any of the calls inside it
+      try
+      {
+         // Turn off the auto-printing when failure occurs so that we can handle the errors appropriately
+         Exception::dontPrint();
+         
+         // Open file
+         H5File file(filename, H5F_ACC_RDWR);
+         
+         char chr[MAXSTRING];
+         
+         
+         String wchrom = as<String>(hiCDatasetValues);
+         std::string word = wchrom.get_cstring();
+         
+         size_t j;
+         
+         for( j=0; j < word.size() && j < (MAXSTRING-1); j++ )
+            chr[j] = word[j];
+         
+         chr[j] = '\0'; // insert hdf5 end of string
+
+         
+         // Create the memory datatype.
+         H5::StrType h5stringType(H5::PredType::C_S1, MAXSTRING); // + 1 for trailing zero
+         
+         // Create the dataset.
+         DataSet* dataset;
+         dataset = new DataSet(file.createDataSet(hiCDatasetName, h5stringType, H5::DataSpace(H5S_SCALAR)));
+         
+         dataset->write(chr, h5stringType);
+         
+         // Release resources
+         delete dataset;
+
+      }  
+      catch(FileIException error) { // catch failure caused by the H5File operations
+         error.printErrorStack();
+         return -1;
+      } catch(DataSetIException error) { // catch failure caused by the DataSet operations
+         error.printErrorStack();
+         return -1;
+      } catch(DataSpaceIException error) { // catch failure caused by the DataSpace operations
+         error.printErrorStack();
+         return -1;
+      }
+      
+      return 0;
+      
+   }
+   
+   
+   
+   
+
 }

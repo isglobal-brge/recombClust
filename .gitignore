@@ -28,3 +28,5 @@ vignettes/*.pdf
 .Rproj.user
 inst/doc
 *.Rproj
+*.o
+*.so

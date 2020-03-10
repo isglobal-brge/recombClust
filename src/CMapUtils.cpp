@@ -133,3 +133,29 @@ std::multimap<double, std::string, std::greater <double>> sortMultimapbyValue( s
    
    return mmsortFreq;
 }
+
+
+
+// Map string vector with key - index of key in vector :
+//    from vector  : [ ch1 ,ch1, ch1, ch2, ch2, ch1]
+//          we get : ch1 : 0,1,2,5
+//                   ch2 : 3,4
+std::map<std::string, std::vector<double> > MapVectorIndexPosition(Rcpp::StringVector v)
+{
+   try 
+   {
+      // StringVector namesv = v.names();
+      std::map<std::string, std::vector<double>> mapv;
+      
+      for (size_t i = 0; i < v.size(); ++i)  
+         mapv[(std::string)v[i]].push_back(i);
+      
+      return mapv;
+      
+   } catch(std::exception &ex) {	
+      forward_exception_to_r(ex);
+   } catch(...) { 
+      ::Rf_error("c++ exception (unknown reason)"); 
+   }
+   
+}

@@ -9,14 +9,15 @@
    #include <dTrait.h>
    #include <dType.h>
    #include <CoreDEF.h>
+   #include "CFileUtils.h"
 
 
    typedef Rcpp::ListOf<Rcpp::NumericMatrix> MatList;
    
    inline bool FileExist (const std::string& name);
-   std::string getFileExtension(std::string filePath);
-   std::string getFileName(std::string filePath, bool wext, char separator );
-   std::string getPath(std::string filePath);
+//..//   std::string getFileExtension(std::string filePath);
+//..//   std::string getFileName(std::string filePath, bool wext, char separator );
+//..//   std::string getPath(std::string filePath);
    std::string CGetDatafromFile( std::string file) ;
    Rcpp::NumericMatrix CgdsSNPpairMatrix( Rcpp::StringMatrix filteredsnp) ;
    Rcpp::NumericMatrix CvcfSNPpairMatrix( Rcpp::StringMatrix filteredsnp) ;

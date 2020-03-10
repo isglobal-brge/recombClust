@@ -9,6 +9,7 @@ inline bool FileExist (const std::string& name) {
    return (stat (name.c_str(), &buffer) == 0); 
 }
 
+/*
 
 // Return file extension
 std::string getFileExtension(std::string filePath)
@@ -52,7 +53,7 @@ std::string getPath(std::string filePath)
    return filePath;
 }
 
-
+*/
 
 
 //' Covnert input data file, .vcf or .bed to gds 

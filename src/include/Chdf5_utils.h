@@ -21,16 +21,20 @@
    
    inline bool ResFileExist (const std::string& name);
    std::vector<std::string> get_Unique_Values(StringVector vect);
-   std::vector<int> get_Position_Elements( std::vector<std::string> v, StringVector vtocount );
+   std::vector<int> get_Position_Elements( std::vector<std::string> v, StringVector vtocount, int offset );
    std::vector<int> count_Elements_Value( std::vector<std::string> v, StringVector vtocount );
+   void addRCtoCorrelationMatrix( Eigen::MatrixXd* matcor, int diff );
    
    
    extern "C" int create_HiCBrick_dataset(H5std_string filename, const std::string hiCDatasetName, RObject hiCDatasetValues);
    extern "C" int create_HiCBrick_dataset_bintable(H5std_string filename, const std::string hiCDatasetName, RObject hiCDatasetValues);
+   extern "C" int create_HiCBrick_dataset_chrominfo(H5std_string filename, const std::string hiCDatasetName, RObject hiCDatasetValues);
    extern "C" int create_HiCBrick_dataset_CharNum(H5std_string filename, const std::string hiCDatasetName, RObject hiCDatasetValues);
    extern "C" int create_HDF5_HiCBrick_group(H5std_string filename, const H5std_string hiCGroup);
    extern "C" int create_HDF5_HiCBrick_group_attribute(H5std_string HiCfilename, H5std_string HiCObject, 
                                                       H5std_string HiCattrName, RObject HiCattr_data);
+   extern "C" int create_HiCBrick_String(H5std_string filename, const std::string hiCDatasetName, RObject hiCDatasetValues);
+   
 
 
 #endif
