@@ -7,15 +7,18 @@
 runRecombClust(haplos, annot, clusters = 2, PCs = 3, ...)
 }
 \arguments{
-\item{haplos}{Matrix with the haplotypes (SNPs in rows, samples in columns)}
-
-\item{annot}{GenomicRanges with the SNPs annotation}
-
 \item{clusters}{Numeric with the clusters used in k-means}
 
 \item{PCs}{Numeric with the number of PCA components used to make the clustering.}
 
 \item{...}{Further arguments passed to runLDmixtureModel}
+
+\item{filename}{File with genotypic data (SNPs and samples) the data file type must be .vcf (Variant Call Format), 
+.gds (Genomic Data Structure) or .bed (Browser Extensible Data).}
+
+\item{start}{start position to be treated}
+
+\item{end}{end position to be treated}
 }
 \value{
 A list with four elements:

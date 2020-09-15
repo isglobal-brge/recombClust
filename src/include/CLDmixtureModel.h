@@ -28,6 +28,6 @@
       }
    };
 
-   Rcpp::List cLDmixtureModel( Rcpp::RObject dat, int maxSteps, double prob0, int blocksize );
+   Rcpp::List LDmixtureModel( Rcpp::RObject dat, int maxSteps, double prob0, int blocksize );
       
 #endif

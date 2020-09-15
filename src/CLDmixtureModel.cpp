@@ -23,7 +23,7 @@ using namespace Rcpp;
 //' }
 //' @export
 // [[Rcpp::export]]
-List cLDmixtureModel( RObject dat, Nullable<int> maxSteps = R_NilValue, Nullable<double> prob0 = R_NilValue,  Nullable<int> blocksize = R_NilValue) 
+List LDmixtureModel( RObject dat, Nullable<int> maxSteps = R_NilValue, Nullable<double> prob0 = R_NilValue,  Nullable<int> blocksize = R_NilValue) 
 {
 /* dat conté : 
               [,1] [,2]

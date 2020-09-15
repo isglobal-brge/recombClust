@@ -19,7 +19,7 @@
 #'  only available for selected models (BIC > 10, pval > 0.05)}
 #' }
 #' @export
-cLDmixtureModel <- function(dat, maxSteps = NULL, prob0 = NULL, blocksize = NULL) {
-    .Call('_recombClust_cLDmixtureModel', PACKAGE = 'recombClust', dat, maxSteps, prob0, blocksize)
+LDmixtureModel <- function(dat, maxSteps = NULL, prob0 = NULL, blocksize = NULL) {
+    .Call('_recombClust_LDmixtureModel', PACKAGE = 'recombClust', dat, maxSteps, prob0, blocksize)
 }
 

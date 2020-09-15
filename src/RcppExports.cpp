@@ -6,9 +6,9 @@
 
 using namespace Rcpp;
 
-// cLDmixtureModel
-List cLDmixtureModel(RObject dat, Nullable<int> maxSteps, Nullable<double> prob0, Nullable<int> blocksize);
-RcppExport SEXP _recombClust_cLDmixtureModel(SEXP datSEXP, SEXP maxStepsSEXP, SEXP prob0SEXP, SEXP blocksizeSEXP) {
+// LDmixtureModel
+List LDmixtureModel(RObject dat, Nullable<int> maxSteps, Nullable<double> prob0, Nullable<int> blocksize);
+RcppExport SEXP _recombClust_LDmixtureModel(SEXP datSEXP, SEXP maxStepsSEXP, SEXP prob0SEXP, SEXP blocksizeSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -16,13 +16,13 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< Nullable<int> >::type maxSteps(maxStepsSEXP);
     Rcpp::traits::input_parameter< Nullable<double> >::type prob0(prob0SEXP);
     Rcpp::traits::input_parameter< Nullable<int> >::type blocksize(blocksizeSEXP);
-    rcpp_result_gen = Rcpp::wrap(cLDmixtureModel(dat, maxSteps, prob0, blocksize));
+    rcpp_result_gen = Rcpp::wrap(LDmixtureModel(dat, maxSteps, prob0, blocksize));
     return rcpp_result_gen;
 END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_recombClust_cLDmixtureModel", (DL_FUNC) &_recombClust_cLDmixtureModel, 4},
+    {"_recombClust_LDmixtureModel", (DL_FUNC) &_recombClust_LDmixtureModel, 4},
     {NULL, NULL, 0}
 };
 

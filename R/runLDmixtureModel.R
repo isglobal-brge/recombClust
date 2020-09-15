@@ -47,13 +47,16 @@ runLDmixtureModel <- function(haplos, annot, blockSize = 2, distance = 1e4,
     bl2 <- S4Vectors::to(overlaps)[ind]
     ind1 <- GRblocks$Ind[[bl1]]
     ind2 <- GRblocks$Ind[[bl2]]
+   
     res <- LDmixtureModel(cbind(
-      apply(haplos[, ind1], 1, function(x) paste(x, collapse = "")),
-      apply(haplos[, ind2], 1, function(x) paste(x, collapse = ""))
+       apply(haplos[, ind1], 1, function(x) paste(x, collapse = "")),
+       apply(haplos[, ind2], 1, function(x) paste(x, collapse = ""))
     ))
+     
     res$annot <- c(start = GenomicRanges::start(GRblocks[bl1]),
-                   end = GenomicRanges::start(GRblocks[bl2]))
+                    end = GenomicRanges::start(GRblocks[bl2]))
     res
-  }, BPPARAM = BPPARAM)
+   }, BPPARAM = BPPARAM)
+   
   models
 }

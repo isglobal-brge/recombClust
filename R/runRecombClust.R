@@ -5,8 +5,10 @@
 #'
 #' @export
 #'
-#' @param haplos Matrix with the haplotypes (SNPs in rows, samples in columns)
-#' @param annot GenomicRanges with the SNPs annotation
+#' @param filename File with genotypic data (SNPs and samples) the data file type must be .vcf (Variant Call Format), 
+#' .gds (Genomic Data Structure) or .bed (Browser Extensible Data).
+#' @param start start position to be treated
+#' @param end end position to be treated
 #' @param clusters Numeric with the clusters used in k-means
 #' @param PCs Numeric with the number of PCA components used to make the clustering.
 #' @param ... Further arguments passed to runLDmixtureModel
@@ -17,8 +19,9 @@
 #'  \item{mat: Responsibilities matrix}
 #'  \item{models: List of models}
 #' }
-runRecombClust <- function(haplos, annot, clusters = 2, PCs = 3, ...){
 
+runRecombClust <- function(haplos, annot, clusters = 2, PCs = 3, ...){ # Capçalear original
+  
   # Tareas generales a mejorar
   ## Hacer los tests (http://r-pkgs.had.co.nz/tests.html)
   ### Comprobar un caso básico para que funcione
@@ -31,7 +34,6 @@ runRecombClust <- function(haplos, annot, clusters = 2, PCs = 3, ...){
 
   # Get models
   models <- runLDmixtureModel(haplos, annot, ...)
-
 
   ## Remove failed models
   goodModels <- vapply(models, class, character(1)) == "list"
@@ -50,3 +52,7 @@ runRecombClust <- function(haplos, annot, clusters = 2, PCs = 3, ...){
   ## TO DO: create an object to encapsulate results
   return(list(class = class, pc = pc, mat = indsmat, models = models))
 }
+
+
+
+
