@@ -8,8 +8,12 @@ output:
     toc: yes
     fig_caption: yes
     toc_float: true
+  BiocStyle::pdf_document:
+    number_sections: true
+    toc: yes
+    fig_caption: yes
 vignette: >
-  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteIndexEntry{Introduction to recombClust}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -35,8 +39,10 @@ library(VariantAnnotation)
 library(GenomicRanges)
 
 
-## Function to load a VCF file, convert it to a snpMatrix and removing SNPs with a low MAF
-getVCFmatrixChr <- function(range = NULL, samples = NULL, snps.names = NULL, minmaf = 0.1, Remove.Granges = NULL, ...){
+## Function to load a VCF file, convert it to a snpMatrix 
+## and removing SNPs with a low MAF
+getVCFmatrixChr <- function(range = NULL, samples = NULL, snps.names = NULL, 
+                            minmaf = 0.1, Remove.Granges = NULL, ...){
   vcf <- loadVCFrange(range, samples, ...)
 
   snpsVCF <- genotypeToSnpMatrix(vcf)
@@ -54,8 +60,10 @@ getVCFmatrixChr <- function(range = NULL, samples = NULL, snps.names = NULL, min
   phase <- Reduce(function(...) rbind(...), phase)
   rownames(phase) <- paste(rep(colnames(geno), each = 2), 1:2, sep = "_")
   colnames(phase) <- rownames(geno)
-  snpsVCF <- list(genotypes = new("SnpMatrix", 2*phase + 1), map = data.frame(name = colnames(phase)))
-  ## Conversion from VCF to SNP matrix produces some SNPs to be NA (multiallelic or bigger than 1)
+  snpsVCF <- list(genotypes = new("SnpMatrix", 2*phase + 1), 
+                  map = data.frame(name = colnames(phase)))
+  ## Conversion from VCF to SNP matrix produces some 
+  ## SNPs to be NA (multiallelic or bigger than 1)
   snpsVCF$map$position <- start(rowRanges(vcf))
   snpsVCF$map$chromosome <- as.character(seqnames(rowRanges(vcf)))
   snpsVCF$map$allele.2 <- unlist(snpsVCF$map$allele.2)
@@ -123,9 +131,10 @@ GRsnps
 
 Now, we are ready to run recombClust. runRecombClust applies the LDmixture model to each SNP-block pair, selects pairs having a recombination plot, computes the probabilities matrix and clusters the individuals. runRecombClust requires the matrix with SNP data and the annotation in a GRanges. Notice that the matrix is divided by 2 to have a matrix with only 0s and 1s (0: reference allele, 1: alternative allele). To speed up the example, we will include only the first 20 SNPs:
 
-```{r run_recombClust, cache=TRUE}
+```{r run_recombClust, cache=FALSE}
 ## Create matrix with snps
-snpMat <- as(snps$genotypes, "numeric")/2 ## Divide by 2 to have 0 as reference and 1 as alternative
+snpMat <- as(snps$genotypes, "numeric")/2 ## Divide by 2 to have 0 
+                                          ## as reference and 1 as alternative
 snpMat[1:10, 1:5]
 
 ## Pass snpMat and GRanges to runRecombClust
