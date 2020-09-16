@@ -1,6 +1,6 @@
 ---
 title: "Introduction to recombClust"
-author: "Carlos Ruiz, Alejandro Caceres, Juan R Gonzalez"
+author: "Carlos Ruiz, Dolors Pelegri, Alejandro Caceres, Juan R Gonzalez"
 date: "`r Sys.Date()`"
 output: 
   BiocStyle::html_document:
