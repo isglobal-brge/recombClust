@@ -20,9 +20,22 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// getProbs
+Rcpp::NumericVector getProbs(Rcpp::RObject mat, Rcpp::RObject sel);
+RcppExport SEXP _recombClust_getProbs(SEXP matSEXP, SEXP selSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::RObject >::type mat(matSEXP);
+    Rcpp::traits::input_parameter< Rcpp::RObject >::type sel(selSEXP);
+    rcpp_result_gen = Rcpp::wrap(getProbs(mat, sel));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_recombClust_LDmixtureModel", (DL_FUNC) &_recombClust_LDmixtureModel, 4},
+    {"_recombClust_getProbs", (DL_FUNC) &_recombClust_getProbs, 2},
     {NULL, NULL, 0}
 };
 

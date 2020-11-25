@@ -17,6 +17,7 @@ LazyData: true
 RoxygenNote: 7.1.1
 Imports: GenomicRanges,
     BiocParallel,
+    GenomeInfoDb,
     S4Vectors,
     gtools,
     stats,
