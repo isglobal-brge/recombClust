@@ -24,6 +24,7 @@ Imports: GenomicRanges,
     Rcpp,
     RcppEigen (>= 0.3.3.5.0)
 LinkingTo: Rcpp, RcppEigen (>= 0.3.3.5.0)
+Depends: igraph
 SystemRequirements: C++11
 Suggests: knitr,
     BiocStyle,

@@ -1,13 +1,14 @@
 #ifndef CUtils
 #define CUtils
 
-   #include <Rcpp.h>
+   #include <RcppEigen.h>
    #include <map>
    #include <unordered_map>
 
    // [[Rcpp::plugins(cpp11)]]
 
    Rcpp::CharacterVector concatenate( Rcpp::CharacterVector x, Rcpp::CharacterVector y, std::string par);
+   
    
    std::map<std::string, double> getFreq(Rcpp::StringVector Block, int start, int length);
    std::map<std::string, double> getFreqSum(Rcpp::NumericVector R, Rcpp::StringVector Block, int start, int length);
@@ -19,5 +20,6 @@
    Rcpp::StringVector getNamesbyWord( Rcpp::StringVector x );
    void splitAllBinaryStrings( Rcpp::StringVector *combs, int nSNP, char symbol );
 
+   bool All_Elements_Zero( Rcpp::RObject obj);
       
 #endif

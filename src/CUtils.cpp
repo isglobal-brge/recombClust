@@ -103,33 +103,6 @@ std::map<std::string, double> getFreqAllCombs(Rcpp::NumericVector R, Rcpp::Strin
 }
 
 
-/***
-// Sort mapped data by freq descending
-std::unordered_map<std::string, int> sortMapbyFreqs( std::map<std::string, double> sNPFreq )
-{
-   
-   // Type of Predicate that accepts 2 pairs and return a bool
-   typedef std::function<bool(std::pair<std::string, int>, std::pair<std::string, int>)> Comparator;
-   
-   // Lambda function to compare two pairs
-   Comparator compFunctor =
-      [](std::pair<std::string, int> elem1 ,std::pair<std::string, int> elem2)
-      {
-         return elem1.second <= elem2.second;
-      };
-      
-   // Declaring a set that will store the pairs using above comparision logic
-   std::set<std::pair<std::string, int>, Comparator> setOfWords(
-            sNPFreq.begin(), sNPFreq.end(), compFunctor);
-   
-   std::unordered_map<std::string, int> sortedsNPFreq;
-   for (std::pair<std::string, int> element : setOfWords)
-      sortedsNPFreq[ element.first ] = element.second;
-
-   return sortedsNPFreq;
-}
-***/
-
 
 // Generate all binary strings of lenght n - recursive
 void getAllBinaryStrings(int n, int arr[], int i, Rcpp::StringVector *k)
@@ -164,4 +137,32 @@ void splitAllBinaryStrings( Rcpp::StringVector *combs, int nSNP, char symbol )
       combs->at(i) = comb;
    }
       
+}
+
+// Check if all elements are equal to zero
+bool All_Elements_Zero( Rcpp::RObject obj)
+{
+   bool allzero = false;
+
+   if( Rf_isMatrix(obj) ){
+      Eigen::MatrixXd tmpObj = as<Eigen::MatrixXd>(obj);
+      Eigen::MatrixXd tmp = Eigen::MatrixXd::Zero(tmpObj.rows(), tmpObj.cols());
+      if (tmpObj.isApprox(tmp)){
+         Rcpp::Rcout<<"same thing"<<std::endl;
+         allzero = true;
+      }else
+         Rcpp::Rcout << "NOT same thing"<<std::endl;
+
+   }
+   else if(Rf_isVector(obj)){
+      Eigen::VectorXd tmpObj = as<Eigen::VectorXd>(obj);
+      Eigen::VectorXd tmp = Eigen::VectorXd::Zero(tmpObj.size());
+      if (tmpObj.isApprox(tmp)){
+         Rcpp::Rcout<<"same thing"<<std::endl;
+         allzero = true;
+      }else
+         Rcpp::Rcout << "NOT same thing"<<std::endl;
+   }
+
+   return(allzero);
 }

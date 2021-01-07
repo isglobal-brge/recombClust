@@ -6,6 +6,51 @@
 
 using namespace Rcpp;
 
+// BigLD
+Rcpp::RObject BigLD(Rcpp::RObject corMat, Nullable<double> CLQcut, Nullable<int> clstgap, std::string CLQmode, std::string hrstType, Nullable<int> hrstParam, std::string chrN);
+RcppExport SEXP _recombClust_BigLD(SEXP corMatSEXP, SEXP CLQcutSEXP, SEXP clstgapSEXP, SEXP CLQmodeSEXP, SEXP hrstTypeSEXP, SEXP hrstParamSEXP, SEXP chrNSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::RObject >::type corMat(corMatSEXP);
+    Rcpp::traits::input_parameter< Nullable<double> >::type CLQcut(CLQcutSEXP);
+    Rcpp::traits::input_parameter< Nullable<int> >::type clstgap(clstgapSEXP);
+    Rcpp::traits::input_parameter< std::string >::type CLQmode(CLQmodeSEXP);
+    Rcpp::traits::input_parameter< std::string >::type hrstType(hrstTypeSEXP);
+    Rcpp::traits::input_parameter< Nullable<int> >::type hrstParam(hrstParamSEXP);
+    Rcpp::traits::input_parameter< std::string >::type chrN(chrNSEXP);
+    rcpp_result_gen = Rcpp::wrap(BigLD(corMat, CLQcut, clstgap, CLQmode, hrstType, hrstParam, chrN));
+    return rcpp_result_gen;
+END_RCPP
+}
+// CLQD_mod
+Rcpp::RObject CLQD_mod(Rcpp::RObject CorMat, double CLQcut, int clstgap, std::string hrstType, int hrstParam, std::string CLQmode);
+RcppExport SEXP _recombClust_CLQD_mod(SEXP CorMatSEXP, SEXP CLQcutSEXP, SEXP clstgapSEXP, SEXP hrstTypeSEXP, SEXP hrstParamSEXP, SEXP CLQmodeSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::RObject >::type CorMat(CorMatSEXP);
+    Rcpp::traits::input_parameter< double >::type CLQcut(CLQcutSEXP);
+    Rcpp::traits::input_parameter< int >::type clstgap(clstgapSEXP);
+    Rcpp::traits::input_parameter< std::string >::type hrstType(hrstTypeSEXP);
+    Rcpp::traits::input_parameter< int >::type hrstParam(hrstParamSEXP);
+    Rcpp::traits::input_parameter< std::string >::type CLQmode(CLQmodeSEXP);
+    rcpp_result_gen = Rcpp::wrap(CLQD_mod(CorMat, CLQcut, clstgap, hrstType, hrstParam, CLQmode));
+    return rcpp_result_gen;
+END_RCPP
+}
+// get_graph_matrix_data
+Rcpp::RObject get_graph_matrix_data(Rcpp::RObject OCM, int hrstParam);
+RcppExport SEXP _recombClust_get_graph_matrix_data(SEXP OCMSEXP, SEXP hrstParamSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::RObject >::type OCM(OCMSEXP);
+    Rcpp::traits::input_parameter< int >::type hrstParam(hrstParamSEXP);
+    rcpp_result_gen = Rcpp::wrap(get_graph_matrix_data(OCM, hrstParam));
+    return rcpp_result_gen;
+END_RCPP
+}
 // LDmixtureModel
 List LDmixtureModel(RObject dat, Nullable<int> maxSteps, Nullable<double> prob0, Nullable<int> blocksize);
 RcppExport SEXP _recombClust_LDmixtureModel(SEXP datSEXP, SEXP maxStepsSEXP, SEXP prob0SEXP, SEXP blocksizeSEXP) {
@@ -17,6 +62,18 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< Nullable<double> >::type prob0(prob0SEXP);
     Rcpp::traits::input_parameter< Nullable<int> >::type blocksize(blocksizeSEXP);
     rcpp_result_gen = Rcpp::wrap(LDmixtureModel(dat, maxSteps, prob0, blocksize));
+    return rcpp_result_gen;
+END_RCPP
+}
+// getCorrelationMatrix
+Rcpp::RObject getCorrelationMatrix(Rcpp::RObject mat, Rcpp::Nullable<bool> absval);
+RcppExport SEXP _recombClust_getCorrelationMatrix(SEXP matSEXP, SEXP absvalSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::RObject >::type mat(matSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type absval(absvalSEXP);
+    rcpp_result_gen = Rcpp::wrap(getCorrelationMatrix(mat, absval));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -34,7 +91,11 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
+    {"_recombClust_BigLD", (DL_FUNC) &_recombClust_BigLD, 7},
+    {"_recombClust_CLQD_mod", (DL_FUNC) &_recombClust_CLQD_mod, 6},
+    {"_recombClust_get_graph_matrix_data", (DL_FUNC) &_recombClust_get_graph_matrix_data, 2},
     {"_recombClust_LDmixtureModel", (DL_FUNC) &_recombClust_LDmixtureModel, 4},
+    {"_recombClust_getCorrelationMatrix", (DL_FUNC) &_recombClust_getCorrelationMatrix, 2},
     {"_recombClust_getProbs", (DL_FUNC) &_recombClust_getProbs, 2},
     {NULL, NULL, 0}
 };
