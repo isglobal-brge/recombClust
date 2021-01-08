@@ -23,15 +23,9 @@ using namespace Rcpp;
 Rcpp::RObject get_graph_matrix_data( Rcpp::RObject OCM, int hrstParam )
 {
    
-   // g <- igraph::graph_from_adjacency_matrix(OCM1, mode="undirected", weighted=TRUE, diag=FALSE, add.colnames=NA)
-   // cores <- igraph::coreness(g)
-   // highcore <- sum(cores>=hrstParam)
-   // local_cores <- table(cores[cores>=(hrstParam)])
-   // local_cores <- local_cores[local_cores>=(hrstParam)]
-   
-   
-   NumericVector cores, local_cores;
-   int highcore;
+   NumericVector cores, bothhighSNPs; 
+   std::map<int, std::vector<int>> local_cores;
+   int highcore, local_hrstParam;
    
    
       try {
@@ -46,6 +40,15 @@ Rcpp::RObject get_graph_matrix_data( Rcpp::RObject OCM, int hrstParam )
 
          cores = get_coreness(Named("graph", g));
          local_cores = get_local_cores(cores, hrstParam);
+         local_hrstParam = local_cores.rbegin()->first;
+         bothhighSNPs = local_cores[static_cast<char>(local_hrstParam)];
+         
+         /* DEBUG ONLY :
+            Rcpp::Rcout<<"\n CoresData : "<< cores;
+            Rcpp::Rcout<<"\n local_hrstParam : "<< local_hrstParam;
+          */
+            Rcpp::Rcout<<"\n bothhighSNPs : "<< bothhighSNPs;
+         
 
 
    } catch(std::exception &ex) {	
@@ -55,7 +58,9 @@ Rcpp::RObject get_graph_matrix_data( Rcpp::RObject OCM, int hrstParam )
    }
    
    return  List::create(Named("cores") = cores,  
-                        Named("local_cores") = local_cores);
+                        Named("local_cores") = get_localcores_map_as_vector(local_cores),
+                        Named("local_hrstParam") = local_hrstParam,
+                        Named("bothhighSNPs") = bothhighSNPs);
    
 }
 
@@ -63,28 +68,36 @@ Rcpp::RObject get_graph_matrix_data( Rcpp::RObject OCM, int hrstParam )
 
 
 // Get a resume of local cores in a vector
-Rcpp::RObject get_local_cores(NumericVector cores, int hrst)
+//..// Rcpp::RObject get_local_cores(NumericVector cores, int hrst)
+std::map<int, std::vector<int>> get_local_cores(NumericVector cores, int hrst)
 {
    
-   NumericVector local_c;
-   
+   //..// NumericVector local_c;
+   std::map<int, std::vector<int>> counts;
    
    try{
       
-      CharacterVector names_local;   
-      std::map<int, int> counts;
+      //..// CharacterVector names_local;   
+      int position = 0;
+      
       for (NumericVector::iterator i = cores.begin() ; i != cores.end(); ++i) {
-         if( *i >= hrst )
-            ++counts[ *i ];
+         if( *i >= hrst ){
+            counts[ *i ].push_back(position) ;
+         }
+         Rcpp::Rcout<<"Posicio val : "<<position<<"\n";
+         position++;
       }
       
-      // Convert map to vector
-      for( std::map<int, int>::iterator it = counts.begin(); it != counts.end(); ++it ) {
-         local_c.push_back( it->second );
-         names_local.push_back( static_cast<char>(it->first) );
-      }
-      
-      local_c.names() = names_local;
+      /* DEBUG ONLY :
+         // Print data in map (sorted??)
+         Rcpp::Rcout << "\nMap content : \n";
+         for(auto elem : counts) {
+            Rcpp::Rcout << elem.first << " :\n";
+            for(auto it2 = elem.second.begin(); it2 != elem.second.end(); ++it2)
+               Rcpp::Rcout <<"\t"<< *it2 ;
+            Rcpp::Rcout <<"\n";
+         }
+      */
       
    } catch(std::exception &ex) {
       forward_exception_to_r(ex);
@@ -92,38 +105,33 @@ Rcpp::RObject get_local_cores(NumericVector cores, int hrst)
       ::Rf_error("c++ exception (unknown reason)");
    }
    
-   return(local_c);
+   //..// return(local_c);
+   return(counts);
    
 }
 
 
-
-
-// 
-// // Get graph from adjacent matrix
-// Rcpp::RObject get_graph_adjacent_matrix(OCM)
-// {
-//    Eigen::MatrixXd inputmat = Rcpp::as<Eigen::MatrixXd>(OCM);
-//    
-//    try{
-//       
-//       
-//       
-//    } catch(std::exception &ex) {	
-//       forward_exception_to_r(ex);
-//    } catch(...) { 
-//       ::Rf_error("c++ exception (unknown reason)"); 
-//    }
-//    
-//    
-//    
-//    
-// }
+// Convert std::map<int, std::vector<int>> map to vector with numbers of values for each key
+NumericVector get_localcores_map_as_vector(std::map<int, std::vector<int>> localCores)
+{
+   CharacterVector names_local;
+   NumericVector local_c;
+   
+   for( std::map<int, std::vector<int>>::iterator it = localCores.begin(); it != localCores.end(); ++it ) {
+      local_c.push_back( it->second.size() );
+      names_local.push_back( std::to_string(it->first) );
+   }
+   
+   local_c.names() = names_local;
+   
+   return(local_c);
+}
 
 
 /*** R
-
-OCM <- R
+a <- matrix(c(1,2,3,4,5,1,2,0,0,0,1,0,0,2,5,1,2,4,4,5,1,0,0,0,0), byrow = TRUE, nrow = 5)
+# OCM <- R
+OCM <- a
 hrstParam <- 1 # valor provisional
 res <- get_graph_matrix_data(OCM, hrstParam)
 

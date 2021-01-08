@@ -166,3 +166,31 @@ bool All_Elements_Zero( Rcpp::RObject obj)
 
    return(allzero);
 }
+
+
+// Test if indexes in index vector are NA in testnavect
+Rcpp::NumericVector testNAIndex( Rcpp::NumericVector testnavect, Rcpp::NumericVector index)
+{
+   Rcpp::NumericVector isNA;
+   
+   for (Rcpp::NumericVector::iterator it = index.begin(); it != index.end(); ++it){
+      if(NumericVector::is_na(testnavect[*it]) ){
+         isNA.push_back(*it);
+      }
+   }
+   
+   
+   /* DEBUG 
+
+    
+      Rcpp::Rcout<<"Index NA : \n";
+      for (Rcpp::NumericVector::iterator it = isNA.begin(); it != isNA.end(); ++it){
+         Rcpp::Rcout<<"\t"<<*it;
+      }
+    
+    */
+   
+   return(isNA);
+   
+   
+}

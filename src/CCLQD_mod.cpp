@@ -73,10 +73,47 @@ Rcpp::RObject CLQD_mod( Rcpp::RObject CorMat,
          while(heuristic == true)
          {
             List coresdata = as<List>(get_graph_matrix_data(OCM, hrstParam));
-            Rcpp::Rcout<<"\n CoresData : "<< as<int>(coresdata["cores"]);
-            Rcpp::Rcout<<"\n highcore : "<< as<int>(coresdata["highcore"]);
-            Rcpp::Rcout<<"\n local_cores : "<< as<NumericVector>(coresdata["local_cores"]);
-         
+            NumericVector cores = coresdata["cores"];
+            Rcpp::NumericVector local_cores = coresdata["local_cores"];
+            int local_hrstParam = coresdata["local_hrstParam"];
+            NumericVector bothhighSNPs = coresdata["bothhighSNPs"];
+            
+            Rcpp::Rcout<<"bothhighSNPs : \n"<<bothhighSNPs.length();
+
+            if( local_cores.length()>0 ){
+            
+               if( heuristicNum == 0 ){
+                  heuristicNum = heuristicNum + 1;
+                  Rcpp::Rcout<<"\nUse near-CLQ heuristic procedure!!\t - \t heuristic loop"<<heuristicNum<<"\n";
+               }else{
+                  heuristicNum = heuristicNum+1;
+                  Rcpp::Rcout<<"heuristic loop"<<heuristicNum<<"\n";
+               }
+               
+               NumericVector SNPset1 = testNAIndex(binvector, bothhighSNPs);
+               
+
+               // NumericVector SNPset1 = 
+               
+               //                      SNPset1 <- which(is.na(binvector))[bothhighSNPs]
+               //                      
+               //                      // Fins aquí, el que fan aquestes línies no es més que mirar els nodes on els local_cores és màxim.
+               //                      només caldria trobar les posicions .... revisar-ho en general perquè potser no caldria fer-ho així
+               //                      i seria fins i tot més senzill..... 
+               //                      
+               //                      
+               //                   nowOCM <- OCM[SNPset1, SNPset1]
+               //                   heuristicBins <- heuristicCLQ(nowOCM, hrstParam)
+               //                      binvector[SNPset1[heuristicBins]]<-binnum
+               //                      binnum <- binnum+1
+               //                   OCM1 <- OCM[is.na(binvector), is.na(binvector)]
+               
+               
+               heuristic = false;
+            } else {
+               heuristic = false;
+            }
+            
 
             
 //             while(heuristic == TRUE){
@@ -147,8 +184,8 @@ NumericMatrix arrange_matrix_by_cutoff(Eigen::MatrixXd CorMat, double cutoff)
 /*** R
 
 library(recombClust)
-a <- matrix(c(1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5,1,2,3,4,5), byrow = TRUE, nrow = 5)
-CLQD_mod(a,)
+a <- matrix(c(1,2,3,4,5,1,2,0,3,0,1,0,0,2,5,1,2,4,4,5,1,4,4,4,5), byrow = TRUE, nrow = 5)
+CLQD_mod(a, hrstType = "near-nonhrst",  hrstParam = 1)
 
 
 CLQD_mod <- function(OCM, CLQcut=0.2, clstgap=40000, hrstType=c("near-nonhrst", "fast", "nonhrst"), hrstParam=200,
