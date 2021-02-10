@@ -61,6 +61,7 @@ Rcpp::RObject CLQD_mod( Rcpp::RObject CorMat,
    NumericVector binvector(OCM.cols());
    std::fill( binvector.begin(), binvector.end(), NumericVector::get_na() ) ;
 
+   Rcpp::NumericMatrix OCM1 = OCM;
    // Aquí seguirem endavant o en un altre cas, retornarem binvector
    if( !All_Elements_Zero(OCM) ){
       
@@ -72,7 +73,7 @@ Rcpp::RObject CLQD_mod( Rcpp::RObject CorMat,
          int heuristicNum = 0;
          while(heuristic == true)
          {
-            List coresdata = as<List>(get_graph_matrix_data(OCM, hrstParam));
+            List coresdata = as<List>(get_graph_matrix_data(OCM1, hrstParam));
             NumericVector cores = coresdata["cores"];
             Rcpp::NumericVector local_cores = coresdata["local_cores"];
             int local_hrstParam = coresdata["local_hrstParam"];
@@ -101,7 +102,17 @@ Rcpp::RObject CLQD_mod( Rcpp::RObject CorMat,
                //                      només caldria trobar les posicions .... revisar-ho en general perquè potser no caldria fer-ho així
                //                      i seria fins i tot més senzill..... 
                //                      
-               //                      
+
+                              
+////// WORKING IN PROGRESS !!!!               
+/***
+               Rcpp::NumericMatrix nowOCM = removeMatrixColsandRows(OCM,SNPset1);
+               Rcpp::NumericMatrix nowOCM = removeMatrixColumns(OCM,SNPset1);
+               nowOCM = removeMatrixRows(nowOCM,SNPset1);
+ ***/
+////// WORKING IN PROGRESS !!!!
+
+               
                //                   nowOCM <- OCM[SNPset1, SNPset1]
                //                   heuristicBins <- heuristicCLQ(nowOCM, hrstParam)
                //                      binvector[SNPset1[heuristicBins]]<-binnum
@@ -184,7 +195,7 @@ NumericMatrix arrange_matrix_by_cutoff(Eigen::MatrixXd CorMat, double cutoff)
 /*** R
 
 library(recombClust)
-a <- matrix(c(1,2,3,4,5,1,2,0,3,0,1,0,0,2,5,1,2,4,4,5,1,4,4,4,5), byrow = TRUE, nrow = 5)
+a <- matrix(c(1,2,3,4,5,1,2,0,3,0,1,0,0,2,5,1,2,4,4,5,0,0,0,4,5), byrow = TRUE, nrow = 5)
 CLQD_mod(a, hrstType = "near-nonhrst",  hrstParam = 1)
 
 
@@ -210,6 +221,28 @@ CLQD_mod <- function(OCM, CLQcut=0.2, clstgap=40000, hrstType=c("near-nonhrst", 
    #..# binnum <- 1
    #..# # re.SNPbps <- SNPbps
    #..# if(all(OCM==0)) return(binvector)
+   
+   ## Inicialització per al testeig : 
+         OCM <- a
+         # hrstParam <- 1
+         # skipRatio <- 0
+         # 
+         # ## Group windows higher than CLQcut
+         # diag(OCM) <- 0
+         # OCM[is.na(OCM)] <- 0
+         # OCM[abs(OCM) < CLQcut] <- 0
+         # OCM[abs(OCM) >= CLQcut] <- 1
+         # 
+         # # SNPinfo<-SNPinfo[!allNASNPs, ]
+         # 
+         # # Main Function
+         # SNPbps <- as.numeric(gsub("-.*", "", colnames(OCM)))
+         # binvector <- rep(NA, dim(OCM)[2])
+         # binnum <- 1
+         # re.SNPbps <- SNPbps
+         if(all(OCM==0)) return(binvector)
+         
+   ## Fi Inicialització per al testeig : ##
    
    # test graph complexity
    OCM1 <- OCM

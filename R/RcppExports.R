@@ -53,6 +53,17 @@ CLQD_mod <- function(CorMat, CLQcut = 0.2, clstgap = 40000L, hrstType = "fast", 
     .Call('_recombClust_CLQD_mod', PACKAGE = 'recombClust', CorMat, CLQcut, clstgap, hrstType, hrstParam, CLQmode)
 }
 
+#' Write data to file
+#'
+#' @param columns string vector with column names
+#' @param results Numerical vector with data
+#' @param outputfile relative path to output data file
+#' @return none
+#' @export
+CWriteResults <- function(columns, results, outputfile) {
+    invisible(.Call('_recombClust_CWriteResults', PACKAGE = 'recombClust', columns, results, outputfile))
+}
+
 #' @title Get graphs data from addjacency matrix
 #' @description \code{Big_LD} returns adjacency matrix graph data to test graph complexity
 #' @param OCM Correlation matrix
@@ -94,6 +105,55 @@ get_graph_matrix_data <- function(OCM, hrstParam) {
 #' @export
 LDmixtureModel <- function(dat, maxSteps = NULL, prob0 = NULL, blocksize = NULL) {
     .Call('_recombClust_LDmixtureModel', PACKAGE = 'recombClust', dat, maxSteps, prob0, blocksize)
+}
+
+#' @title Remove columns and Rows from squared matrix
+#' @description \code{removeMatrixColsandRows} removes the rows and columns indicated in vector indices vIndex from a matrix
+#' @param Mat Matrix to remove index columns and rows
+#' @param vIndex Rows and column numbers to be removed from a matrix
+#' 
+#' <output>
+#' @return  The original matrix without rows and column index .
+#' 
+#' @export
+removeMatrixColsandRows <- function(Mat, vIndex) {
+    .Call('_recombClust_removeMatrixColsandRows', PACKAGE = 'recombClust', Mat, vIndex)
+}
+
+#' Covnert input data file, .vcf or .bed to gds 
+#'
+#' @param filename, string with route to file with .vcf, .bed or .gds data type
+#' @return converted gds filename
+#' @export
+CGetDatafromFile <- function(file) {
+    .Call('_recombClust_CGetDatafromFile', PACKAGE = 'recombClust', file)
+}
+
+#' Get's SNP-block pair
+#'
+#' @param filename, string with route to file with .vcf, .bed or .gds data type
+#' @return converted gds filename
+#' @export
+CgdsSNPpairMatrix <- function(filteredsnp) {
+    .Call('_recombClust_CgdsSNPpairMatrix', PACKAGE = 'recombClust', filteredsnp)
+}
+
+#' Get's SNP-block pair
+#'
+#' @param filename, string with route to file with .vcf, .bed or .gds data type
+#' @return converted gds filename
+#' @export
+CvcfSNPpairMatrix <- function(filteredsnp) {
+    .Call('_recombClust_CvcfSNPpairMatrix', PACKAGE = 'recombClust', filteredsnp)
+}
+
+#' Convert 3D-Matrix to 2D-Matrix
+#'
+#' @param 3D-matrix with allele, samples and SNPs information [allele,samples,SNPs]
+#' @return 2D-matrix with one row with each sample-allel [sample-allele, SNP]
+#' @export
+CTransformtoSampleAlleles <- function(x, allele, sample, variable) {
+    .Call('_recombClust_CTransformtoSampleAlleles', PACKAGE = 'recombClust', x, allele, sample, variable)
 }
 
 #' Compute correlation matrix

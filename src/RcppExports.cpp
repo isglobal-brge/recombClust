@@ -39,6 +39,18 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// CWriteResults
+void CWriteResults(StringVector columns, NumericVector results, std::string outputfile);
+RcppExport SEXP _recombClust_CWriteResults(SEXP columnsSEXP, SEXP resultsSEXP, SEXP outputfileSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< StringVector >::type columns(columnsSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type results(resultsSEXP);
+    Rcpp::traits::input_parameter< std::string >::type outputfile(outputfileSEXP);
+    CWriteResults(columns, results, outputfile);
+    return R_NilValue;
+END_RCPP
+}
 // get_graph_matrix_data
 Rcpp::RObject get_graph_matrix_data(Rcpp::RObject OCM, int hrstParam);
 RcppExport SEXP _recombClust_get_graph_matrix_data(SEXP OCMSEXP, SEXP hrstParamSEXP) {
@@ -62,6 +74,65 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< Nullable<double> >::type prob0(prob0SEXP);
     Rcpp::traits::input_parameter< Nullable<int> >::type blocksize(blocksizeSEXP);
     rcpp_result_gen = Rcpp::wrap(LDmixtureModel(dat, maxSteps, prob0, blocksize));
+    return rcpp_result_gen;
+END_RCPP
+}
+// removeMatrixColsandRows
+Rcpp::RObject removeMatrixColsandRows(Rcpp::RObject Mat, Rcpp::RObject vIndex);
+RcppExport SEXP _recombClust_removeMatrixColsandRows(SEXP MatSEXP, SEXP vIndexSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::RObject >::type Mat(MatSEXP);
+    Rcpp::traits::input_parameter< Rcpp::RObject >::type vIndex(vIndexSEXP);
+    rcpp_result_gen = Rcpp::wrap(removeMatrixColsandRows(Mat, vIndex));
+    return rcpp_result_gen;
+END_RCPP
+}
+// CGetDatafromFile
+std::string CGetDatafromFile(std::string file);
+RcppExport SEXP _recombClust_CGetDatafromFile(SEXP fileSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::string >::type file(fileSEXP);
+    rcpp_result_gen = Rcpp::wrap(CGetDatafromFile(file));
+    return rcpp_result_gen;
+END_RCPP
+}
+// CgdsSNPpairMatrix
+Rcpp::NumericMatrix CgdsSNPpairMatrix(Rcpp::StringMatrix filteredsnp);
+RcppExport SEXP _recombClust_CgdsSNPpairMatrix(SEXP filteredsnpSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::StringMatrix >::type filteredsnp(filteredsnpSEXP);
+    rcpp_result_gen = Rcpp::wrap(CgdsSNPpairMatrix(filteredsnp));
+    return rcpp_result_gen;
+END_RCPP
+}
+// CvcfSNPpairMatrix
+Rcpp::NumericMatrix CvcfSNPpairMatrix(Rcpp::StringMatrix filteredsnp);
+RcppExport SEXP _recombClust_CvcfSNPpairMatrix(SEXP filteredsnpSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::StringMatrix >::type filteredsnp(filteredsnpSEXP);
+    rcpp_result_gen = Rcpp::wrap(CvcfSNPpairMatrix(filteredsnp));
+    return rcpp_result_gen;
+END_RCPP
+}
+// CTransformtoSampleAlleles
+Rcpp::IntegerMatrix CTransformtoSampleAlleles(Rcpp::NumericVector x, Rcpp::StringVector allele, Rcpp::StringVector sample, Rcpp::StringVector variable);
+RcppExport SEXP _recombClust_CTransformtoSampleAlleles(SEXP xSEXP, SEXP alleleSEXP, SEXP sampleSEXP, SEXP variableSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type x(xSEXP);
+    Rcpp::traits::input_parameter< Rcpp::StringVector >::type allele(alleleSEXP);
+    Rcpp::traits::input_parameter< Rcpp::StringVector >::type sample(sampleSEXP);
+    Rcpp::traits::input_parameter< Rcpp::StringVector >::type variable(variableSEXP);
+    rcpp_result_gen = Rcpp::wrap(CTransformtoSampleAlleles(x, allele, sample, variable));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -93,8 +164,14 @@ END_RCPP
 static const R_CallMethodDef CallEntries[] = {
     {"_recombClust_BigLD", (DL_FUNC) &_recombClust_BigLD, 7},
     {"_recombClust_CLQD_mod", (DL_FUNC) &_recombClust_CLQD_mod, 6},
+    {"_recombClust_CWriteResults", (DL_FUNC) &_recombClust_CWriteResults, 3},
     {"_recombClust_get_graph_matrix_data", (DL_FUNC) &_recombClust_get_graph_matrix_data, 2},
     {"_recombClust_LDmixtureModel", (DL_FUNC) &_recombClust_LDmixtureModel, 4},
+    {"_recombClust_removeMatrixColsandRows", (DL_FUNC) &_recombClust_removeMatrixColsandRows, 2},
+    {"_recombClust_CGetDatafromFile", (DL_FUNC) &_recombClust_CGetDatafromFile, 1},
+    {"_recombClust_CgdsSNPpairMatrix", (DL_FUNC) &_recombClust_CgdsSNPpairMatrix, 1},
+    {"_recombClust_CvcfSNPpairMatrix", (DL_FUNC) &_recombClust_CvcfSNPpairMatrix, 1},
+    {"_recombClust_CTransformtoSampleAlleles", (DL_FUNC) &_recombClust_CTransformtoSampleAlleles, 4},
     {"_recombClust_getCorrelationMatrix", (DL_FUNC) &_recombClust_getCorrelationMatrix, 2},
     {"_recombClust_getProbs", (DL_FUNC) &_recombClust_getProbs, 2},
     {NULL, NULL, 0}

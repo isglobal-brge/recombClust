@@ -5,7 +5,7 @@
 #'
 #' @export
 #'
-#' @param filename File with genotypic data (SNPs and samples) the data file type must be .vcf (Variant Call Format), 
+#' @param filename File with genotypic data (SNPs and samples) the data file type must be .vcf (Variant Call Format),
 #' .gds (Genomic Data Structure) or .bed (Browser Extensible Data).
 #' @param annot GenomicRanges with the SNPs annotation
 #' @param range Region GenomicRanges
@@ -16,27 +16,22 @@
 #'  \item{porbTab: Summarized probabilities by window}
 #'  \item{models: List of models}
 #' }
-computeRecombProbabilities <- function(haplos, annot, range, window = 500, ...)
-{ 
-   
-   # Get models
-   models <- runLDmixtureModel(haplos, annot, ...)
-   
-   ## Remove failed models
-   goodModels <- vapply(models, class, character(1)) == "list"
-   
-   # Get matrix
-   matProb <- createMatrixfromModels(models[goodModels], range)
-   
-   # # Summarize recombClust probabilities by windows 
-   matWindProb <- getRecombProb(matProb$mat, matProb$annot, range, window)
-   
-   # 
-   # # Return models and matrix with summarized probabilities by widow
-   return(list(models = models, probTab = matWindProb))
-   
+computeRecombProbabilities <- function(haplos, annot, range, window = 500, ...) 
+{
+
+  # Get models
+  models <- runLDmixtureModel(haplos, annot, ...)
+
+  ## Remove failed models
+  goodModels <- vapply(models, class, character(1)) == "list"
+
+  # Get matrix
+  matProb <- createMatrixfromModels(models[goodModels], range)
+
+  # # Summarize recombClust probabilities by windows
+  matWindProb <- getRecombProb(matProb$mat, matProb$annot, range, window)
+
+  #
+  # # Return models and matrix with summarized probabilities by widow
+  return(list(models = models, probTab = matWindProb))
 }
-
-
-
-
