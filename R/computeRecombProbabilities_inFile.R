@@ -11,12 +11,8 @@
 #' @param range Region GenomicRanges
 #' @param window only to debug, by default window = 500bp
 #' @param ... Further arguments passed to runLDmixtureModel
-#' @return A list with four elements:
-#' \itemize{
-#'  \item{porbTab: Summarized probabilities by window}
-#'  \item{models: List of models}
-#' }
-computeRecombProbabilities_inFile <- function(filename, chromosome, range, window = 500, minmaf = 0.1, ...) {
+#' @return probTab: Summarized probabilities by window
+computeRecombProbabilities_inFile <- function(filename, range, window = 500, minmaf = 0.1, ...) {
    
    # initialize values
    gcstart <- start(range)
@@ -26,10 +22,10 @@ computeRecombProbabilities_inFile <- function(filename, chromosome, range, windo
    gds_file <- CGetDatafromFile(filename)
    
    # Read data 
-   snpsData <- getData(gds_file, chromosome, range, minmaf)
+   snpsData <- getData(gds_file, range, minmaf)
    
    # get genomic coordinates position in file
-   pos.gcoord <- CgetIndexfromGenCoord(gds_file, chromosome, start(range), end(range), 0.1)
+   pos.gcoord <- CgetIndexfromGenCoord(gds_file, seqlevels(range), start(range), end(range), 0.1)
    
    annot <- makeGRangesFromDataFrame(snpsData$map, start.field = "position", 
                                      end.field = "position")

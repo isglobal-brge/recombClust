@@ -19,11 +19,7 @@ computeRecombProbabilities(haplos, annot, range, window = 500, ...)
 .gds (Genomic Data Structure) or .bed (Browser Extensible Data).}
 }
 \value{
-A list with four elements:
-\itemize{
- \item{porbTab: Summarized probabilities by window}
- \item{models: List of models}
-}
+probTab: Summarized probabilities by window
 }
 \description{
 This function takes as input phased chromosomes and returns the responsibilities

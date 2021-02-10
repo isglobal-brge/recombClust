@@ -2,11 +2,10 @@
 % Please edit documentation in R/computeRecombProbabilities_inFile.R
 \name{computeRecombProbabilities_inFile}
 \alias{computeRecombProbabilities_inFile}
-\title{Main function to run all the recombClust pipeline}
+\title{Main function to run all the recombClust pipeline with data in a file}
 \usage{
 computeRecombProbabilities_inFile(
   filename,
-  chromosome,
   range,
   window = 500,
   minmaf = 0.1,
@@ -26,11 +25,7 @@ computeRecombProbabilities_inFile(
 \item{annot}{GenomicRanges with the SNPs annotation}
 }
 \value{
-A list with four elements:
-\itemize{
- \item{porbTab: Summarized probabilities by window}
- \item{models: List of models}
-}
+probTab: Summarized probabilities by window
 }
 \description{
 This function takes as input phased chromosomes and returns the responsibilities

@@ -11,11 +11,7 @@
 #' @param range Region GenomicRanges
 #' @param window only to debug, by default window = 500bp
 #' @param ... Further arguments passed to runLDmixtureModel
-#' @return A list with four elements:
-#' \itemize{
-#'  \item{porbTab: Summarized probabilities by window}
-#'  \item{models: List of models}
-#' }
+#' @return probTab: Summarized probabilities by window
 computeRecombProbabilities <- function(haplos, annot, range, window = 500, ...) 
 {
 
@@ -33,5 +29,5 @@ computeRecombProbabilities <- function(haplos, annot, range, window = 500, ...)
 
   #
   # # Return models and matrix with summarized probabilities by widow
-  return(list(models = models, probTab = matWindProb))
+  return(probTab = matWindProb)
 }

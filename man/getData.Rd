@@ -5,12 +5,10 @@
 \title{This function takes a file as input, converts file to gds format
 and get data ready to be processed}
 \usage{
-getData(filename, chromosome, range, minmaf = 0.1)
+getData(filename, range, minmaf = 0.1)
 }
 \arguments{
 \item{filename}{character string with file path}
-
-\item{chromosome}{character or character vector with chromosomes}
 
 \item{range}{genomic ranges with regions to be read}
 

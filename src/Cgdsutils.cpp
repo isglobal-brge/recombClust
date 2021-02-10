@@ -81,8 +81,6 @@ std::string CGetDatafromFile( std::string file)
          std::string extension =  getFileExtension(file);
          fileWithoutExt = filename.substr(0, filename.length()-extension.length() );
 
-         Rcpp::Rcout<<"\n fileWithoutExt : "<<fileWithoutExt<<"\n";
-         
          if( extension !=".bed" && extension != ".vcf" && extension!=".gds")
             throw std::range_error("Unknown file format");
 
