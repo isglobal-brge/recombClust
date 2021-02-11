@@ -58,7 +58,7 @@ Rcpp::RObject get_graph_matrix_data( Rcpp::RObject OCM, int hrstParam )
    }
    
    return  List::create(Named("cores") = cores,  
-                        Named("local_cores") = get_localcores_map_as_vector(local_cores),
+                        // Return this data --> error server compilation // Named("local_cores") = get_localcores_map_as_vector(local_cores),
                         Named("local_hrstParam") = local_hrstParam,
                         Named("bothhighSNPs") = bothhighSNPs);
    
