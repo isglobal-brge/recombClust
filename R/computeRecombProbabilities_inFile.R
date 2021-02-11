@@ -9,6 +9,7 @@
 #' .gds (Genomic Data Structure) or .bed (Browser Extensible Data).
 #' @param annot GenomicRanges with the SNPs annotation
 #' @param range Region GenomicRanges
+#' @param @param samples optional, character vector with sample ids to be used to compute models
 #' @param window only to debug, by default window = 500bp
 #' @param ... Further arguments passed to runLDmixtureModel
 #' @return probTab: Summarized probabilities by window

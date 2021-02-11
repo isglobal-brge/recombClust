@@ -7,6 +7,7 @@
 computeRecombProbabilities_inFile(
   filename,
   range,
+  samples = NULL,
   window = 500,
   minmaf = 0.1,
   ...
@@ -23,6 +24,8 @@ computeRecombProbabilities_inFile(
 \item{...}{Further arguments passed to runLDmixtureModel}
 
 \item{annot}{GenomicRanges with the SNPs annotation}
+
+\item{@param}{samples optional, character vector with sample ids to be used to compute models}
 }
 \value{
 probTab: Summarized probabilities by window

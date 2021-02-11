@@ -6,6 +6,7 @@
 #'
 #' @param filename character string with file path
 #' @param range genomic ranges with regions to be read
+#' @param samples optional, character vector with sample ids to be used to compute models
 #' @param minmaf minimum MAF, default 0.01
 #' @return data ready to be processed
 getData <- function(filename, range, samples, minmaf = 0.1) {
@@ -17,7 +18,7 @@ getData <- function(filename, range, samples, minmaf = 0.1) {
                      from.bp = start(range), to.bp = end(range), is.num = TRUE)
 
    # Filter by samples
-   if(!is.null(sampes)) {
+   if(!is.null(samples)) {
       seqSetFilter(gds, sample.id =samples)
    }
    

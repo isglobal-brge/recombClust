@@ -5,12 +5,14 @@
 \title{This function takes a file as input, converts file to gds format
 and get data ready to be processed}
 \usage{
-getData(filename, range, minmaf = 0.1)
+getData(filename, range, samples, minmaf = 0.1)
 }
 \arguments{
 \item{filename}{character string with file path}
 
 \item{range}{genomic ranges with regions to be read}
+
+\item{samples}{optional, character vector with sample ids to be used to compute models}
 
 \item{minmaf}{minimum MAF, default 0.01}
 }
