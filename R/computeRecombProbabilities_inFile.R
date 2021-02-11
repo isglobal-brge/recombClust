@@ -12,7 +12,7 @@
 #' @param window only to debug, by default window = 500bp
 #' @param ... Further arguments passed to runLDmixtureModel
 #' @return probTab: Summarized probabilities by window
-computeRecombProbabilities_inFile <- function(filename, range, window = 500, minmaf = 0.1, ...) {
+computeRecombProbabilities_inFile <- function(filename, range, samples = NULL, window = 500, minmaf = 0.1, ...) {
    
    # initialize values
    gcstart <- start(range)
@@ -22,7 +22,7 @@ computeRecombProbabilities_inFile <- function(filename, range, window = 500, min
    gds_file <- CGetDatafromFile(filename)
    
    # Read data 
-   snpsData <- getData(gds_file, range, minmaf)
+   snpsData <- getData(gds_file, range, samples, minmaf)
    
    # get genomic coordinates position in file
    pos.gcoord <- CgetIndexfromGenCoord(gds_file, seqlevels(range), start(range), end(range), 0.1)

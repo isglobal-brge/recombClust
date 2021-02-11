@@ -91,6 +91,8 @@ Rcpp::RObject CLQD_mod( Rcpp::RObject CorMat,
                   Rcpp::Rcout<<"heuristic loop"<<heuristicNum<<"\n";
                }
                
+////// WORKING IN PROGRESS !!!!               
+/***              
                NumericVector SNPset1 = testNAIndex(binvector, bothhighSNPs);
                
 
@@ -104,8 +106,7 @@ Rcpp::RObject CLQD_mod( Rcpp::RObject CorMat,
                //                      
 
                               
-////// WORKING IN PROGRESS !!!!               
-/***
+
                Rcpp::NumericMatrix nowOCM = removeMatrixColsandRows(OCM,SNPset1);
                Rcpp::NumericMatrix nowOCM = removeMatrixColumns(OCM,SNPset1);
                nowOCM = removeMatrixRows(nowOCM,SNPset1);

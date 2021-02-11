@@ -8,7 +8,7 @@
 #' @param range genomic ranges with regions to be read
 #' @param minmaf minimum MAF, default 0.01
 #' @return data ready to be processed
-getData <- function(filename, range, minmaf = 0.1) {
+getData <- function(filename, range, samples, minmaf = 0.1) {
 
    gds <- seqOpen(filename)
    
@@ -16,6 +16,11 @@ getData <- function(filename, range, minmaf = 0.1) {
    seqSetFilterChrom(gds, gsub("chr","",unique(as.character(seqnames(range)))), 
                      from.bp = start(range), to.bp = end(range), is.num = TRUE)
 
+   # Filter by samples
+   if(!is.null(sampes)) {
+      seqSetFilter(gds, sample.id =samples)
+   }
+   
    # Filter - by MAF
    minmaf = minmaf + 1e-9 # To force filter to be strictly greater
    seqSetFilterCond(gds, maf=rep(minmaf,length(start(range))), .progress = FALSE, verbose = TRUE)
