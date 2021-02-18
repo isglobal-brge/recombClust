@@ -16,6 +16,7 @@
 #' @importFrom S4Vectors from to
 #' @importFrom stats chisq.test kmeans prcomp
 #' @importFrom Rcpp evalCpp
+#' @importFrom SeqVarTools isSNV
 #' @import RcppEigen
 #' @exportPattern("^[[:alpha:]]+")
 NULL

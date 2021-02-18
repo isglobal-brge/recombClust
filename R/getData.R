@@ -25,9 +25,24 @@ getData <- function(filename, range, samples, minmaf = 0.1) {
    
    # Filter - by MAF
    minmaf = minmaf + 1e-9 # To force filter to be strictly greater
-   seqSetFilterCond(gds, maf=rep(minmaf,length(start(range))), .progress = FALSE, verbose = TRUE)
    
+   # Filter by range
+   if( sum(countOverlaps(granges(gds), range))>0 ){
+      seqSetFilterCond(gds, maf=rep(minmaf,length(start(range))), .progress = FALSE, verbose = TRUE)
+   } else {
+      message("No SNP`s in selected range")
+      return(NA)
+   }
    
+   # Filter indels
+   variant.id <- seqGetData(gds, "variant.id")
+   svn <- variant.id[which(isSNV(gds, biallelic=TRUE))]
+   if(!is.null(svn)){
+      seqSetFilter(gds, variant.id = svn)
+   }else {
+      message("No SNP`s in selected range")
+      return(NA)
+   }
    
    # Get genotype from filtered data
    geno.gds <- seqGetData(gds, "genotype")
