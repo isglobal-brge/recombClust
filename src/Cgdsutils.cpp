@@ -98,8 +98,10 @@ std::string CGetDatafromFile( std::string file)
             Function vcf2gds = pkg["seqVCF2GDS"];
             vcf2gds(file, path + fileWithoutExt + ".gds");
             outputfile = path + fileWithoutExt + ".gds";
+            
          } else if (extension == ".gds"){
-            outputfile = file;
+            outputfile = path + file;
+            
          }
             
          

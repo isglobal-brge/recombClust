@@ -11,12 +11,13 @@
 #' @return data ready to be processed
 getData <- function(filename, range, samples, minmaf = 0.1) {
 
-   gds <- seqOpen(filename)
-   
 
+   gds <- seqOpen(filename, readonly = TRUE)
+   
+   
    seqSetFilterChrom(gds, gsub("chr","",unique(as.character(seqnames(range)))), 
                      from.bp = start(range), to.bp = end(range), is.num = TRUE)
-
+   
    # Filter by samples
    if(!is.null(samples)) {
       seqSetFilter(gds, sample.id =samples)
@@ -26,24 +27,29 @@ getData <- function(filename, range, samples, minmaf = 0.1) {
    minmaf = minmaf + 1e-9 # To force filter to be strictly greater
    seqSetFilterCond(gds, maf=rep(minmaf,length(start(range))), .progress = FALSE, verbose = TRUE)
    
+   
+   
    # Get genotype from filtered data
    geno.gds <- seqGetData(gds, "genotype")
    
-   # getting sample and variable names
-   allel <- c('_1', '_2')
-   dimnames(geno.gds) <- list(allel, seqGetData(gds, "sample.id"), seqGetData(gds, "annotation/id"))
-   
-   # Transform list (3d-data) to matrix (2d-data)
-   geno.snpmatrix <- CTransformtoSampleAlleles(geno.gds, allel, seqGetData(gds, "sample.id"), seqGetData(gds, "annotation/id"))
+   if(!is.null(geno.gds)){
+      # getting sample and variable names
+      allel <- c('_1', '_2')
+      dimnames(geno.gds) <- list(allel, seqGetData(gds, "sample.id"), seqGetData(gds, "annotation/id"))
+      
+      # Transform list (3d-data) to matrix (2d-data)
+      geno.snpmatrix <- CTransformtoSampleAlleles(geno.gds, allel, seqGetData(gds, "sample.id"), seqGetData(gds, "annotation/id"))
+      
+      # Getting positions from different variables
+      snpsData <- list(genotypes = geno.snpmatrix, map = data.frame(name = colnames(geno.snpmatrix)))
+      snpsData$map$position <- SeqArray::seqGetData(gds, "position")
+      snpsData$map$chromosome <- SeqArray::seqGetData(gds, "chromosome")
+      rownames(snpsData$map) <- seqGetData(gds, "annotation/id")
+   } else {
+      snpsData <- NA
+   }
 
-   # Getting positions from different variables
-   snpsData <- list(genotypes = geno.snpmatrix, map = data.frame(name = colnames(geno.snpmatrix)))
-   snpsData$map$position <- SeqArray::seqGetData(gds, "position")
-   snpsData$map$chromosome <- SeqArray::seqGetData(gds, "chromosome")
-   rownames(snpsData$map) <- seqGetData(gds, "annotation/id")
-   
    seqClose(gds)
-   
    return(snpsData)
    
 }

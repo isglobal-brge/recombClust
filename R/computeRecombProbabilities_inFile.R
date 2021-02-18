@@ -15,6 +15,7 @@
 #' @return probTab: Summarized probabilities by window
 computeRecombProbabilities_inFile <- function(filename, range, samples = NULL, window = 500, minmaf = 0.1, ...) {
    
+   
    # initialize values
    gcstart <- start(range)
    gcend <- end(range)
@@ -25,16 +26,25 @@ computeRecombProbabilities_inFile <- function(filename, range, samples = NULL, w
    # Read data 
    snpsData <- getData(gds_file, range, samples, minmaf)
    
-   # get genomic coordinates position in file
-   pos.gcoord <- CgetIndexfromGenCoord(gds_file, seqlevels(range), start(range), end(range), 0.1)
    
-   annot <- makeGRangesFromDataFrame(snpsData$map, start.field = "position", 
-                                     end.field = "position")
+   if( ! is.na(snpsData)){
+      
+      # get genomic coordinates position in file
+      pos.gcoord <- CgetIndexfromGenCoord(gds_file, seqlevels(range), start(range), end(range), 0.1)
+      
+      annot <- makeGRangesFromDataFrame(snpsData$map, start.field = "position", 
+                                        end.field = "position")
+      
+      # Get models
+      haplos <- snpsData$genotypes[, pos.gcoord$SNPs]
    
-   # Get models
-   haplos <- snpsData$genotypes[, pos.gcoord$SNPs]
-
-   results <- computeRecombProbabilities(haplos, annot, range, window = 500)
+      results <- computeRecombProbabilities(haplos, annot, range, window = 500)
+      
+   }else {
+      
+      results <- NA
+      
+   }
 
    # # Return models and matrix with summarized probabilities by widow
    return(results)

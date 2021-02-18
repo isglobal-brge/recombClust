@@ -13,7 +13,7 @@ CgetIndexfromGenCoord <- function(filename, chrom, gcstart=NULL, gcend=NULL, min
 {
    
    # Open file
-   gds <- seqOpen(filename)
+   gds <- seqOpen(filename, readonly = TRUE)
 
    # Get gds filtered data by minmaf
    seqSetFilterCond(gds, maf=minmaf, .progress = FALSE, verbose = TRUE)

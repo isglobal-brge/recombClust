@@ -65,15 +65,34 @@ std::string getFileName(std::string filePath, bool wext, char separator )
 }
 
 
+// // Return file name and path without extension
+// std::string getPath(std::string filePath)
+// {
+//    // Find lenght of filename
+//    std::size_t pos = getFileName(filePath, true, '/').length();
+//    
+//    // If point of extension is found
+//    if (pos != std::string::npos)
+//       return filePath.substr(0, filePath.length() - pos ); // return filename
+//    
+//    return filePath;
+// }
+
+
+
 // Return file name and path without extension
 std::string getPath(std::string filePath)
 {
-   // Find lenght of filename
-   std::size_t pos = getFileName(filePath, true, '/').length();
+   char sep = '/';
    
-   // If point of extension is found
-   if (pos != std::string::npos)
-      return filePath.substr(0, filePath.length() - pos ); // return filename
+#ifdef _WIN32
+   sep = '\\';
+#endif
    
-   return filePath;
+   size_t i = filePath.rfind(sep, filePath.length());
+   if (i != std::string::npos) {
+      return(filePath.substr(0, i));
+   }
+   
+   return("");
 }
