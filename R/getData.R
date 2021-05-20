@@ -42,7 +42,7 @@ getData <- function(filename, range, samples, minmaf = 0.1) {
       seqSetFilter(gds, variant.id = svn)
    }else {
       seqClose(gds)
-      message("No SNP`s in selected range")
+      message("No variants in selected range")
       return(NA)
    }
    

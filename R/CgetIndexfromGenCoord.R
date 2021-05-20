@@ -27,14 +27,14 @@ CgetIndexfromGenCoord <- function(filename, chrom, gcstart=NULL, gcend=NULL, min
    if( is.null(gcstart)) 
       ipos <- min(which(SeqArray::seqGetData(gds, "chromosome")==chrom))
    else
-      ipos <- which(SeqArray::seqGetData(gds, "chromosome")==chrom && 
-                       min(SeqArray::seqGetData(gds, "position")[which(SeqArray::seqGetData(gds, "position")>=gcstart )] ) ) 
+      ipos <- min(intersect( which(SeqArray::seqGetData(gds, "chromosome")==chrom),
+                             which(SeqArray::seqGetData(gds, "position")>=gcstart ))) 
    
    if(is.null(gcend))
       epos <- max(which(SeqArray::seqGetData(gds, "chromosome")==chrom))
    else
-      epos <- which(SeqArray::seqGetData(gds, "chromosome")==chrom && 
-                       max(SeqArray::seqGetData(gds, "position")[which(SeqArray::seqGetData(gds, "position")<=gcend )] ) ) 
+      epos <- max(intersect( which(SeqArray::seqGetData(gds, "chromosome")==chrom),
+                             which(SeqArray::seqGetData(gds, "position")<=gcend ))) 
    
    if( is.null(ipos) || is.null(epos)) {
       message("No data found between start and end genomic coordinates")
