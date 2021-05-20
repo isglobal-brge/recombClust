@@ -74,7 +74,7 @@ std::string CGetDatafromFile( std::string file)
    
       if(FileExist (file))
       {
-         Rcpp::Rcout<<"\n File exists\n";
+         //..// Rcpp::Rcout<<"\n File exists\n";
          // Get filepath decomposition
          path = getPath(file);
          std::string filename = getFileName(file, false, '/');
@@ -100,7 +100,8 @@ std::string CGetDatafromFile( std::string file)
             outputfile = path + fileWithoutExt + ".gds";
             
          } else if (extension == ".gds"){
-            outputfile = path + file;
+
+            outputfile = file;
             
          }
             

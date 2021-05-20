@@ -52,6 +52,10 @@ std::string getFileExtension(std::string filePath)
 // Return file name with or without extension
 std::string getFileName(std::string filePath, bool wext, char separator )
 {
+   
+   // Remove path from filePath
+   filePath = filePath.substr(getPath(filePath).length(), filePath.length());
+
    // Get dot position (last)
    std::size_t dpos = filePath.rfind('.');
    std::size_t spos = filePath.rfind(separator);
