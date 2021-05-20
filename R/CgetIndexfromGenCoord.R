@@ -27,14 +27,21 @@ CgetIndexfromGenCoord <- function(filename, chrom, gcstart=NULL, gcend=NULL, min
    if( is.null(gcstart)) 
       ipos <- min(which(SeqArray::seqGetData(gds, "chromosome")==chrom))
    else
-      ipos <- which(SeqArray::seqGetData(gds, "chromosome")==chrom & SeqArray::seqGetData(gds, "position")==gcstart)
+      ipos <- which(SeqArray::seqGetData(gds, "chromosome")==chrom && 
+                       min(SeqArray::seqGetData(gds, "position")[which(SeqArray::seqGetData(gds, "position")>=gcstart )] ) ) 
    
    if(is.null(gcend))
       epos <- max(which(SeqArray::seqGetData(gds, "chromosome")==chrom))
    else
-      epos <- which(SeqArray::seqGetData(gds, "chromosome")==chrom & SeqArray::seqGetData(gds, "position")==gcend)
+      epos <- which(SeqArray::seqGetData(gds, "chromosome")==chrom && 
+                       max(SeqArray::seqGetData(gds, "position")[which(SeqArray::seqGetData(gds, "position")<=gcend )] ) ) 
    
-   workSNPs <- SeqArray::seqGetData(gds,"annotation/id")[ipos:epos]
+   if( is.null(ipos) || is.null(epos)) {
+      message("No data found between start and end genomic coordinates")
+      workSNPs <- NA
+   } else {
+      workSNPs <- SeqArray::seqGetData(gds,"annotation/id")[ipos:epos]
+   }
       
    seqClose(gds)
    

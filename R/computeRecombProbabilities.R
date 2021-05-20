@@ -21,13 +21,17 @@ computeRecombProbabilities <- function(haplos, annot, range, window = 500, ...)
   ## Remove failed models
   goodModels <- vapply(models, class, character(1)) == "list"
 
-  # Get matrix
-  matProb <- createMatrixfromModels(models[goodModels], range)
-
-  # # Summarize recombClust probabilities by windows
-  matWindProb <- getRecombProb(matProb$mat, matProb$annot, range, window)
-
-  #
+  if(length(goodModels)>0){
+    # Get matrix
+    matProb <- createMatrixfromModels(models[goodModels], range)
+  
+    # Summarize recombClust probabilities by windows
+    matWindProb <- getRecombProb(matProb$mat, matProb$annot, range, window)
+    
+  } else {
+    matWindProb <- NA
+  }
+  
   # # Return models and matrix with summarized probabilities by widow
   return(probTab = matWindProb)
 }

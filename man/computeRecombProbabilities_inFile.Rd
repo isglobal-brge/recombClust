@@ -19,13 +19,13 @@ computeRecombProbabilities_inFile(
 
 \item{range}{Region GenomicRanges}
 
+\item{samples}{optional, character vector with sample ids to be used to compute models}
+
 \item{window}{only to debug, by default window = 500bp}
 
 \item{...}{Further arguments passed to runLDmixtureModel}
 
 \item{annot}{GenomicRanges with the SNPs annotation}
-
-\item{@param}{samples optional, character vector with sample ids to be used to compute models}
 }
 \value{
 probTab: Summarized probabilities by window

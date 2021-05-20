@@ -30,6 +30,7 @@ getData <- function(filename, range, samples, minmaf = 0.1) {
    if( sum(countOverlaps(granges(gds), range))>0 ){
       seqSetFilterCond(gds, maf=rep(minmaf,length(start(range))), .progress = FALSE, verbose = TRUE)
    } else {
+      seqClose(gds)
       message("No SNP`s in selected range")
       return(NA)
    }
@@ -40,6 +41,7 @@ getData <- function(filename, range, samples, minmaf = 0.1) {
    if(!is.null(svn)){
       seqSetFilter(gds, variant.id = svn)
    }else {
+      seqClose(gds)
       message("No SNP`s in selected range")
       return(NA)
    }
@@ -59,7 +61,12 @@ getData <- function(filename, range, samples, minmaf = 0.1) {
       snpsData <- list(genotypes = geno.snpmatrix, map = data.frame(name = colnames(geno.snpmatrix)))
       snpsData$map$position <- SeqArray::seqGetData(gds, "position")
       snpsData$map$chromosome <- SeqArray::seqGetData(gds, "chromosome")
-      rownames(snpsData$map) <- seqGetData(gds, "annotation/id")
+      new_rownames <- sapply(seq(1,length(seqGetData(gds, "annotation/id"))), function(x, data) { name = data[x] 
+                                                                                                  if(data[x] == "") 
+                                                                                                     name = paste0("NA.",x)
+                                                                                                  return(name) },
+                             data = seqGetData(gds, "annotation/id") )
+      rownames(snpsData$map) <- new_rownames
    } else {
       snpsData <- NA
    }
