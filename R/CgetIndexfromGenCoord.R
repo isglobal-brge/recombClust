@@ -41,6 +41,9 @@ CgetIndexfromGenCoord <- function(filename, chrom, gcstart=NULL, gcend=NULL, min
       workSNPs <- NA
    } else {
       workSNPs <- SeqArray::seqGetData(gds,"annotation/id")[ipos:epos]
+      if(length(workSNPs)<=1) {
+         workSNPs <- NA
+      }
    }
       
    seqClose(gds)
