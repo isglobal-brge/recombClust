@@ -18,7 +18,8 @@ recombClust depends on some Bioconductor packages. These can be installed using 
 if (!requireNamespace("BiocManager", quietly = TRUE))
     install.packages("BiocManager")
 
-BiocManager::install(c("GenomicRanges", "BiocParallel", "S4Vectors", "gtools", "stats", "VariantAnnotation", "SeqVarTools"))
+BiocManager::install(c("GenomicRanges", "BiocParallel", "S4Vectors", 
+               "gtools", "stats", "VariantAnnotation", "SeqVarTools"))
 ```
 
 ### Installation
