@@ -37,6 +37,9 @@ computeRecombProbabilities_inFile <- function(filename, range, samples = NULL, w
          annot <- makeGRangesFromDataFrame(snpsData$map, start.field = "position", 
                                            end.field = "position")
          
+         # Filter pos.gcoord$SNPs in snpsData$genotypes before select data
+         pos.gcoord$SNPs <- pos.gcoord$SNPs[ which(pos.gcoord$SNPs %in% colnames(snpsData$genotypes) )] 
+         
          # Get models
          haplos <- snpsData$genotypes[, pos.gcoord$SNPs]
       
