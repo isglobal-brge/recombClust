@@ -32,7 +32,7 @@ computeRecombProbabilities_inFile <- function(filename, range, samples = NULL, w
       # get genomic coordinates position in file
       pos.gcoord <- CgetIndexfromGenCoord(gds_file, seqlevels(range), start(range), end(range), 0.1)
       
-      if(!is.na(pos.gcoord$SNPs[1])) {
+      if(!is.na(pos.gcoord$SNPs[1]) && length(pos.gcoord$SNPs)>1 ) {
       
          annot <- makeGRangesFromDataFrame(snpsData$map, start.field = "position", 
                                            end.field = "position")
