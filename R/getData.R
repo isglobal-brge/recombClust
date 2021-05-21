@@ -27,7 +27,7 @@ getData <- function(filename, range, samples, minmaf = 0.1) {
    minmaf = minmaf + 1e-9 # To force filter to be strictly greater
    
    # Filter by range
-   if( sum(countOverlaps(granges(gds), range))>0 ){
+   if( length(findOverlaps(granges(gds), range))>0 ){
       seqSetFilterCond(gds, maf=rep(minmaf,length(start(range))), .progress = FALSE, verbose = TRUE)
    } else {
       seqClose(gds)
