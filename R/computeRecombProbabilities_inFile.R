@@ -37,13 +37,17 @@ computeRecombProbabilities_inFile <- function(filename, range, samples = NULL, w
          annot <- makeGRangesFromDataFrame(snpsData$map, start.field = "position", 
                                            end.field = "position")
          
-         # Filter pos.gcoord$SNPs in snpsData$genotypes before select data
+         # Filter pos.gcoord$SNPs in snpsData$genotypes colnames before select data to avoid subscript out of bounds.
          pos.gcoord$SNPs <- pos.gcoord$SNPs[ which(pos.gcoord$SNPs %in% colnames(snpsData$genotypes) )] 
          
+         # Get intersection with pos.gcoord$SNPs and annot to filter common data - subscript out of bounds in happlos and annot
+         commonrs <- intersect(pos.gcoord$SNPs, colnames(snpsData$genotypes))
+         
          # Get models
-         haplos <- snpsData$genotypes[, pos.gcoord$SNPs]
+         # haplos <- snpsData$genotypes[, pos.gcoord$SNPs]
+         haplos <- snpsData$genotypes[, commonrs]
       
-         results <- computeRecombProbabilities(haplos, annot, range, window = 500)
+         results <- computeRecombProbabilities(haplos, annot[which(names(annot) %in% commonrs),], range, window = 500)
       } else {
          results <- NA
       }

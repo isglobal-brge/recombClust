@@ -6,6 +6,11 @@
 
 using namespace Rcpp;
 
+#ifdef RCPP_USE_GLOBAL_ROSTREAM
+Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
+Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
+#endif
+
 // BigLD
 Rcpp::RObject BigLD(Rcpp::RObject corMat, Nullable<double> CLQcut, Nullable<int> clstgap, std::string CLQmode, std::string hrstType, Nullable<int> hrstParam, std::string chrN);
 RcppExport SEXP _recombClust_BigLD(SEXP corMatSEXP, SEXP CLQcutSEXP, SEXP clstgapSEXP, SEXP CLQmodeSEXP, SEXP hrstTypeSEXP, SEXP hrstParamSEXP, SEXP chrNSEXP) {

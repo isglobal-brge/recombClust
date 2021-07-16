@@ -40,11 +40,11 @@ List LDmixtureModel( RObject dat, Nullable<int> maxSteps = R_NilValue, Nullable<
    double dprob0;
    CharacterMatrix cdat = transpose(as<CharacterMatrix>(dat));
 
-   
+
    // Variable initialization default values
    if(maxSteps.isNotNull())  imaxSteps = as<int> (maxSteps);
    else    imaxSteps = 100;
-   
+
    if(prob0.isNotNull())  dprob0 = as<double> (prob0);
    else    dprob0 = 0.5;
    
@@ -57,13 +57,13 @@ List LDmixtureModel( RObject dat, Nullable<int> maxSteps = R_NilValue, Nullable<
    
    NumericVector r1(inds.length()); 
    r1.fill(1);
-   
+
    NumericVector propsRecomb = CRecombFreq(r1, inds, iblocksize);
    NumericVector propsLink = CLinkageFreq(r1, inds, iblocksize);
   
    r1 = getNumericVectorfromStringVector( VectortoOrderedMap(propsRecomb), inds );
    NumericVector r2 = getNumericVectorfromStringVector( VectortoOrderedMap(propsLink), inds );
-   
+
    r1.attr("names") = inds;
    r2.attr("names") = inds;
    
@@ -77,7 +77,7 @@ List LDmixtureModel( RObject dat, Nullable<int> maxSteps = R_NilValue, Nullable<
    List params =  List::create(Named("r1") = r1,  Named("r2") = r2,  
                                Named("props1") = propsRecomb, Named("props2") = propsLink,
                                Named("prob0") = dprob0, Named("inds") = inds, Named("blocksize") = iblocksize);
- 
+
    // EM loop
    double tol =  1;
    int steps = 1;
@@ -95,7 +95,7 @@ List LDmixtureModel( RObject dat, Nullable<int> maxSteps = R_NilValue, Nullable<
       
       NumericVector difprops1 = (parprops1 - nparprops1);
       NumericVector difprops2 = (parprops2 - nparprops2);
-      
+
       tol = sqrt( std::inner_product(difprops1.begin(), difprops1.end(), difprops1.begin(), 0.0) +
                   std::inner_product(difprops2.begin(), difprops2.end(), difprops2.begin(), 0.0) +
                   abs(as<double>(params["prob0"]) - as<double>(newparams["prob0"])) );
@@ -103,13 +103,13 @@ List LDmixtureModel( RObject dat, Nullable<int> maxSteps = R_NilValue, Nullable<
       params = clone(newparams);
       
       steps = steps+1;
-      
+
       // If one of the populations have all samples, leave the loop
       if (as<double>(newparams["prob0"]) == 1 || as<double>(newparams["prob0"]) == 0) {
          break;
       }
    }
-   
+
    //get last values to compute likelihood of the complete inversion model
    r1 = as<double>(params["prob0"]) * getNumericVectorfromStringVector( VectortoOrderedMap(as<NumericVector>(params["props1"])), inds );
    r2 = (1 - as<double>(params["prob0"])) * getNumericVectorfromStringVector( VectortoOrderedMap(as<NumericVector>(params["props2"])), inds );
@@ -118,7 +118,7 @@ List LDmixtureModel( RObject dat, Nullable<int> maxSteps = R_NilValue, Nullable<
    NumericVector R1 = r1/(r1 + r2);
    
    R1.attr("names") = inds;
-         
+
    return  List::create(Named("logNoLD") = LoglikeRecomb,  
                         Named("prob") = as<double>(params["prob0"]),
                         Named("r1") = R1);
