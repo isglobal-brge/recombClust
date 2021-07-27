@@ -27,6 +27,7 @@ computeRecombProbabilities <- function(haplos, annot, range, window = 500, ...)
   
     # Summarize recombClust probabilities by windows
     matWindProb <- getRecombProb(matProb$mat, matProb$annot, range, window)
+    rownames(matWindProb) <- rownames(haplos)
     
   } else {
     matWindProb <- NA
