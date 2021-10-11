@@ -7,6 +7,17 @@ using namespace Rcpp;
 //' Run LDmixture model to a pair of SNP-blocks
 //'
 //' @param dat Matrix with the genotype data
+//' @param resfilename string, path and file name to store results. By default
+//' this runLDmixture stores data in recombClustResults.hdf5, if resfilename 
+//' is empty then function works on memory. To work with big regions it is 
+//' recommended to work with data on disk. Only use resfilename = "" when regions 
+//' are small in order to prevent memory overflows and low performance.
+//' @param resgroup string, folder inside a file where we want to store results. By default
+//' runLDmixture stores data inside group "AllModels" in resfilename file.
+//' @param overwrite boolean, (optional) either a logical value indicating whether
+//' the output file can be overwritten or not, by default files are not overwritten.
+//' @param grstart Numerical genomic region start
+//' @param grend Numerical genomic region end
 //' @param maxSteps Numerical with the maximum number of iterations run by the EM algorithm
 //' @param prob0 Initial mixture probability.
 //' @return A list with the LDmixture results
@@ -23,7 +34,13 @@ using namespace Rcpp;
 //' }
 //' @export
 // [[Rcpp::export]]
-List LDmixtureModel( RObject dat, Nullable<int> maxSteps = R_NilValue, Nullable<double> prob0 = R_NilValue,  Nullable<int> blocksize = R_NilValue) 
+List LDmixtureModel( RObject dat, 
+                     std::string resfilename, std::string resgroup,
+                     bool overwrite,
+                     std::string grchr, double grstart, double grend,
+                     Nullable<int> maxSteps = R_NilValue, 
+                     Nullable<double> prob0 = R_NilValue,
+                     Nullable<int> blocksize = R_NilValue) 
 {
 /* dat conté : 
               [,1] [,2]
@@ -118,10 +135,24 @@ List LDmixtureModel( RObject dat, Nullable<int> maxSteps = R_NilValue, Nullable<
    NumericVector R1 = r1/(r1 + r2);
    
    R1.attr("names") = inds;
+   
+   if(resfilename.compare("") == 0)
+   {
+      return  List::create(   Named("logNoLD") = LoglikeRecomb,  
+                              Named("prob") = as<double>(params["prob0"]),
+                              Named("r1") = R1,
+                              Named("annot") = NumericVector::create(_["start"] = grstart, 
+                                    _["end"] = grend)
+      );
+      
+   } else {
+      // Write data to disk
+      writeResultModel( resfilename, resgroup, LoglikeRecomb, as<double>(params["prob0"]), R1, grchr, grstart, grend );
+      
+      return(NULL);
+   }
 
-   return  List::create(Named("logNoLD") = LoglikeRecomb,  
-                        Named("prob") = as<double>(params["prob0"]),
-                        Named("r1") = R1);
+   
    
 }   
 

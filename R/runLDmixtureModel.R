@@ -7,6 +7,16 @@
 #'
 #' @param haplos Matrix with the haplotypes (SNPs in columns, samples in rows)
 #' @param annot GenomicRanges with the SNPs annotation
+#' @param range Region GenomicRanges
+#' @param resfilename string, path and file name to store results. By default
+#' this runLDmixture stores data in recombClustResults.hdf5, if resfilename 
+#' is empty then function works on memory. To work with big regions it is recommended 
+#' to work with data on disk. Only use resfilename = "" when regions are small in order to 
+#' prevent memory overflows and low performance.
+#' @param resgroup string, folder inside a file where we want to store results. By default
+#' runLDmixture stores data inside group "AllModels" in resfilename file.
+#' @param overwrite boolean, (optional) either a logical value indicating whether
+#' the output file can be overwritten or not, by default files are not overwritten.
 #' @param blockSize Numeric with the size of the SNP block (Default: 2)
 #' @param distance Numeric with the maximum distance in bases to pair two blocks. (Default: 1e5)
 #' @param BPPARAM  An object from \code{BiocParallelParam}. It allow running the models
@@ -23,16 +33,22 @@
 #'  \item{"pval"}{P-value of the Chi-square test}
 #'  \item{"r1"}{Responsibilities for recomb population of each chromosomes.}
 #' }
-runLDmixtureModel <- function(haplos, annot, blockSize = 2, distance = 1e4,
-                              BPPARAM = BiocParallel::SerialParam()){
+runLDmixtureModel <- function(haplos, annot, range, resfilename, resgroup,
+                              overwrite, blockSize = 2, distance = 1e4,
+                              BPPARAM = BiocParallel::SerialParam()) {
 
   # Make list of SNP pairs to test
   GRblocks <- GenomicRanges::GRanges(
-    paste0(GenomicRanges::seqnames(annot)[1], ":",
-           GenomicRanges::start(annot)[1:(length(annot) - blockSize + 1)], "-",
-           GenomicRanges::end(annot)[blockSize:(length(annot))]))
-  GRblocks$Ind <- lapply(1:(length(annot) - blockSize + 1),
-                         function(x) seq(x, x + blockSize -1, 1))
+    paste0(
+      GenomicRanges::seqnames(annot)[1], ":",
+      GenomicRanges::start(annot)[1:(length(annot) - blockSize + 1)], "-",
+      GenomicRanges::end(annot)[blockSize:(length(annot))]
+    )
+  )
+  GRblocks$Ind <- lapply(
+    1:(length(annot) - blockSize + 1),
+    function(x) seq(x, x + blockSize - 1, 1)
+  )
 
   # Select pairs of blocks that are closer than distance
   overlaps <- GenomicRanges::findOverlaps(GenomicRanges::resize(GRblocks, distance), GRblocks)
@@ -40,23 +56,37 @@ runLDmixtureModel <- function(haplos, annot, blockSize = 2, distance = 1e4,
 
   ## Remove overlapping pairs of blocks
   overlaps <- overlaps[!S4Vectors::`%in%`(overlaps, autoOverlaps)]
+  
+  
+  # Obtenir finestres : 
+  windws <- getWindows(GenomicRanges::resize(GRblocks, distance)[ queryHits(overlaps)], range)
+  # getWindows(GenomicRanges::resize(GRblocks, distance)[ queryHits(overlaps)], range)
 
+  # Test if we need to write data to disk or not.
+  if( resfilename != ""){
+     # Preparar fitxer per escriure resultats (test existeix + overwrite + ....)
+     # si no passa el test ==> Error i acabem.
+  }
+     
   # Run model over the SNP-block pairs
-  models <- BiocParallel::bplapply(seq_len(length(overlaps)), function(ind){
+  models <- BiocParallel::bplapply(seq_len(length(overlaps)), function(ind) {
     bl1 <- S4Vectors::from(overlaps)[ind]
     bl2 <- S4Vectors::to(overlaps)[ind]
     ind1 <- GRblocks$Ind[[bl1]]
     ind2 <- GRblocks$Ind[[bl2]]
-   
+
     res <- LDmixtureModel(cbind(
-       apply(haplos[, ind1], 1, function(x) paste(x, collapse = "")),
-       apply(haplos[, ind2], 1, function(x) paste(x, collapse = ""))
-    ))
-     
-    res$annot <- c(start = GenomicRanges::start(GRblocks[bl1]),
-                    end = GenomicRanges::start(GRblocks[bl2]))
-    res
-   }, BPPARAM = BPPARAM)
-   
+                  apply(haplos[, ind1], 1, function(x) paste(x, collapse = "")),
+                  apply(haplos[, ind2], 1, function(x) paste(x, collapse = ""))),
+                resfilename,
+                grchr = seqlevels(GRblocks[bl1]),
+                grstart = GenomicRanges::start(GRblocks[bl1]), 
+                grend = GenomicRanges::start(GRblocks[bl2]) 
+            )
+    
+    return(res)
+
+  }, BPPARAM = BPPARAM)
+
   models
 }

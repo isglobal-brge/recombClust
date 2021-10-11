@@ -1,6 +1,6 @@
 Package: recombClust
 Title: Group chromosomes by recombination history
-Version: 0.1.1
+Version: 0.2.1
 Authors@R: c(person("Carlos", "Ruiz-Arenas", , "carlos.ruiz@isglobal.org", role = c("aut", "cre")),
   person("Dolors", "Pelegri-Siso", , "dolors.pelegri@isglobal.org", role = "aut"),
   person("Alejandro", "Caceres", ,"alejandro.caceres@isglobal.org", role = "aut"),
@@ -23,11 +23,16 @@ Imports:
     gtools,
     stats,
     Rcpp,
-    RcppEigen (>= 0.3.3.5.0),
     SeqVarTools
-LinkingTo: Rcpp, RcppEigen (>= 0.3.3.5.0)
+LinkingTo: 
+    Rcpp, 
+    RcppEigen, 
+    Rhdf5lib
 SystemRequirements: C++11
-Suggests: knitr,
+Suggests: 
+    HDF5Array,
+    knitr,
+    rhdf5,
     BiocStyle,
     rmarkdown
 VignetteBuilder: knitr

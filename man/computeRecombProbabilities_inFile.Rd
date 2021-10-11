@@ -10,18 +10,28 @@ computeRecombProbabilities_inFile(
   samples = NULL,
   window = 500,
   minmaf = 0.1,
+  resfilename = "recombClustResults.hdf5",
   ...
 )
 }
 \arguments{
-\item{filename}{File with genotypic data (SNPs and samples) the data file type must be .vcf (Variant Call Format),
-.gds (Genomic Data Structure) or .bed (Browser Extensible Data).}
+\item{filename}{File with genotypic data (SNPs and samples) the data file 
+type must be .vcf (Variant Call Format), .gds (Genomic Data Structure) or 
+.bed (Browser Extensible Data).}
 
 \item{range}{Region GenomicRanges}
 
 \item{samples}{optional, character vector with sample ids to be used to compute models}
 
 \item{window}{only to debug, by default window = 500bp}
+
+\item{minmaf}{optional, threshold to filter by minimum MAF, by default minmaf = 0.1}
+
+\item{resfilename}{string, path and file name to store results. By default
+this runLDmixture stores data in recombClustResults.hdf5, if resfilename 
+is empty then function works on memory. To work with big regions it is recommended 
+to work with data on disk. Only use resfilename = "" when regions are small in order to 
+prevent memory overflows and low performance.}
 
 \item{...}{Further arguments passed to runLDmixtureModel}
 

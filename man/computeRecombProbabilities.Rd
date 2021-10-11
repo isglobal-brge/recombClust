@@ -4,12 +4,25 @@
 \alias{computeRecombProbabilities}
 \title{Main function to run all the recombClust pipeline}
 \usage{
-computeRecombProbabilities(haplos, annot, range, window = 500, ...)
+computeRecombProbabilities(
+  haplos,
+  annot,
+  range,
+  resfilename = "recombClustResults.hdf5",
+  window = 500,
+  ...
+)
 }
 \arguments{
 \item{annot}{GenomicRanges with the SNPs annotation}
 
 \item{range}{Region GenomicRanges}
+
+\item{resfilename}{string, path and file name to store results. By default
+this runLDmixture stores data in recombClustResults.hdf5, if resfilename 
+is empty then function works on memory. To work with big regions it is recommended 
+to work with data on disk. Only use resfilename = "" when regions are small in order to 
+prevent memory overflows and low performance.}
 
 \item{window}{only to debug, by default window = 500bp}
 

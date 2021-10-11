@@ -69,16 +69,22 @@ BEGIN_RCPP
 END_RCPP
 }
 // LDmixtureModel
-List LDmixtureModel(RObject dat, Nullable<int> maxSteps, Nullable<double> prob0, Nullable<int> blocksize);
-RcppExport SEXP _recombClust_LDmixtureModel(SEXP datSEXP, SEXP maxStepsSEXP, SEXP prob0SEXP, SEXP blocksizeSEXP) {
+List LDmixtureModel(RObject dat, std::string resfilename, std::string resgroup, bool overwrite, std::string grchr, double grstart, double grend, Nullable<int> maxSteps, Nullable<double> prob0, Nullable<int> blocksize);
+RcppExport SEXP _recombClust_LDmixtureModel(SEXP datSEXP, SEXP resfilenameSEXP, SEXP resgroupSEXP, SEXP overwriteSEXP, SEXP grchrSEXP, SEXP grstartSEXP, SEXP grendSEXP, SEXP maxStepsSEXP, SEXP prob0SEXP, SEXP blocksizeSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< RObject >::type dat(datSEXP);
+    Rcpp::traits::input_parameter< std::string >::type resfilename(resfilenameSEXP);
+    Rcpp::traits::input_parameter< std::string >::type resgroup(resgroupSEXP);
+    Rcpp::traits::input_parameter< bool >::type overwrite(overwriteSEXP);
+    Rcpp::traits::input_parameter< std::string >::type grchr(grchrSEXP);
+    Rcpp::traits::input_parameter< double >::type grstart(grstartSEXP);
+    Rcpp::traits::input_parameter< double >::type grend(grendSEXP);
     Rcpp::traits::input_parameter< Nullable<int> >::type maxSteps(maxStepsSEXP);
     Rcpp::traits::input_parameter< Nullable<double> >::type prob0(prob0SEXP);
     Rcpp::traits::input_parameter< Nullable<int> >::type blocksize(blocksizeSEXP);
-    rcpp_result_gen = Rcpp::wrap(LDmixtureModel(dat, maxSteps, prob0, blocksize));
+    rcpp_result_gen = Rcpp::wrap(LDmixtureModel(dat, resfilename, resgroup, overwrite, grchr, grstart, grend, maxSteps, prob0, blocksize));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -171,7 +177,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_recombClust_CLQD_mod", (DL_FUNC) &_recombClust_CLQD_mod, 6},
     {"_recombClust_CWriteResults", (DL_FUNC) &_recombClust_CWriteResults, 3},
     {"_recombClust_get_graph_matrix_data", (DL_FUNC) &_recombClust_get_graph_matrix_data, 2},
-    {"_recombClust_LDmixtureModel", (DL_FUNC) &_recombClust_LDmixtureModel, 4},
+    {"_recombClust_LDmixtureModel", (DL_FUNC) &_recombClust_LDmixtureModel, 10},
     {"_recombClust_removeMatrixColsandRows", (DL_FUNC) &_recombClust_removeMatrixColsandRows, 2},
     {"_recombClust_CGetDatafromFile", (DL_FUNC) &_recombClust_CGetDatafromFile, 1},
     {"_recombClust_CgdsSNPpairMatrix", (DL_FUNC) &_recombClust_CgdsSNPpairMatrix, 1},

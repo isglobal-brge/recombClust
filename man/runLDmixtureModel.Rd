@@ -7,6 +7,8 @@
 runLDmixtureModel(
   haplos,
   annot,
+  range,
+  resfilename,
   blockSize = 2,
   distance = 10000,
   BPPARAM = BiocParallel::SerialParam()
@@ -17,12 +19,25 @@ runLDmixtureModel(
 
 \item{annot}{GenomicRanges with the SNPs annotation}
 
+\item{range}{Region GenomicRanges}
+
+\item{resfilename}{string, path and file name to store results. By default
+this runLDmixture stores data in recombClustResults.hdf5, if resfilename 
+is empty then function works on memory. To work with big regions it is recommended 
+to work with data on disk. Only use resfilename = "" when regions are small in order to 
+prevent memory overflows and low performance.}
+
 \item{blockSize}{Numeric with the size of the SNP block (Default: 2)}
 
 \item{distance}{Numeric with the maximum distance in bases to pair two blocks. (Default: 1e5)}
 
 \item{BPPARAM}{An object from \code{BiocParallelParam}. It allow running the models
 in parallel. By default, the models are run in serial.}
+
+\item{workdisk}{optional boolean, to indicate if results are stored in 
+memory or on disk, to work with big regions it is recomended to work with 
+data on disk. Only use workdisk = FALSE when regions are small in order to 
+prevent memory overflows and low performance.}
 }
 \value{
 A list with the results of the LDmixture models. Each element is a model

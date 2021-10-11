@@ -8,6 +8,7 @@
    #include "CMapUtils.h"
    #include "CUpdateModel.h"
    #include "CMapUtils.h"
+   #include "CwriteModelHdf5.h"
 
 
    using namespace Rcpp;
@@ -28,6 +29,12 @@
       }
    };
 
-   Rcpp::List LDmixtureModel( Rcpp::RObject dat, int maxSteps, double prob0, int blocksize );
+   List LDmixtureModel( RObject dat, 
+                        std::string resfilename, std::string resgroup,
+                        bool overwrite,
+                        std::string grchr, double grstart, double grend,
+                        Nullable<int> maxSteps, 
+                        Nullable<double> prob0,
+                        Nullable<int> blocksize );
       
 #endif

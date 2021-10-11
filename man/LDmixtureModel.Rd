@@ -4,10 +4,28 @@
 \alias{LDmixtureModel}
 \title{Run LDmixture model to a pair of SNP-blocks}
 \usage{
-LDmixtureModel(dat, maxSteps = NULL, prob0 = NULL, blocksize = NULL)
+LDmixtureModel(
+  dat,
+  resfilename,
+  grstart,
+  grend,
+  maxSteps = NULL,
+  prob0 = NULL,
+  blocksize = NULL
+)
 }
 \arguments{
 \item{dat}{Matrix with the genotype data}
+
+\item{resfilename}{string, path and file name to store results. By default
+this runLDmixture stores data in recombClustResults.hdf5, if resfilename 
+is empty then function works on memory. To work with big regions it is 
+recommended to work with data on disk. Only use resfilename = "" when regions 
+are small in order to prevent memory overflows and low performance.}
+
+\item{grstart}{Numerical genomic region start}
+
+\item{grend}{Numerical genomic region end}
 
 \item{maxSteps}{Numerical with the maximum number of iterations run by the EM algorithm}
 
