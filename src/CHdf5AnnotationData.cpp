@@ -37,8 +37,6 @@ Rcpp::RObject getAnnotationDataHdf5(std::string resfilename, std::string resgrou
         {
             std::string strdataset = resgroup +"/" + datasets(i);
             
-            Rcpp::Rcout<<"\nDataset a llegir : "<<strdataset<<"\n";
-
             if( exists_HDF5_element_ptr(file, strdataset ) == 0 ) {
                 file->close();
                 Rcpp::Rcout<<"Group or dataset does not exists, please create the input dataset before proceed";
@@ -57,23 +55,29 @@ Rcpp::RObject getAnnotationDataHdf5(std::string resfilename, std::string resgrou
             IntegerVector count = IntegerVector::create(dims_out[0], 2);
             IntegerVector offset = IntegerVector::create(0, dims_out[1]-2);
             
-            Rcpp::Rcout<<"\n Llegirem x per y posicions : "<<count[0]<< "--" <<count[1]<<"\n";
-            Rcpp::Rcout<<"\n Començat a la posició x - y : "<<offset[0]<< "--" <<offset[1]<<"\n";
-            
-            
             // Real data set dimension
             NumericMatrix data( dims_out[0], 2 );
-            
-            
-            // FALLA A LA LECTURA !!! ESTÀ LLEGINT EN ALGUNA POSICIÓ QUE NO TOCA???!!!
-            // SEGUR QUE SI QUE ES AIXÒ !!!
+
             read_HDF5_matrix_subset(file, pdataset, offset, count, stride, block, REAL(data) );
             
-            allAnnotations.resize(allAnnotations.rows() + data.nrow() , allAnnotations.cols());
-            allAnnotations << allAnnotations, 
-                              Rcpp::as<Eigen::Map<Eigen::MatrixXd> >(data);
+            Eigen::Map<Eigen::Matrix<double,Eigen::Dynamic,Eigen::Dynamic,Eigen::ColMajor> > mTrans((Rcpp::as<Eigen::MatrixXd>(data).data()), data.cols(), data.rows());
+            Eigen::VectorXd chr =  Eigen::VectorXd::Constant(data.rows(), atoi(datasets(i)));
             
-            
+            if(allAnnotations.rows() == 0 && allAnnotations.cols() == 0){
+                allAnnotations.resize( mTrans.rows() +1 ,  mTrans.cols());
+                allAnnotations << chr.transpose(), mTrans;
+            } else {
+                // else Not tested
+                Eigen::MatrixXd curannot;
+                curannot.resize( mTrans.rows() +1 ,  mTrans.cols());
+                curannot << chr.transpose(), mTrans;
+                
+                allAnnotations.resize( allAnnotations.rows() + curannot.rows()  ,  allAnnotations.cols());
+                allAnnotations << allAnnotations, 
+                                  curannot;
+                
+            }
+
         }
             
         // Open file
@@ -106,6 +110,6 @@ Rcpp::RObject getAnnotationDataHdf5(std::string resfilename, std::string resgrou
 
     pdataset->close();
     file->close();
-    return(wrap(allAnnotations));
+    return(wrap(allAnnotations.transpose()));
     
 }

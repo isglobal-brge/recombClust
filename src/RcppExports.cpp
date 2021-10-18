@@ -220,6 +220,21 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// getProbs_hdf5
+Rcpp::RObject getProbs_hdf5(std::string filename, std::string group, Rcpp::RObject selection, Rcpp::Nullable<std::string> outgroup, Rcpp::Nullable<std::string> outdataset);
+RcppExport SEXP _recombClust_getProbs_hdf5(SEXP filenameSEXP, SEXP groupSEXP, SEXP selectionSEXP, SEXP outgroupSEXP, SEXP outdatasetSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::string >::type filename(filenameSEXP);
+    Rcpp::traits::input_parameter< std::string >::type group(groupSEXP);
+    Rcpp::traits::input_parameter< Rcpp::RObject >::type selection(selectionSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<std::string> >::type outgroup(outgroupSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<std::string> >::type outdataset(outdatasetSEXP);
+    rcpp_result_gen = Rcpp::wrap(getProbs_hdf5(filename, group, selection, outgroup, outdataset));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_recombClust_BigLD", (DL_FUNC) &_recombClust_BigLD, 7},
@@ -238,6 +253,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_recombClust_CTransformtoSampleAlleles", (DL_FUNC) &_recombClust_CTransformtoSampleAlleles, 4},
     {"_recombClust_getCorrelationMatrix", (DL_FUNC) &_recombClust_getCorrelationMatrix, 2},
     {"_recombClust_getProbs", (DL_FUNC) &_recombClust_getProbs, 2},
+    {"_recombClust_getProbs_hdf5", (DL_FUNC) &_recombClust_getProbs_hdf5, 5},
     {NULL, NULL, 0}
 };
 

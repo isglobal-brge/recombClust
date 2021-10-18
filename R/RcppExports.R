@@ -243,3 +243,13 @@ getProbs <- function(mat, sel) {
     .Call('_recombClust_getProbs', PACKAGE = 'recombClust', mat, sel)
 }
 
+#' Compute cluster Recomb freq by mean of voting
+#'
+#' @param mat with initial probabilities
+#' @param sel overlap ranges
+#' @return NumericVector with recombination probabilites
+#' @export
+getProbs_hdf5 <- function(filename, group, selection, outgroup = NULL, outdataset = NULL) {
+    .Call('_recombClust_getProbs_hdf5', PACKAGE = 'recombClust', filename, group, selection, outgroup, outdataset)
+}
+

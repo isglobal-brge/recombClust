@@ -44,7 +44,7 @@ computeRecombProbabilities <- function(haplos, annot, range,
             rownames(matWindProb) <- rownames(haplos)
             
         } else {
-            ## getRecombProb_hdf5(resfilename, resgroup, range, window)
+            getRecombProb_hdf5(resfilename, resgroup, range, window)
         }
         
     } else {

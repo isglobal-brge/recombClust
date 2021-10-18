@@ -678,19 +678,15 @@ int read_HDF5_matrix_subset(H5File* file, DataSet* dataset,
 
       DataSpace memspace(RANK2, dimsm, NULL);
 
-      Rcpp::Rcout<<"\nError - 1";
       //  Get dataspace of the dataset.
       DataSpace dataspace = dataset->getSpace();
       dataspace.selectHyperslab(H5S_SELECT_SET, count, offset, stride, block);
-      Rcpp::Rcout<<"\nError - 2";
       H5T_class_t type_class = dataset->getTypeClass();
-      Rcpp::Rcout<<"\nError - 3";
       // Get class of datatype and print message if it's an integer.
       if( type_class == H5T_INTEGER )
          dataset->read( rdatablock, PredType::NATIVE_INT, memspace, dataspace );
       else if (type_class == H5T_FLOAT)
          dataset->read( rdatablock, PredType::NATIVE_DOUBLE, memspace, dataspace );
-      Rcpp::Rcout<<"\nError - 4";
       dataspace.close();
    } catch(H5::FileIException& error) { // catch failure caused by the H5File operations
        dataset->close();

@@ -16,19 +16,21 @@ getRecombProb_hdf5 <- function(filename, group, range, window = 500) {
   starts <- seq(start(range), end(range), window)
   chunks <- GRanges(seqnames = seqnames(range), IRanges(start = starts, width = window))
   
-  annot = getAnnotationDataHdf5(filename, group, seqnames(ranges))
-
+  annot = getAnnotationDataHdf5(filename, group, unique(seqnames(range)))
+  annot <- GRanges(seqnames = annot[,1], IRanges(start = annot[,2], end = annot[,3]))
+  
   overLaps <- findOverlaps(chunks, annot, type = "within")
-
-  ## Compute cluster Recomb freq by mean of voting
-  res <- sapply(seq_len(length(chunks)), function(chunk) {
+  
+  ## Compute cluster Recomb freq by mean of voting .
+  ## To avoid extra execution we start to compose matrix from first overlap avoiding NAs
+  res <- sapply(seq( from = min(from(overLaps)), to = length(chunks)), function(chunk) {
     sel <- to(overLaps)[from(overLaps) == chunk]
     
-    if (length(sel) == 0) {
-      val <- rep(NA, nrow(mat))
-    } else {
-      val <- getProbs(mat, sel)
-    }
+    # if (length(sel) == 0) {
+    #   val <- rep(NA, nrow(mat))
+    # } else {
+    #   val <- getProbs(mat, sel)
+    # }
   })
 
   rownames(res) <- rownames(mat)
