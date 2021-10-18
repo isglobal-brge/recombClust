@@ -9,6 +9,8 @@ runLDmixtureModel(
   annot,
   range,
   resfilename,
+  resgroup,
+  overwrite,
   blockSize = 2,
   distance = 10000,
   BPPARAM = BiocParallel::SerialParam()
@@ -27,17 +29,18 @@ is empty then function works on memory. To work with big regions it is recommend
 to work with data on disk. Only use resfilename = "" when regions are small in order to 
 prevent memory overflows and low performance.}
 
+\item{resgroup}{string, folder inside a file where we want to store results. By default
+runLDmixture stores data inside group "AllModels" in resfilename file.}
+
+\item{overwrite}{boolean, (optional) either a logical value indicating whether
+the output file can be overwritten or not, by default files are not overwritten.}
+
 \item{blockSize}{Numeric with the size of the SNP block (Default: 2)}
 
 \item{distance}{Numeric with the maximum distance in bases to pair two blocks. (Default: 1e5)}
 
 \item{BPPARAM}{An object from \code{BiocParallelParam}. It allow running the models
 in parallel. By default, the models are run in serial.}
-
-\item{workdisk}{optional boolean, to indicate if results are stored in 
-memory or on disk, to work with big regions it is recomended to work with 
-data on disk. Only use workdisk = FALSE when regions are small in order to 
-prevent memory overflows and low performance.}
 }
 \value{
 A list with the results of the LDmixture models. Each element is a model

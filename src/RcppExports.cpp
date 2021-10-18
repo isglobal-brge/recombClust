@@ -68,23 +68,72 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// getAnnotationDataHdf5
+Rcpp::RObject getAnnotationDataHdf5(std::string resfilename, std::string resgroup, Rcpp::StringVector datasets);
+RcppExport SEXP _recombClust_getAnnotationDataHdf5(SEXP resfilenameSEXP, SEXP resgroupSEXP, SEXP datasetsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::string >::type resfilename(resfilenameSEXP);
+    Rcpp::traits::input_parameter< std::string >::type resgroup(resgroupSEXP);
+    Rcpp::traits::input_parameter< Rcpp::StringVector >::type datasets(datasetsSEXP);
+    rcpp_result_gen = Rcpp::wrap(getAnnotationDataHdf5(resfilename, resgroup, datasets));
+    return rcpp_result_gen;
+END_RCPP
+}
+// existsHdf5Element
+bool existsHdf5Element(std::string filename, std::string element);
+RcppExport SEXP _recombClust_existsHdf5Element(SEXP filenameSEXP, SEXP elementSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::string >::type filename(filenameSEXP);
+    Rcpp::traits::input_parameter< std::string >::type element(elementSEXP);
+    rcpp_result_gen = Rcpp::wrap(existsHdf5Element(filename, element));
+    return rcpp_result_gen;
+END_RCPP
+}
+// setHdf5Group
+bool setHdf5Group(std::string filename, std::string element, bool overwrite);
+RcppExport SEXP _recombClust_setHdf5Group(SEXP filenameSEXP, SEXP elementSEXP, SEXP overwriteSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::string >::type filename(filenameSEXP);
+    Rcpp::traits::input_parameter< std::string >::type element(elementSEXP);
+    Rcpp::traits::input_parameter< bool >::type overwrite(overwriteSEXP);
+    rcpp_result_gen = Rcpp::wrap(setHdf5Group(filename, element, overwrite));
+    return rcpp_result_gen;
+END_RCPP
+}
+// createEmptyHdf5File
+bool createEmptyHdf5File(std::string filename, Rcpp::Nullable<bool> overwrite);
+RcppExport SEXP _recombClust_createEmptyHdf5File(SEXP filenameSEXP, SEXP overwriteSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::string >::type filename(filenameSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type overwrite(overwriteSEXP);
+    rcpp_result_gen = Rcpp::wrap(createEmptyHdf5File(filename, overwrite));
+    return rcpp_result_gen;
+END_RCPP
+}
 // LDmixtureModel
-List LDmixtureModel(RObject dat, std::string resfilename, std::string resgroup, bool overwrite, std::string grchr, double grstart, double grend, Nullable<int> maxSteps, Nullable<double> prob0, Nullable<int> blocksize);
-RcppExport SEXP _recombClust_LDmixtureModel(SEXP datSEXP, SEXP resfilenameSEXP, SEXP resgroupSEXP, SEXP overwriteSEXP, SEXP grchrSEXP, SEXP grstartSEXP, SEXP grendSEXP, SEXP maxStepsSEXP, SEXP prob0SEXP, SEXP blocksizeSEXP) {
+List LDmixtureModel(RObject dat, std::string resfilename, std::string resgroup, std::string grchr, double grstart, double grend, Nullable<int> maxSteps, Nullable<double> prob0, Nullable<int> blocksize);
+RcppExport SEXP _recombClust_LDmixtureModel(SEXP datSEXP, SEXP resfilenameSEXP, SEXP resgroupSEXP, SEXP grchrSEXP, SEXP grstartSEXP, SEXP grendSEXP, SEXP maxStepsSEXP, SEXP prob0SEXP, SEXP blocksizeSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< RObject >::type dat(datSEXP);
     Rcpp::traits::input_parameter< std::string >::type resfilename(resfilenameSEXP);
     Rcpp::traits::input_parameter< std::string >::type resgroup(resgroupSEXP);
-    Rcpp::traits::input_parameter< bool >::type overwrite(overwriteSEXP);
     Rcpp::traits::input_parameter< std::string >::type grchr(grchrSEXP);
     Rcpp::traits::input_parameter< double >::type grstart(grstartSEXP);
     Rcpp::traits::input_parameter< double >::type grend(grendSEXP);
     Rcpp::traits::input_parameter< Nullable<int> >::type maxSteps(maxStepsSEXP);
     Rcpp::traits::input_parameter< Nullable<double> >::type prob0(prob0SEXP);
     Rcpp::traits::input_parameter< Nullable<int> >::type blocksize(blocksizeSEXP);
-    rcpp_result_gen = Rcpp::wrap(LDmixtureModel(dat, resfilename, resgroup, overwrite, grchr, grstart, grend, maxSteps, prob0, blocksize));
+    rcpp_result_gen = Rcpp::wrap(LDmixtureModel(dat, resfilename, resgroup, grchr, grstart, grend, maxSteps, prob0, blocksize));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -177,7 +226,11 @@ static const R_CallMethodDef CallEntries[] = {
     {"_recombClust_CLQD_mod", (DL_FUNC) &_recombClust_CLQD_mod, 6},
     {"_recombClust_CWriteResults", (DL_FUNC) &_recombClust_CWriteResults, 3},
     {"_recombClust_get_graph_matrix_data", (DL_FUNC) &_recombClust_get_graph_matrix_data, 2},
-    {"_recombClust_LDmixtureModel", (DL_FUNC) &_recombClust_LDmixtureModel, 10},
+    {"_recombClust_getAnnotationDataHdf5", (DL_FUNC) &_recombClust_getAnnotationDataHdf5, 3},
+    {"_recombClust_existsHdf5Element", (DL_FUNC) &_recombClust_existsHdf5Element, 2},
+    {"_recombClust_setHdf5Group", (DL_FUNC) &_recombClust_setHdf5Group, 3},
+    {"_recombClust_createEmptyHdf5File", (DL_FUNC) &_recombClust_createEmptyHdf5File, 2},
+    {"_recombClust_LDmixtureModel", (DL_FUNC) &_recombClust_LDmixtureModel, 9},
     {"_recombClust_removeMatrixColsandRows", (DL_FUNC) &_recombClust_removeMatrixColsandRows, 2},
     {"_recombClust_CGetDatafromFile", (DL_FUNC) &_recombClust_CGetDatafromFile, 1},
     {"_recombClust_CgdsSNPpairMatrix", (DL_FUNC) &_recombClust_CgdsSNPpairMatrix, 1},

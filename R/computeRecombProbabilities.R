@@ -28,24 +28,31 @@ computeRecombProbabilities <- function(haplos, annot, range,
                                        window = 500, ...) 
 {
 
-  # Get models
-  models <- runLDmixtureModel(haplos, annot, range, resfilename, overwrite, ...)
-
-  ## Remove failed models
-  goodModels <- vapply(models, class, character(1)) == "list"
-
-  if(length(goodModels)>0){
-    # Get matrix
-    matProb <- createMatrixfromModels(models[goodModels], range)
-  
-    # Summarize recombClust probabilities by windows
-    matWindProb <- getRecombProb(matProb$mat, matProb$annot, range, window)
-    rownames(matWindProb) <- rownames(haplos)
+    # Get models
+    models <- runLDmixtureModel(haplos, annot, range, resfilename, resgroup, overwrite, ...)
     
-  } else {
-    matWindProb <- NA
-  }
-  
-  # # Return models and matrix with summarized probabilities by widow
-  return(probTab = matWindProb)
+    ## Remove failed models
+    goodModels <- vapply(models, class, character(1)) == "list"
+
+    if(length(goodModels)>0) {
+        
+        if(resfilename == "") {
+            # Get matrix
+            matProb <- createMatrixfromModels(models[goodModels], range)
+            # Summarize recombClust probabilities by windows
+            matWindProb <- getRecombProb(matProb$mat, matProb$annot, range, window)
+            rownames(matWindProb) <- rownames(haplos)
+            
+        } else {
+            ## getRecombProb_hdf5(resfilename, resgroup, range, window)
+        }
+        
+    } else {
+        matWindProb <- NA
+    }
+        
+    
+    
+    # # Return models and matrix with summarized probabilities by widow
+    return(probTab = matWindProb)
 }

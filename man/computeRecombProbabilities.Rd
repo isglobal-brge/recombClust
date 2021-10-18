@@ -9,6 +9,8 @@ computeRecombProbabilities(
   annot,
   range,
   resfilename = "recombClustResults.hdf5",
+  resgroup = "AllModels",
+  overwrite = FALSE,
   window = 500,
   ...
 )
@@ -23,6 +25,12 @@ this runLDmixture stores data in recombClustResults.hdf5, if resfilename
 is empty then function works on memory. To work with big regions it is recommended 
 to work with data on disk. Only use resfilename = "" when regions are small in order to 
 prevent memory overflows and low performance.}
+
+\item{resgroup}{string, folder inside a file where we want to store results. By default
+runLDmixture stores data inside group "AllModels" in resfilename file.}
+
+\item{overwrite}{boolean, (optional) either a logical value indicating whether
+the output file can be overwritten or not, by default files are not overwritten.}
 
 \item{window}{only to debug, by default window = 500bp}
 

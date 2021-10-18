@@ -62,10 +62,24 @@ runLDmixtureModel <- function(haplos, annot, range, resfilename, resgroup,
   windws <- getWindows(GenomicRanges::resize(GRblocks, distance)[ queryHits(overlaps)], range)
   # getWindows(GenomicRanges::resize(GRblocks, distance)[ queryHits(overlaps)], range)
 
-  # Test if we need to write data to disk or not.
-  if( resfilename != ""){
-     # Preparar fitxer per escriure resultats (test existeix + overwrite + ....)
-     # si no passa el test ==> Error i acabem.
+  # Test if we need to write data to disk or not, if we need to write data
+  # prepare file with group --> LDmixtureModel only writes data to hdf5 dataset
+  
+  
+  if( resfilename != "") {
+      
+      if(!file.exists(resfilename)) {
+          createEmptyHdf5File(resfilename);
+          setHdf5Group(resfilename, resgroup, overwrite)
+      } else if(file.exists(resfilename) & 
+         existsHdf5Element(resfilename, resgroup) & overwrite == FALSE) {
+          print( paste0("File and group already exists, please set ",
+                        "overwrite = TRUE or set another filename and/or ",
+                        "group to store results"))
+      } else {
+          setHdf5Group(resfilename, resgroup, overwrite);
+      }
+      
   }
      
   # Run model over the SNP-block pairs
@@ -79,6 +93,7 @@ runLDmixtureModel <- function(haplos, annot, range, resfilename, resgroup,
                   apply(haplos[, ind1], 1, function(x) paste(x, collapse = "")),
                   apply(haplos[, ind2], 1, function(x) paste(x, collapse = ""))),
                 resfilename,
+                resgroup = resgroup,
                 grchr = seqlevels(GRblocks[bl1]),
                 grstart = GenomicRanges::start(GRblocks[bl1]), 
                 grend = GenomicRanges::start(GRblocks[bl2]) 

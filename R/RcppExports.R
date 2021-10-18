@@ -85,8 +85,63 @@ get_graph_matrix_data <- function(OCM, hrstParam) {
     .Call('_recombClust_get_graph_matrix_data', PACKAGE = 'recombClust', OCM, hrstParam)
 }
 
-#' Run LDmixture model to a pair of SNP-blocks
+#' Get annotation data from hdf5
 #'
+#' Get model annotation data from hdf5 data file
+#'
+#' @param resfilename string, path and file name where models data is store.
+#' @param resgroup Annotation obtained for the different models in LDMixture
+#' @param datasets Range to look in
+#' @return Annotation data from models
+#' @export
+getAnnotationDataHdf5 <- function(resfilename, resgroup, datasets) {
+    .Call('_recombClust_getAnnotationDataHdf5', PACKAGE = 'recombClust', resfilename, resgroup, datasets)
+}
+
+#' Test if element exits
+#' 
+#' Test if group name or dataset name exists inside the hdf5 data file
+#'
+#' @param filename string, path and file name to search element.
+#' @param element string, group or dataset name to search inside hdf5 data file.
+#' @return A boolean indicating whether or not the element being searched exists
+#' @export
+existsHdf5Element <- function(filename, element) {
+    .Call('_recombClust_existsHdf5Element', PACKAGE = 'recombClust', filename, element)
+}
+
+#' Create a group 
+#' 
+#' Create a group inside Hdf5 data file
+#'
+#' @param filename string, path and file name to search element.
+#' @param element string, group name to be created inside the hdf5 data file.
+#' @param overwrite boolean, if true this function overwrites existing group.
+#' @return integer, if 0 the process was successful and group was created in 
+#' the file
+#' @export
+setHdf5Group <- function(filename, element, overwrite) {
+    .Call('_recombClust_setHdf5Group', PACKAGE = 'recombClust', filename, element, overwrite)
+}
+
+#' Create File
+#' 
+#' Create a group inside Hdf5 data file
+#'
+#' @param filename string, path and file name to search element.
+#' @param element string, group name to be created inside the hdf5 data file.
+#' @param overwrite boolean, if true this function overwrites existing group.
+#' @return integer, if 0 the process was successful and group was created in 
+#' the file
+#' @export
+createEmptyHdf5File <- function(filename, overwrite = FALSE) {
+    .Call('_recombClust_createEmptyHdf5File', PACKAGE = 'recombClust', filename, overwrite)
+}
+
+#' Run LDmixture model to a pair of SNP-blocks
+#' 
+#' Run LDmixture model to a pair of SNP-blocks
+#' 
 #' @param dat Matrix with the genotype data
 #' @param resfilename string, path and file name to store results. By default
 #' this runLDmixture stores data in recombClustResults.hdf5, if resfilename 
@@ -95,8 +150,8 @@ get_graph_matrix_data <- function(OCM, hrstParam) {
 #' are small in order to prevent memory overflows and low performance.
 #' @param resgroup string, folder inside a file where we want to store results. By default
 #' runLDmixture stores data inside group "AllModels" in resfilename file.
-#' @param overwrite boolean, (optional) either a logical value indicating whether
-#' the output file can be overwritten or not, by default files are not overwritten.
+NULL
+
 #' @param grstart Numerical genomic region start
 #' @param grend Numerical genomic region end
 #' @param maxSteps Numerical with the maximum number of iterations run by the EM algorithm
@@ -114,8 +169,8 @@ get_graph_matrix_data <- function(OCM, hrstParam) {
 #'  only available for selected models (BIC > 10, pval > 0.05)}
 #' }
 #' @export
-LDmixtureModel <- function(dat, resfilename, resgroup, overwrite, grchr, grstart, grend, maxSteps = NULL, prob0 = NULL, blocksize = NULL) {
-    .Call('_recombClust_LDmixtureModel', PACKAGE = 'recombClust', dat, resfilename, resgroup, overwrite, grchr, grstart, grend, maxSteps, prob0, blocksize)
+LDmixtureModel <- function(dat, resfilename, resgroup, grchr, grstart, grend, maxSteps = NULL, prob0 = NULL, blocksize = NULL) {
+    .Call('_recombClust_LDmixtureModel', PACKAGE = 'recombClust', dat, resfilename, resgroup, grchr, grstart, grend, maxSteps, prob0, blocksize)
 }
 
 #' @title Remove columns and Rows from squared matrix

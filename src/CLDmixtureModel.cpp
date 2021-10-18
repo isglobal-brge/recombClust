@@ -5,7 +5,9 @@ using namespace Rcpp;
 
 
 //' Run LDmixture model to a pair of SNP-blocks
-//'
+//' 
+//' Run LDmixture model to a pair of SNP-blocks
+//' 
 //' @param dat Matrix with the genotype data
 //' @param resfilename string, path and file name to store results. By default
 //' this runLDmixture stores data in recombClustResults.hdf5, if resfilename 
@@ -14,8 +16,8 @@ using namespace Rcpp;
 //' are small in order to prevent memory overflows and low performance.
 //' @param resgroup string, folder inside a file where we want to store results. By default
 //' runLDmixture stores data inside group "AllModels" in resfilename file.
-//' @param overwrite boolean, (optional) either a logical value indicating whether
-//' the output file can be overwritten or not, by default files are not overwritten.
+// //' @param overwrite boolean, (optional) either a logical value indicating whether
+// //' the output file can be overwritten or not, by default files are not overwritten.
 //' @param grstart Numerical genomic region start
 //' @param grend Numerical genomic region end
 //' @param maxSteps Numerical with the maximum number of iterations run by the EM algorithm
@@ -36,7 +38,6 @@ using namespace Rcpp;
 // [[Rcpp::export]]
 List LDmixtureModel( RObject dat, 
                      std::string resfilename, std::string resgroup,
-                     bool overwrite,
                      std::string grchr, double grstart, double grend,
                      Nullable<int> maxSteps = R_NilValue, 
                      Nullable<double> prob0 = R_NilValue,

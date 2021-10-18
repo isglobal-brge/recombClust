@@ -179,8 +179,8 @@ int write_hdf5_matrix_dimnames(H5File* file, std::string groupname, std::string 
       // Add colnames
       if( colnames.length()>1 )
          write_hdf5_string_vector(file, strGroup + "/2", colnames);
-      else
-         Rcpp::Rcout<<"Info : no colnames to save";
+      // else
+      //    Rcpp::Rcout<<"Info : no colnames to save";
 
 
    } catch(H5::FileIException& error) { // catch failure caused by the H5File operations
@@ -678,32 +678,43 @@ int read_HDF5_matrix_subset(H5File* file, DataSet* dataset,
 
       DataSpace memspace(RANK2, dimsm, NULL);
 
+      Rcpp::Rcout<<"\nError - 1";
       //  Get dataspace of the dataset.
       DataSpace dataspace = dataset->getSpace();
       dataspace.selectHyperslab(H5S_SELECT_SET, count, offset, stride, block);
-
+      Rcpp::Rcout<<"\nError - 2";
       H5T_class_t type_class = dataset->getTypeClass();
-
+      Rcpp::Rcout<<"\nError - 3";
       // Get class of datatype and print message if it's an integer.
       if( type_class == H5T_INTEGER )
          dataset->read( rdatablock, PredType::NATIVE_INT, memspace, dataspace );
       else if (type_class == H5T_FLOAT)
          dataset->read( rdatablock, PredType::NATIVE_DOUBLE, memspace, dataspace );
-
+      Rcpp::Rcout<<"\nError - 4";
       dataspace.close();
    } catch(H5::FileIException& error) { // catch failure caused by the H5File operations
+       dataset->close();
+       file->close();
       ::Rf_error( "c++ exception read_HDF5_matrix_subset (File IException)" );
       return -1;
    } catch(H5::DataSetIException& error) { // catch failure caused by the DataSet operations
+       dataset->close();
+       file->close();
       ::Rf_error( "c++ exception read_HDF5_matrix_subset (DataSet IException)" );
       return -1;
    } catch(H5::GroupIException& error) { // catch failure caused by the Group operations
+       dataset->close();
+       file->close();
       ::Rf_error( "c++ exception read_HDF5_matrix_subset (Group IException)" );
       return -1;
    } catch(H5::DataSpaceIException& error) { // catch failure caused by the DataSpace operations
+       dataset->close();
+       file->close();
       ::Rf_error( "c++ exception read_HDF5_matrix_subset (DataSpace IException)" );
       return -1;
    } catch(H5::DataTypeIException& error) { // catch failure caused by the DataSpace operations
+       dataset->close();
+       file->close();
       ::Rf_error( "c++ exception read_HDF5_matrix_subset (Data TypeIException)" );
       return -1;
    }
@@ -818,4 +829,71 @@ int extend_HDF5_matrix_subset_ptr(H5File* file, DataSet* dataset, const size_t r
    }
    return 0;
    
+}
+
+
+/* Create empty matrix dataset in hdf5 file */
+int create_HDF5_unlimited_matrix_dataset_ptr(H5File* file, const std::string CDatasetName, 
+                                             const size_t rows, const size_t cols, std::string strdatatype)
+{
+    
+    try
+    {
+        Exception::dontPrint();
+        
+        herr_t status;
+        
+        hsize_t     dimsf[2];              // dataset dimensions
+        dimsf[0] = rows;
+        dimsf[1] = cols;
+        hid_t cparms; 
+        
+        // Declare unlimited dimensions
+        hsize_t  maxdims[2] = {H5S_UNLIMITED, H5S_UNLIMITED};
+        DataSpace dataspace ( RANK2, dimsf, maxdims );
+        
+        // Enabling chunking
+        hsize_t chunk_dims[2];
+        chunk_dims[0] = rows;
+        chunk_dims[1] = cols;
+        
+        cparms = H5Pcreate(H5P_DATASET_CREATE);
+        status = H5Pset_chunk( cparms, RANK2, chunk_dims);
+        
+        // Create dataset
+        if( strdatatype == "int") {
+            IntType datatype( PredType::NATIVE_INT );
+            DataSet dataset = file->createDataSet( CDatasetName, datatype, dataspace, cparms);
+            dataset.close();
+        } else {
+            IntType datatype( PredType::NATIVE_DOUBLE ); 
+            DataSet dataset = file->createDataSet( CDatasetName, datatype, dataspace, cparms);
+            dataset.close();
+        }
+        
+        dataspace.close();
+        
+    } catch(FileIException& error) { // catch failure caused by the H5File operations
+        file->close();
+        ::Rf_error( "c++ exception create_HDF5_unlimited_matrix_dataset_ptr (File IException)" );
+        return -1;
+    } catch(DataSetIException& error) { // catch failure caused by the DataSet operations
+        file->close();
+        ::Rf_error( "c++ exception create_HDF5_unlimited_matrix_dataset_ptr (DataSet IException)" );
+        return -1;
+    } catch(GroupIException& error) { // catch failure caused by the Group operations
+        file->close();
+        ::Rf_error( "c++ exception create_HDF5_unlimited_matrix_dataset_ptr (Group IException)" );
+        return -1;
+    } catch(DataSpaceIException& error) { // catch failure caused by the DataSpace operations
+        file->close();
+        ::Rf_error( "c++ exception create_HDF5_unlimited_matrix_dataset_ptr (DataSpace IException)" );
+        return -1;
+    } catch(DataTypeIException& error) { // catch failure caused by the DataSpace operations
+        file->close();
+        ::Rf_error( "c++ exception create_HDF5_unlimited_matrix_dataset_ptr (Data TypeIException)" );
+        return -1;
+    }
+    
+    return 0;
 }

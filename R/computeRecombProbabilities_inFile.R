@@ -66,7 +66,8 @@ computeRecombProbabilities_inFile <- function(filename, range, samples = NULL,
          # haplos <- snpsData$genotypes[, pos.gcoord$SNPs]
          haplos <- snpsData$genotypes[, commonrs]
       
-         results <- computeRecombProbabilities(haplos, annot[which(names(annot) %in% commonrs),], range, resfilename, window = 500, ...)
+         results <- computeRecombProbabilities(haplos, annot[which(names(annot) %in% commonrs),], 
+                                               range, resfilename, overwrite = overwrite, window = 500, ...)
       } else {
          results <- NA
       }
