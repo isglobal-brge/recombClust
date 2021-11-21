@@ -245,11 +245,28 @@ getProbs <- function(mat, sel) {
 
 #' Compute cluster Recomb freq by mean of voting
 #'
-#' @param mat with initial probabilities
-#' @param sel overlap ranges
+#' @param filename with initial probabilities
+#' @param group String, inside we have one dataset for each chromosome
+#' @param dataset String, chromosome dataset inside the group
+#' @param selection overlap ranges
+#' @param nCols Integer, number of columns in selection.
+#' @param outgroup String output group
+#' @param outdataset String output dataset
 #' @return NumericVector with recombination probabilites
 #' @export
-getProbs_hdf5 <- function(filename, group, selection, outgroup = NULL, outdataset = NULL) {
-    .Call('_recombClust_getProbs_hdf5', PACKAGE = 'recombClust', filename, group, selection, outgroup, outdataset)
+getProbs_hdf5 <- function(filename, group, dataset, selection, nCols, outgroup = NULL, outdataset = NULL) {
+    .Call('_recombClust_getProbs_hdf5', PACKAGE = 'recombClust', filename, group, dataset, selection, nCols, outgroup, outdataset)
+}
+
+#' Get dataset dimensions
+#'
+#' get dataset dimensions
+#' 
+#' @param filename, character array indicating the name of the file to create
+#' @param element path to element, character array indicating the complete route to the element to query size (folder or dataset). 
+#' @return dimension
+#' @export
+get_dimHdf5 <- function(filename, element) {
+    .Call('_recombClust_get_dimHdf5', PACKAGE = 'recombClust', filename, element)
 }
 

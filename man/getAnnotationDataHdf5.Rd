@@ -12,11 +12,9 @@ getAnnotationDataHdf5(resfilename, resgroup, datasets)
 \item{resgroup}{Annotation obtained for the different models in LDMixture}
 
 \item{datasets}{Range to look in}
-
-\item{window}{windows size, by default 500bp}
 }
 \value{
-Probability matrix by window
+Annotation data from models
 }
 \description{
 Get model annotation data from hdf5 data file

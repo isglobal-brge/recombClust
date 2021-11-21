@@ -19,6 +19,15 @@ bool ResFileExist_filestream(std::string name)
 }
 
 
+// Check if file exists
+bool ResFileExist(const std::string& name) {
+    
+    struct stat buffer;   
+    return (stat (name.c_str(), &buffer) == 0); 
+    
+}
+
+
 // Create hdf5 data file with matrix data
 int Create_hdf5_file(std::string filename)
 {
@@ -682,12 +691,16 @@ int read_HDF5_matrix_subset(H5File* file, DataSet* dataset,
       DataSpace dataspace = dataset->getSpace();
       dataspace.selectHyperslab(H5S_SELECT_SET, count, offset, stride, block);
       H5T_class_t type_class = dataset->getTypeClass();
+      
       // Get class of datatype and print message if it's an integer.
-      if( type_class == H5T_INTEGER )
+      if( type_class == H5T_INTEGER ){
          dataset->read( rdatablock, PredType::NATIVE_INT, memspace, dataspace );
-      else if (type_class == H5T_FLOAT)
+      } else if (type_class == H5T_FLOAT){
          dataset->read( rdatablock, PredType::NATIVE_DOUBLE, memspace, dataspace );
+      }
+      
       dataspace.close();
+      
    } catch(H5::FileIException& error) { // catch failure caused by the H5File operations
        dataset->close();
        file->close();
@@ -717,29 +730,6 @@ int read_HDF5_matrix_subset(H5File* file, DataSet* dataset,
 
    return 0;  // successfully terminated
 
-}
-
-IntegerVector get_HDF5_dataset_size(DataSet dataset)
-{
-   // Get dataspace from dataset
-   DataSpace dataspace = dataset.getSpace();
-   IntegerVector dims;
-   int ndims;
-
-   // Get the number of dimensions in the dataspace.
-   int rank = dataspace.getSimpleExtentNdims();
-
-   // Get the dimension size of each dimension in the dataspace and
-   // display them.
-   hsize_t dims_out[2];
-   ndims = dataspace.getSimpleExtentDims( dims_out, NULL);
-
-   if(rank==1)
-      dims = IntegerVector::create( static_cast<int>(dims_out[0]), static_cast<int>(1));
-   else
-      dims = IntegerVector::create(static_cast<int>(dims_out[0]), static_cast<int>(dims_out[1]));
-
-   return(dims);
 }
 
 bool remove_HDF5_element_ptr(H5File* file, const H5std_string element)

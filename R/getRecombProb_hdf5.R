@@ -23,17 +23,41 @@ getRecombProb_hdf5 <- function(filename, group, range, window = 500) {
   
   ## Compute cluster Recomb freq by mean of voting .
   ## To avoid extra execution we start to compose matrix from first overlap avoiding NAs
-  res <- sapply(seq( from = min(from(overLaps)), to = length(chunks)), function(chunk) {
+
+  hdf5Dims <- NULL
+  
+  #. CONDICIÓ BONA !!! .# res <- sapply(seq( from = min(from(overLaps)), to = length(chunks)), function(chunk) {
+  res <- sapply(seq( from = min(from(overLaps)), to = min(from(overLaps)) + 1 ), function(chunk) {
     sel <- to(overLaps)[from(overLaps) == chunk]
     
-    # if (length(sel) == 0) {
-    #   val <- rep(NA, nrow(mat))
-    # } else {
-    #   val <- getProbs(mat, sel)
-    # }
+    if (length(sel) == 0) {
+        
+        if(is.null(hdf5Dims)){
+            # Get dataset dimensions, we only get dimension once to avoid overload processes
+            hdf5Dims <- get_dimHdf5(filename, paste0(group,"/", runValue(seqnames(chunks[chunk]))))
+        }
+        
+        val <- rep(NA, hdf5Dims[1])
+        
+    } else {
+        
+        if(is.null(hdf5Dims)){
+            # Get dataset dimensions, we only get dimension once to avoid overload processes
+            hdf5Dims <- get_dimHdf5(filename, paste0(group,"/", runValue(seqnames(chunks[chunk]))))
+        }
+        
+        datasetname <- runValue(seqnames(chunks[chunk]))
+        getProbs_hdf5(filename, group, "22", sel, hdf5Dims[1])
+        
+        print("Tornem a estar al punt inicial")
+        return(0)
+    
+      # val <- getProbs(mat, sel)
+    }
   })
 
-  rownames(res) <- rownames(mat)
-  colnames(res) <- paste(start(chunks), end(chunks), sep = "-")
-  res
+  # rownames(res) <- rownames(mat)
+  # colnames(res) <- paste(start(chunks), end(chunks), sep = "-")
+  
+  #..# res
 }

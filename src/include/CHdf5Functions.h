@@ -3,8 +3,10 @@
 
    #include <RcppEigen.h>
    #include <fstream>
+    #include <sys/stat.h>
    #include <boost/algorithm/string.hpp>
    #include "H5Cpp.h"
+    
    
    // [[Rcpp::depends(RcppEigen)]]
 
@@ -23,6 +25,7 @@
    // Utils - generics with files
    bool pathExists(hid_t id, const std::string& path);
    bool ResFileExist_filestream(std::string name);
+   bool ResFileExist(const std::string& name);
 
 
    // HDF5 specific functions (files and groups)
@@ -58,5 +61,8 @@
                                           IntegerVector ivstride, IntegerVector ivblock,
                                           double* rdatablock);
    extern "C" int extend_HDF5_matrix_subset_ptr(H5File* file, DataSet* dataset, const size_t rows, const size_t cols);
+   extern "C" int create_HDF5_unlimited_matrix_dataset_ptr(H5File* file, const std::string CDatasetName, 
+                                                          const size_t rows, const size_t cols, 
+                                                          std::string strdatatype);
 
 #endif

@@ -94,12 +94,14 @@ Rcpp::RObject getAnnotationDataHdf5(std::string resfilename, std::string resgrou
     } catch( FileIException& error ) { // catch failure caused by the H5File operations
         pdataset->close();
         file->close();
-        ::Rf_error( "c++ exception blockmult_hdf5 (File IException)" );
+        // ::Rf_error( "c++ exception blockmult_hdf5 (File IException)" );
+        Rcpp::Rcout<< "c++ exception blockmult_hdf5 (File IException) - File error, file dosn't exists or file is open";
         return wrap(-1);
     } catch( DataSetIException& error ) { // catch failure caused by the DataSet operations
         pdataset->close();
         file->close();
-        ::Rf_error( "c++ exception blockmult_hdf5 (DataSet IException)" );
+        // ::Rf_error( "c++ exception blockmult_hdf5 (DataSet IException)" );
+        Rcpp::Rcout<< "c++ exception blockmult_hdf5 (DataSet IException)";
         return wrap(-1);
     } catch(std::exception &ex) {
         pdataset->close();
