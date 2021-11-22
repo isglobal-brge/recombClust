@@ -2,11 +2,13 @@
 % Please edit documentation in R/RcppExports.R
 \name{LDmixtureModel}
 \alias{LDmixtureModel}
-\title{Run LDmixture model to a pair of SNP-blocks}
+\title{LDmixture model to a pair of SNP-blocks}
 \usage{
 LDmixtureModel(
   dat,
   resfilename,
+  resgroup,
+  grchr,
   grstart,
   grend,
   maxSteps = NULL,
@@ -23,6 +25,9 @@ is empty then function works on memory. To work with big regions it is
 recommended to work with data on disk. Only use resfilename = "" when regions 
 are small in order to prevent memory overflows and low performance.}
 
+\item{resgroup}{string, folder inside a file where we want to store results. By default
+runLDmixture stores data inside group "AllModels" in resfilename file.}
+
 \item{grstart}{Numerical genomic region start}
 
 \item{grend}{Numerical genomic region end}
@@ -30,9 +35,12 @@ are small in order to prevent memory overflows and low performance.}
 \item{maxSteps}{Numerical with the maximum number of iterations run by the EM algorithm}
 
 \item{prob0}{Initial mixture probability.}
+
+\item{overwrite}{boolean, (optional) either a logical value indicating whether
+the output file can be overwritten or not, by default files are not overwritten.}
 }
 \value{
-A list with the LDmixture results
+A list with the LDmixture results 
 \itemize{
  \item{"logMix"}{Log-likelihood of mixture model}
  \item{"logLD"}{Log-likelihood of linkage model}
@@ -46,5 +54,5 @@ A list with the LDmixture results
 }
 }
 \description{
-Run LDmixture model to a pair of SNP-blocks
+Runs LDmixture model to a pair of SNP-blocks
 }

@@ -2,7 +2,7 @@
 # Generator token: 10BE3573-1514-4C36-9D1C-5A225CD40393
 
 #' @title Estimation of LD block regions
-#' @description \code{Big_LD} returns the estimation of LD block regions of given data.
+#' @description returns the estimation of LD block regions of given data.
 #' @param geno A data frame or matrix of additive genotype data, each column is additive genotype of each SNP.
 #' @param SNPinfo A data frame or matrix of SNPs information.  1st column is rsID and 2nd column is bp position.
 #' @param CLQcut A numeric value of threshold for the correlation value |r|, between 0 to 1.
@@ -138,9 +138,9 @@ createEmptyHdf5File <- function(filename, overwrite = FALSE) {
     .Call('_recombClust_createEmptyHdf5File', PACKAGE = 'recombClust', filename, overwrite)
 }
 
-#' Run LDmixture model to a pair of SNP-blocks
+#' @title LDmixture model to a pair of SNP-blocks
 #' 
-#' Run LDmixture model to a pair of SNP-blocks
+#' @description Runs LDmixture model to a pair of SNP-blocks
 #' 
 #' @param dat Matrix with the genotype data
 #' @param resfilename string, path and file name to store results. By default
@@ -150,13 +150,13 @@ createEmptyHdf5File <- function(filename, overwrite = FALSE) {
 #' are small in order to prevent memory overflows and low performance.
 #' @param resgroup string, folder inside a file where we want to store results. By default
 #' runLDmixture stores data inside group "AllModels" in resfilename file.
-NULL
-
+#' @param overwrite boolean, (optional) either a logical value indicating whether
+#' the output file can be overwritten or not, by default files are not overwritten.
 #' @param grstart Numerical genomic region start
 #' @param grend Numerical genomic region end
 #' @param maxSteps Numerical with the maximum number of iterations run by the EM algorithm
 #' @param prob0 Initial mixture probability.
-#' @return A list with the LDmixture results
+#' @return A list with the LDmixture results 
 #' \itemize{
 #'  \item{"logMix"}{Log-likelihood of mixture model}
 #'  \item{"logLD"}{Log-likelihood of linkage model}
@@ -174,7 +174,7 @@ LDmixtureModel <- function(dat, resfilename, resgroup, grchr, grstart, grend, ma
 }
 
 #' @title Remove columns and Rows from squared matrix
-#' @description \code{removeMatrixColsandRows} removes the rows and columns indicated in vector indices vIndex from a matrix
+#' @description removeMatrixColsandRows removes the rows and columns indicated in vector indices vIndex from a matrix
 #' @param Mat Matrix to remove index columns and rows
 #' @param vIndex Rows and column numbers to be removed from a matrix
 #' 

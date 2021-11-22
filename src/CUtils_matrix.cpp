@@ -3,7 +3,7 @@
 using namespace Rcpp;
 
 //' @title Remove columns and Rows from squared matrix
-//' @description \code{removeMatrixColsandRows} removes the rows and columns indicated in vector indices vIndex from a matrix
+//' @description removeMatrixColsandRows removes the rows and columns indicated in vector indices vIndex from a matrix
 //' @param Mat Matrix to remove index columns and rows
 //' @param vIndex Rows and column numbers to be removed from a matrix
 //' 

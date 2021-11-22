@@ -17,5 +17,5 @@ removeMatrixColsandRows(Mat, vIndex)
 The original matrix without rows and column index .
 }
 \description{
-\code{removeMatrixColsandRows} removes the rows and columns indicated in vector indices vIndex from a matrix
+removeMatrixColsandRows removes the rows and columns indicated in vector indices vIndex from a matrix
 }

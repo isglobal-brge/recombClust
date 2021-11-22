@@ -1,11 +1,9 @@
 #include "include/CgetProbsHdf5.h"
 
-using namespace Rcpp;
-
-
 
 std::vector<BLOCKS> getChunkSelection( std::vector<int>val)
 {
+    
     
     std::vector<int> distances(val.size());
     std::vector<int> result(val.size());
@@ -15,6 +13,11 @@ std::vector<BLOCKS> getChunkSelection( std::vector<int>val)
     std::cout << "using default adjacent_difference: ";
     for (int i=0; i<val.size(); i++) std::cout << distances[i] << ' ';
     std::cout << '\n';
+    
+    // std::cout << "using default result: ";
+    // for (int i=0; i<val.size(); i++) std::cout << result[i] << ' ';
+    // std::cout << '\n';
+    
      /***/
     
     // Some iterator to the begin and end of a -1 block in a source data
@@ -34,17 +37,33 @@ std::vector<BLOCKS> getChunkSelection( std::vector<int>val)
         
         //Push back new blocks taking in to account blocks with single element.
         if( selmodel.empty() && std::distance(distances.begin(), i1) != 0) {
-            // add a block for every single element
-            for(int i = 0; i<std::distance(distances.begin(), i1); i++)
-            {
-                selmodel.push_back(BLOCKS());
-                selmodel[block].start = i;
-                selmodel[block].end = i;
-                selmodel[block].len = 1;
-                selmodel[block].startSelection = val.at(selmodel[block].start);
-                selmodel[block].endESelection = val.at(selmodel[block].end);
-                block++;
+
+            if( std::distance(distances.begin(), i1) == 1 && distances[0]<=1 ) {
+                // add a block for every single element
+                for(int i = 0; i<std::distance(distances.begin(), i1); i++)
+                {
+                    Rcpp::Rcout<<"\n\n DISTANCIA ... : "<<std::distance(distances.begin(), i1)<<"\n\n";
+                    selmodel.push_back(BLOCKS());
+                    selmodel[block].start = i;
+                    selmodel[block].end = i;
+                    selmodel[block].len = 1;
+                    selmodel[block].startSelection = val.at(selmodel[block].start);
+                    selmodel[block].endESelection = val.at(selmodel[block].end);
+                    block++;
+                }
+            } else {
+                for(int i = 1; i<std::distance(distances.begin(), i1); i++)
+                {
+                    selmodel.push_back(BLOCKS());
+                    selmodel[block].start = i;
+                    selmodel[block].end = i;
+                    selmodel[block].len = 1;
+                    selmodel[block].startSelection = val.at(selmodel[block].start);
+                    selmodel[block].endESelection = val.at(selmodel[block].end);
+                    block++;
+                };
             }
+            
         } else if (!selmodel.empty() && (selmodel[block-1].end + 1 != std::distance(distances.begin(), i1)) ) {
             for(int i = selmodel[block-1].end + 1; i<std::distance(distances.begin(), i1)-1; i++)
             {
@@ -57,6 +76,8 @@ std::vector<BLOCKS> getChunkSelection( std::vector<int>val)
                 block++;
             }
         }
+        
+        
         
         selmodel.push_back(BLOCKS());
         
@@ -86,6 +107,7 @@ std::vector<BLOCKS> getChunkSelection( std::vector<int>val)
         }
         
         block++;
+        
         
     }
     
@@ -130,7 +152,7 @@ Rcpp::RObject getProbs_hdf5( std::string filename,
     H5File* file;
     
     DataSet* pdatasetin = nullptr;
-    DataSet* pdatasetout = nullptr;
+    //..// DataSet* pdatasetout = nullptr;
     DataSet* unlimDataset = nullptr;
     
     try {
@@ -194,17 +216,20 @@ Rcpp::RObject getProbs_hdf5( std::string filename,
         for (unsigned int i{}; i < fullModel.size(); ++i) {
 
             // Get number of rows to read
-            int nRows = fullModel[i].endESelection;
+            int nRows = fullModel[i].end - fullModel[i].start ;
             NumericMatrix readeddata(nRows, nCols);
             
             Rcpp::Rcout<<" Rows to be read : "<<nRows<<"\n";
             Rcpp::Rcout<<" Cols to be read : "<<nCols<<"\n";
             
+            Rcpp::Rcout<<" Start to read : "<<fullModel[i].startSelection<<"\n";
+            Rcpp::Rcout<<" Start to read - 2 : "<<fullModel[i].startSelection - 1<<"\n";
+            
         
             // IntegerVector stride = IntegerVector::create(fullModel[i].startSelection, 0 );
             IntegerVector stride = IntegerVector::create(1, 1 );
             IntegerVector block = IntegerVector::create(1, 1 );
-            IntegerVector offset = IntegerVector::create(fullModel[i].start, 0);
+            IntegerVector offset = IntegerVector::create(fullModel[i].startSelection - 1 , 0);
             IntegerVector count = IntegerVector::create(nRows, nCols);
 
             // Read data from hyperslab in RowMajor and addapt to ColMajor
@@ -216,6 +241,8 @@ Rcpp::RObject getProbs_hdf5( std::string filename,
             istartMatrixPos = istartMatrixPos + nRows;
         
         }
+        
+        pdatasetin->close();
         
         /***** M'HE QUEDAT AQUÍ !!!!  
          * FALTARIA REPASSAR-HO TOT, ARA GENERO LA MITJANA PER MODEL
@@ -238,104 +265,90 @@ Rcpp::RObject getProbs_hdf5( std::string filename,
         
         ***/
         
-        // STORE THIS DATA !!!
-        // Rcpp::Rcout<<"\nValors mitjanes rowwise : \n"<< dataSelection.rowwise().mean()<<"\n";
-        Rcpp::Rcout<<"\nValors mitjanes colwise : \n"<< dataSelection.colwise().mean()<<"\n";
+        
+        IntegerVector ustride = IntegerVector::create(1, 1 );
+        IntegerVector ublock = IntegerVector::create(1, 1 );
+        IntegerVector uoffset = IntegerVector::create(0, 0);
+        
+        
+        // // STORE THIS DATA !!!
+        // // Rcpp::Rcout<<"\nValors mitjanes rowwise : \n"<< dataSelection.rowwise().mean()<<"\n";
+        // Rcpp::Rcout<<"\nValors mitjanes colwise : \n"<< dataSelection.colwise().mean()<<"\n";
         
         bool datasetexists = exists_HDF5_element_ptr( file, stroutDatasetName );
+        IntegerVector ucount = IntegerVector::create(1, nCols);
         
-        IntegerVector count = IntegerVector::create(1, nCols);
-        
-        // count[0] = 1;
-        // count[1] = nCols ; 
-        
+        // Rcpp::Rcout<< "Existeix ?? : "<<stroutDatasetName<<"\n";
+            
         // if dataset doesn't exist --> Create unlimited dataset
         if( datasetexists == 0 ) {
-            create_HDF5_unlimited_matrix_dataset_ptr(file, stroutDatasetName, count[0], count[1], "numeric");
+            create_HDF5_unlimited_matrix_dataset_ptr(file, stroutDatasetName, ucount[0], ucount[1], "numeric");
+            Rcpp::Rcout<< "L'acabem de CREAR !!!\n \n";
             dims_out[0] = 0; dims_out[1] = 0;
         }
         
-        // extend dataset (if datasets exists previous execution)
+        // // extend dataset (if datasets exists previous execution)
         unlimDataset = new DataSet(file->openDataSet(stroutDatasetName));
+
+        if( datasetexists != 0 ) {
+            dims_out = get_HDF5_dataset_size(*unlimDataset);
+            extend_HDF5_matrix_subset_ptr(file, unlimDataset, 1, 0);
+        }
+        
+        uoffset[0] = dims_out[0];
+        
+        Rcpp::Rcout<<"Escriurem a : "<<uoffset[0]<< "  -  " <<uoffset[1]<<"\n";
+        Rcpp::Rcout<<"Mida a : "<<ucount[0]<< "  -  " <<ucount[1]<<"\n I referent al vector : "<< dataSelection.colwise().mean().size()<<"\n";
+        
+        Eigen::RowVectorXd toWrite = dataSelection.colwise().mean();
+        
+        write_HDF5_matrix_subset(file, unlimDataset, uoffset, ucount, ustride, ublock, Rcpp::wrap(toWrite) );  
+        
+        
         
         
         /** REVISAR AQUÍ QUE ÉS EL QUE HE D'ESCRIURE !!!
-        
-        // do actions 
-        if(datasetexists == 0) {
-            CharacterVector cvrowsmames =  R1.names(),
-                cvcolnames;
-            cvrowsmames.push_back("LoglikeRecomb");
-            cvrowsmames.push_back("prob0");
-            cvrowsmames.push_back("gstart");
-            cvrowsmames.push_back("gend");
-            write_hdf5_matrix_dimnames(file, group, grchr, cvrowsmames, cvcolnames );
-        } else {
-            dims_out = get_HDF5_dataset_size(*unlimDataset);
-        }
-        
-        
+         
         FI REVISAR AQUÍ QUE ÉS EL QUE HE D'ESCRIURE !!! **/
         
         
-        Rcpp::Rcout<<"\nAra retornarem... \n";
+        // Rcpp::Rcout<<"\nAra retornarem... \n";
         
 
-        // Sort selection
-        // Search for continuous series (to generate big chunks)
-        // Read data from file and store in matrix
-        // return(wrap(dmatsel.rowwise().mean()));
-        // 
-        
-        
-       
-        
-        // Eigen::MatrixXd dmat = Rcpp::as<Eigen::MatrixXd>(mat);
-        // Eigen::VectorXd dsel = Rcpp::as<Eigen::VectorXd>(sel);
-        // 
-        // Eigen::MatrixXd dmatsel = Eigen::MatrixXd::Zero(dmat.rows(), dsel.size());
-        // 
-        // for( int i=0; i<dsel.size(); i++){
-        //     dmatsel.col(i) = dmat.col(dsel[i]-1);
-        // }
-        // 
-        // return(wrap(dmatsel.rowwise().mean()));
-
-        
     }catch( FileIException& error ) { // catch failure caused by the H5File operations
         pdatasetin->close();
-        pdatasetout->close();
+        unlimDataset->close();
         file->close();
         ::Rf_error( "c++ exception Normalize_hdf5 (File IException)" );
         return wrap(-1);
     } catch( DataSetIException& error ) { // catch failure caused by the DataSet operations
         pdatasetin->close();
-        pdatasetout->close();
+        unlimDataset->close();
         file->close();
         ::Rf_error( "c++ exception Normalize_hdf5 (DataSet IException)" );
         return wrap(-1);
     } catch( DataSpaceIException& error ) { // catch failure caused by the DataSpace operations
         pdatasetin->close();
-        pdatasetout->close();
+        unlimDataset->close();
         file->close();
         ::Rf_error( "c++ exception Normalize_hdf5 (DataSpace IException)" );
         return wrap(-1);
     } catch( DataTypeIException& error ) { // catch failure caused by the DataSpace operations
         pdatasetin->close();
-        pdatasetout->close();
+        unlimDataset->close();
         file->close();
         ::Rf_error( "c++ exception Normalize_hdf5 (DataType IException)" );
         return wrap(-1);
     }catch(std::exception &ex) {
         pdatasetin->close();
-        pdatasetout->close();
+        unlimDataset->close();
         file->close();
         Rcpp::Rcout<< ex.what();
         return wrap(-1);
     }
     
-    pdatasetin->close();
-    // pdatasetout->close();
+    
+    unlimDataset->close();
     file->close();
     
     

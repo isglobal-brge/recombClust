@@ -46,5 +46,5 @@ A data frame of block estimation result.
 Each row of data frame shows the starting SNP and end SNP of each estimated LD block.
 }
 \description{
-\code{Big_LD} returns the estimation of LD block regions of given data.
+returns the estimation of LD block regions of given data.
 }

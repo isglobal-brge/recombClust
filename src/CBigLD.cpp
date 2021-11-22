@@ -6,7 +6,7 @@ using namespace Rcpp;
 // I have to MODIFY THIS INFORMATION WITH RECOMBCLUST SPECIFICS !!!!!!
 
 //' @title Estimation of LD block regions
-//' @description \code{Big_LD} returns the estimation of LD block regions of given data.
+//' @description returns the estimation of LD block regions of given data.
 //' @param geno A data frame or matrix of additive genotype data, each column is additive genotype of each SNP.
 //' @param SNPinfo A data frame or matrix of SNPs information.  1st column is rsID and 2nd column is bp position.
 //' @param CLQcut A numeric value of threshold for the correlation value |r|, between 0 to 1.
