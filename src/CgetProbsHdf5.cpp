@@ -42,7 +42,7 @@ std::vector<BLOCKS> getChunkSelection( std::vector<int>val)
                 // add a block for every single element
                 for(int i = 0; i<std::distance(distances.begin(), i1); i++)
                 {
-                    Rcpp::Rcout<<"\n\n DISTANCIA ... : "<<std::distance(distances.begin(), i1)<<"\n\n";
+                    Rcpp::Rcout<<"\n\n EL DE SEMPRE ... : "<<std::distance(distances.begin(), i1)<<"\n\n";
                     selmodel.push_back(BLOCKS());
                     selmodel[block].start = i;
                     selmodel[block].end = i;
@@ -54,6 +54,7 @@ std::vector<BLOCKS> getChunkSelection( std::vector<int>val)
             } else {
                 for(int i = 1; i<std::distance(distances.begin(), i1); i++)
                 {
+                    Rcpp::Rcout<<"\n\n SALTANT EL PRIMER ELEMENT ... : "<<std::distance(distances.begin(), i1)<<"\n\n";
                     selmodel.push_back(BLOCKS());
                     selmodel[block].start = i;
                     selmodel[block].end = i;
@@ -185,11 +186,12 @@ Rcpp::RObject getProbs_hdf5( std::string filename,
         
         std::vector<BLOCKS> fullModel = getChunkSelection(vselect);
         
-    /*** M'HE QUEDAT AQUÍ I
+    /*** TO DO
     
     
-    A PARTIR D'AQUÍ S'HA DE REVISAR TOT ... COM FA EL CÀLCUL? PER FILES O PER COLUMNES ???
-     TENIR-HO EN COMPTE A L'HORA DE FER LA LECTURA DE LES DADES I EL COMPUT DELS MODELS !!!!'
+    ARA FA ELS CÀLCULS I ALGUNS D'ELLS CON CORRECTES PERÒ N'HI HA D'ALTRES QUE NO!!! S'HA DE REVISAR
+     QUINS SON ELS CÀLCULS CORRECTES I QUINS NO. 
+     HE GUARDAT UN FITXER RDA AL PATH DE DOCTORAT_LOCAL PER NO HAVER-HO DE RECALCULAR TOT DE NOU !!!
     
     ***/
         // GESTIONEM ELS SELECTIONS ...
@@ -216,16 +218,10 @@ Rcpp::RObject getProbs_hdf5( std::string filename,
         for (unsigned int i{}; i < fullModel.size(); ++i) {
 
             // Get number of rows to read
-            int nRows = fullModel[i].end - fullModel[i].start ;
+            int nRows = (fullModel[i].end - fullModel[i].start) + 1 ;
+            
             NumericMatrix readeddata(nRows, nCols);
-            
-            Rcpp::Rcout<<" Rows to be read : "<<nRows<<"\n";
-            Rcpp::Rcout<<" Cols to be read : "<<nCols<<"\n";
-            
-            Rcpp::Rcout<<" Start to read : "<<fullModel[i].startSelection<<"\n";
-            Rcpp::Rcout<<" Start to read - 2 : "<<fullModel[i].startSelection - 1<<"\n";
-            
-        
+
             // IntegerVector stride = IntegerVector::create(fullModel[i].startSelection, 0 );
             IntegerVector stride = IntegerVector::create(1, 1 );
             IntegerVector block = IntegerVector::create(1, 1 );
@@ -250,6 +246,10 @@ Rcpp::RObject getProbs_hdf5( std::string filename,
          * HO HE DE CALCULAR PER FILES O COLUMNES
          * REVISAR-HO FENT UNA EXECUCIÓ DE RECOMBCLUST AMB LES MATEIXES DADES
          * PERÒ LA VERSIÓ EN MEMÒRIA QUE ESTÀ FORÇA MES TESTEJADA !!!! '
+         * 
+         * ==> OK TESTEJAT !!!
+         * 
+         * 
 
         // Steps :
         //  1. Existeix dataset?
@@ -296,9 +296,6 @@ Rcpp::RObject getProbs_hdf5( std::string filename,
         }
         
         uoffset[0] = dims_out[0];
-        
-        Rcpp::Rcout<<"Escriurem a : "<<uoffset[0]<< "  -  " <<uoffset[1]<<"\n";
-        Rcpp::Rcout<<"Mida a : "<<ucount[0]<< "  -  " <<ucount[1]<<"\n I referent al vector : "<< dataSelection.colwise().mean().size()<<"\n";
         
         Eigen::RowVectorXd toWrite = dataSelection.colwise().mean();
         

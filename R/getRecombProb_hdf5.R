@@ -26,9 +26,7 @@ getRecombProb_hdf5 <- function(filename, group, range, window = 500) {
 
   hdf5Dims <- NULL
   
-  #. CONDICIÓ BONA !!! .# res <- sapply(seq( from = min(from(overLaps)), to = length(chunks)), function(chunk) {
-  res <- sapply(seq( from = min(from(overLaps)), to = min(from(overLaps)) + 5 ), function(chunk) {
-  #.Opció bona...pero sense obtenir el res....# sapply(seq( from = min(from(overLaps)), to = length(chunks)), function(chunk) {
+  sapply(seq( from = min(from(overLaps)), to = length(chunks)), function(chunk) {
     sel <- to(overLaps)[from(overLaps) == chunk]
     
     if (length(sel) == 0) {
@@ -49,14 +47,30 @@ getRecombProb_hdf5 <- function(filename, group, range, window = 500) {
         
         datasetname <- runValue(seqnames(chunks[chunk]))
         #..# getProbs_hdf5(filename, group, datasetname, sel, hdf5Dims[1])
-        getProbs_hdf5(filename, group, "22", sel, hdf5Dims[1])
+        getProbs_hdf5(filename, group, "22", sel, hdf5Dims[1] - 4)
         
       # val <- getProbs(mat, sel)
     }
   })
 
+  ## !!!!     AQUÍ    !!!!! 
+  ## !!!!     AQUÍ    !!!!! 
+  
+  ## FALTARIA ESCRIURE AL FITXER LES FILES I LES COLUMNES !!!
+  ## IMPORTANT PER A PODER TORNAR A MUNTAR LA MATRIU DE RESULTATS !!!
+  
+  #.--.# write_dimNames( filename = filename, group = group, dataset = "FinalModels", 
+  #.--.#                 rownames = rownames(mat), 
+  #.--.#                 colnames = paste(start(chunks), end(chunks), sep = "-"), 
+  #.--.#                 force = T )
+  #.--.# 
   # rownames(res) <- rownames(mat)
   # colnames(res) <- paste(start(chunks), end(chunks), sep = "-")
+  
+  
+  ## !!!!     AQUÍ    !!!!! 
+  ## !!!!     AQUÍ    !!!!! 
+  
   
   #..# res
 }

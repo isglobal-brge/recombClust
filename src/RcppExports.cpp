@@ -118,6 +118,33 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// get_dimHdf5
+Rcpp::RObject get_dimHdf5(std::string filename, std::string element);
+RcppExport SEXP _recombClust_get_dimHdf5(SEXP filenameSEXP, SEXP elementSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::string >::type filename(filenameSEXP);
+    Rcpp::traits::input_parameter< std::string >::type element(elementSEXP);
+    rcpp_result_gen = Rcpp::wrap(get_dimHdf5(filename, element));
+    return rcpp_result_gen;
+END_RCPP
+}
+// write_dimNames
+void write_dimNames(std::string filename, std::string group, std::string dataset, Rcpp::Nullable<Rcpp::StringVector> rownames, Rcpp::Nullable<Rcpp::StringVector> colnames, Rcpp::Nullable<bool> force);
+RcppExport SEXP _recombClust_write_dimNames(SEXP filenameSEXP, SEXP groupSEXP, SEXP datasetSEXP, SEXP rownamesSEXP, SEXP colnamesSEXP, SEXP forceSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::string >::type filename(filenameSEXP);
+    Rcpp::traits::input_parameter< std::string >::type group(groupSEXP);
+    Rcpp::traits::input_parameter< std::string >::type dataset(datasetSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<Rcpp::StringVector> >::type rownames(rownamesSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<Rcpp::StringVector> >::type colnames(colnamesSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type force(forceSEXP);
+    write_dimNames(filename, group, dataset, rownames, colnames, force);
+    return R_NilValue;
+END_RCPP
+}
 // LDmixtureModel
 List LDmixtureModel(RObject dat, std::string resfilename, std::string resgroup, std::string grchr, double grstart, double grend, Nullable<int> maxSteps, Nullable<double> prob0, Nullable<int> blocksize);
 RcppExport SEXP _recombClust_LDmixtureModel(SEXP datSEXP, SEXP resfilenameSEXP, SEXP resgroupSEXP, SEXP grchrSEXP, SEXP grstartSEXP, SEXP grendSEXP, SEXP maxStepsSEXP, SEXP prob0SEXP, SEXP blocksizeSEXP) {
@@ -237,18 +264,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// get_dimHdf5
-Rcpp::RObject get_dimHdf5(std::string filename, std::string element);
-RcppExport SEXP _recombClust_get_dimHdf5(SEXP filenameSEXP, SEXP elementSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< std::string >::type filename(filenameSEXP);
-    Rcpp::traits::input_parameter< std::string >::type element(elementSEXP);
-    rcpp_result_gen = Rcpp::wrap(get_dimHdf5(filename, element));
-    return rcpp_result_gen;
-END_RCPP
-}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_recombClust_BigLD", (DL_FUNC) &_recombClust_BigLD, 7},
@@ -259,6 +274,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_recombClust_existsHdf5Element", (DL_FUNC) &_recombClust_existsHdf5Element, 2},
     {"_recombClust_setHdf5Group", (DL_FUNC) &_recombClust_setHdf5Group, 3},
     {"_recombClust_createEmptyHdf5File", (DL_FUNC) &_recombClust_createEmptyHdf5File, 2},
+    {"_recombClust_get_dimHdf5", (DL_FUNC) &_recombClust_get_dimHdf5, 2},
+    {"_recombClust_write_dimNames", (DL_FUNC) &_recombClust_write_dimNames, 6},
     {"_recombClust_LDmixtureModel", (DL_FUNC) &_recombClust_LDmixtureModel, 9},
     {"_recombClust_removeMatrixColsandRows", (DL_FUNC) &_recombClust_removeMatrixColsandRows, 2},
     {"_recombClust_CGetDatafromFile", (DL_FUNC) &_recombClust_CGetDatafromFile, 1},
@@ -268,7 +285,6 @@ static const R_CallMethodDef CallEntries[] = {
     {"_recombClust_getCorrelationMatrix", (DL_FUNC) &_recombClust_getCorrelationMatrix, 2},
     {"_recombClust_getProbs", (DL_FUNC) &_recombClust_getProbs, 2},
     {"_recombClust_getProbs_hdf5", (DL_FUNC) &_recombClust_getProbs_hdf5, 7},
-    {"_recombClust_get_dimHdf5", (DL_FUNC) &_recombClust_get_dimHdf5, 2},
     {NULL, NULL, 0}
 };
 

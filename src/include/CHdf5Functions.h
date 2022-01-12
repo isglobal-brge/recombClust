@@ -42,8 +42,6 @@
 
 
    // Write data
-   extern "C" int write_hdf5_matrix_dimnames(H5File* file, std::string groupname, std::string datasetname,
-                                            StringVector rownames, StringVector colnames );
    extern "C" int write_HDF5_matrix_ptr(H5File* file, const std::string CDatasetName, RObject DatasetValues);
 
    extern "C" int write_HDF5_matrix_subset( H5File* file, DataSet* dataset,

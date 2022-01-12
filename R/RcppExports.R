@@ -138,6 +138,33 @@ createEmptyHdf5File <- function(filename, overwrite = FALSE) {
     .Call('_recombClust_createEmptyHdf5File', PACKAGE = 'recombClust', filename, overwrite)
 }
 
+#' Get dataset dimensions
+#'
+#' get dataset dimensions
+#' 
+#' @param filename, character array indicating the name of the file to create
+#' @param element path to element, character array indicating the complete route to the element to query size (folder or dataset). 
+#' @return dimension
+#' @export
+get_dimHdf5 <- function(filename, element) {
+    .Call('_recombClust_get_dimHdf5', PACKAGE = 'recombClust', filename, element)
+}
+
+#' Get dataset dimensions
+#'
+#' get dataset dimensions
+#' 
+#' @param filename, character array indicating the name of the file to create
+#' @param group, Character array, indicating the group where the data set is stored
+#' @param datasets, Character array, indicating the datasets name column and/or row names belong
+#' @param rownames character vector with row names. 
+#' @param colnames character vector with column names. 
+#' @return no data returned.
+#' @export
+write_dimNames <- function(filename, group, dataset, rownames, colnames, force = FALSE) {
+    invisible(.Call('_recombClust_write_dimNames', PACKAGE = 'recombClust', filename, group, dataset, rownames, colnames, force))
+}
+
 #' @title LDmixture model to a pair of SNP-blocks
 #' 
 #' @description Runs LDmixture model to a pair of SNP-blocks
@@ -256,17 +283,5 @@ getProbs <- function(mat, sel) {
 #' @export
 getProbs_hdf5 <- function(filename, group, dataset, selection, nCols, outgroup = NULL, outdataset = NULL) {
     .Call('_recombClust_getProbs_hdf5', PACKAGE = 'recombClust', filename, group, dataset, selection, nCols, outgroup, outdataset)
-}
-
-#' Get dataset dimensions
-#'
-#' get dataset dimensions
-#' 
-#' @param filename, character array indicating the name of the file to create
-#' @param element path to element, character array indicating the complete route to the element to query size (folder or dataset). 
-#' @return dimension
-#' @export
-get_dimHdf5 <- function(filename, element) {
-    .Call('_recombClust_get_dimHdf5', PACKAGE = 'recombClust', filename, element)
 }
 

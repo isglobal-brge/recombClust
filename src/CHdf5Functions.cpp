@@ -166,59 +166,6 @@ int create_HDF5_groups_ptr( H5File* file, const H5std_string mGroup)
 }
 
 
-
-// Write dimnames from Matrix RObjects to hdf5 data file
-int write_hdf5_matrix_dimnames(H5File* file, std::string groupname, std::string datasetname, StringVector rownames, StringVector colnames )
-{
-
-   try{
-
-      Exception::dontPrint();
-
-      std::string strGroup = groupname + "/." + datasetname + "_dimnames";
-
-      // Add rownames
-      create_HDF5_groups_ptr(file, strGroup);
-
-      if( rownames.length()>1 )
-         write_hdf5_string_vector(file, strGroup + "/1" , rownames);
-      else
-         Rcpp::Rcout<<"Info : no rownames to save";
-
-      // Add colnames
-      if( colnames.length()>1 )
-         write_hdf5_string_vector(file, strGroup + "/2", colnames);
-      // else
-      //    Rcpp::Rcout<<"Info : no colnames to save";
-
-
-   } catch(H5::FileIException& error) { // catch failure caused by the H5File operations
-       file->close();
-      ::Rf_error( "c++ exception write_hdf5_matrix_dimnames (File IException)" );
-      return -1;
-   } catch(H5::DataSetIException& error) { // catch failure caused by the DataSet operations
-       file->close();
-      ::Rf_error( "c++ exception write_hdf5_matrix_dimnames (DataSet IException)" );
-      return -1;
-   } catch(H5::GroupIException& error) { // catch failure caused by the Group operations
-       file->close();
-      ::Rf_error( "c++ exception write_hdf5_matrix_dimnames (Group IException)" );
-      return -1;
-   } catch(H5::DataSpaceIException& error) { // catch failure caused by the DataSpace operations
-       file->close();
-      ::Rf_error( "c++ exception write_hdf5_matrix_dimnames (DataSpace IException)" );
-      return -1;
-   } catch(H5::DataTypeIException& error) { // catch failure caused by the DataSpace operations
-       file->close();
-      ::Rf_error( "c++ exception write_hdf5_matrix_dimnames (Data TypeIException)" );
-      return -1;
-   }
-
-   return(0);
-}
-
-
-
 // Create dataset from stringVector
 int write_hdf5_string_vector(H5File* file, std::string datasetname, StringVector DatasetValues)
 {
