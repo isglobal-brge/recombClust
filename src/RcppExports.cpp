@@ -248,10 +248,9 @@ BEGIN_RCPP
 END_RCPP
 }
 // getProbs_hdf5
-Rcpp::RObject getProbs_hdf5(std::string filename, std::string group, std::string dataset, Rcpp::RObject selection, int nCols, Rcpp::Nullable<std::string> outgroup, Rcpp::Nullable<std::string> outdataset);
+void getProbs_hdf5(std::string filename, std::string group, std::string dataset, Rcpp::RObject selection, int nCols, Rcpp::Nullable<std::string> outgroup, Rcpp::Nullable<std::string> outdataset);
 RcppExport SEXP _recombClust_getProbs_hdf5(SEXP filenameSEXP, SEXP groupSEXP, SEXP datasetSEXP, SEXP selectionSEXP, SEXP nColsSEXP, SEXP outgroupSEXP, SEXP outdatasetSEXP) {
 BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< std::string >::type filename(filenameSEXP);
     Rcpp::traits::input_parameter< std::string >::type group(groupSEXP);
@@ -260,8 +259,8 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< int >::type nCols(nColsSEXP);
     Rcpp::traits::input_parameter< Rcpp::Nullable<std::string> >::type outgroup(outgroupSEXP);
     Rcpp::traits::input_parameter< Rcpp::Nullable<std::string> >::type outdataset(outdatasetSEXP);
-    rcpp_result_gen = Rcpp::wrap(getProbs_hdf5(filename, group, dataset, selection, nCols, outgroup, outdataset));
-    return rcpp_result_gen;
+    getProbs_hdf5(filename, group, dataset, selection, nCols, outgroup, outdataset);
+    return R_NilValue;
 END_RCPP
 }
 

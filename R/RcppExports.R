@@ -282,6 +282,6 @@ getProbs <- function(mat, sel) {
 #' @return NumericVector with recombination probabilites
 #' @export
 getProbs_hdf5 <- function(filename, group, dataset, selection, nCols, outgroup = NULL, outdataset = NULL) {
-    .Call('_recombClust_getProbs_hdf5', PACKAGE = 'recombClust', filename, group, dataset, selection, nCols, outgroup, outdataset)
+    invisible(.Call('_recombClust_getProbs_hdf5', PACKAGE = 'recombClust', filename, group, dataset, selection, nCols, outgroup, outdataset))
 }
 

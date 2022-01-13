@@ -4,7 +4,7 @@
 \alias{getRecombProb_hdf5}
 \title{Get matrix probabilities by window size}
 \usage{
-getRecombProb_hdf5(filename, group, range, window = 500)
+getRecombProb_hdf5(filename, group, range, samples, window = 500)
 }
 \arguments{
 \item{filename}{Results obtained with the different models LDMixture}
@@ -12,6 +12,8 @@ getRecombProb_hdf5(filename, group, range, window = 500)
 \item{group}{Results obtained with the different models LDMixture}
 
 \item{range}{Range to look in}
+
+\item{samples}{Sample names}
 
 \item{window}{windows size, by default 500bp}
 

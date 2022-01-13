@@ -8,9 +8,10 @@
 #' @param group Results obtained with the different models LDMixture
 #' @param annot Annotation obtained for the different models in LDMixture (A ELIMINAR !!)
 #' @param range Range to look in
+#' @param samples Sample names
 #' @param window windows size, by default 500bp
 #' @return Probability matrix by window
-getRecombProb_hdf5 <- function(filename, group, range, window = 500) {
+getRecombProb_hdf5 <- function(filename, group, range, samples, window = 500) {
 
   ## Define chunks
   starts <- seq(start(range), end(range), window)
@@ -26,7 +27,7 @@ getRecombProb_hdf5 <- function(filename, group, range, window = 500) {
 
   hdf5Dims <- NULL
   
-  sapply(seq( from = min(from(overLaps)), to = length(chunks)), function(chunk) {
+  chunkUsed <- sapply(seq( from = min(from(overLaps)), to = length(chunks)), function(chunk) {
     sel <- to(overLaps)[from(overLaps) == chunk]
     
     if (length(sel) == 0) {
@@ -36,8 +37,8 @@ getRecombProb_hdf5 <- function(filename, group, range, window = 500) {
             hdf5Dims <- get_dimHdf5(filename, paste0(group,"/", runValue(seqnames(chunks[chunk]))))
         }
         
-        val <- rep(NA, hdf5Dims[1])
-        
+        # val <- rep(NA, hdf5Dims[1])
+        return(NA) 
     } else {
         
         if(is.null(hdf5Dims)){
@@ -46,31 +47,19 @@ getRecombProb_hdf5 <- function(filename, group, range, window = 500) {
         }
         
         datasetname <- runValue(seqnames(chunks[chunk]))
-        #..# getProbs_hdf5(filename, group, datasetname, sel, hdf5Dims[1])
         getProbs_hdf5(filename, group, "22", sel, hdf5Dims[1] - 4)
+        
+        return(chunk) 
         
       # val <- getProbs(mat, sel)
     }
   })
 
-  ## !!!!     AQUÍ    !!!!! 
-  ## !!!!     AQUÍ    !!!!! 
-  
-  ## FALTARIA ESCRIURE AL FITXER LES FILES I LES COLUMNES !!!
-  ## IMPORTANT PER A PODER TORNAR A MUNTAR LA MATRIU DE RESULTATS !!!
-  
-  #.--.# write_dimNames( filename = filename, group = group, dataset = "FinalModels", 
-  #.--.#                 rownames = rownames(mat), 
-  #.--.#                 colnames = paste(start(chunks), end(chunks), sep = "-"), 
-  #.--.#                 force = T )
-  #.--.# 
-  # rownames(res) <- rownames(mat)
-  # colnames(res) <- paste(start(chunks), end(chunks), sep = "-")
-  
-  
-  ## !!!!     AQUÍ    !!!!! 
-  ## !!!!     AQUÍ    !!!!! 
-  
-  
-  #..# res
+  columns_n <- paste(start(chunks[chunkUsed[which(!is.na(chunkUsed))]]) , 
+                         end(chunks[chunkUsed[which(!is.na(chunkUsed))]]), sep = "-")
+ 
+  write_dimNames( filename = filename, group = group, dataset = "ModelsProb", 
+                   rownames = samples, 
+                   colnames = columns_n, 
+                   force = T )
 }

@@ -13,13 +13,17 @@
         int startSelection;
         int endESelection;
     };
+    
+    // C++ functions
+    std::vector<BLOCKS> getChunkSelection( std::vector<int>val);
 
-    Rcpp::RObject getProbs_hdf5( std::string filename, 
-                                 std::string group, 
-                                 std::string dataset, 
-                                 Rcpp::RObject selection, 
-                                 int nCols,
-                                 Rcpp::Nullable<std::string> outgroup ,
-                                 Rcpp::Nullable<std::string> outdataset );
+    // R functions
+    void getProbs_hdf5( std::string filename, 
+                        std::string group, 
+                        std::string dataset, 
+                        Rcpp::RObject selection, 
+                        int nCols,
+                        Rcpp::Nullable<std::string> outgroup,
+                        Rcpp::Nullable<std::string> outdataset );
 
 #endif

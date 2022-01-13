@@ -44,7 +44,13 @@ computeRecombProbabilities <- function(haplos, annot, range,
             rownames(matWindProb) <- rownames(haplos)
             
         } else {
-            getRecombProb_hdf5(resfilename, resgroup, range, window)
+            getRecombProb_hdf5(resfilename, resgroup, range, rownames(haplos), window)
+            matWindProb <- list( filename = resfilename,
+                                 dataset = paste(resgroup,"ModelsProb", sep = "/"),
+                                 colnames = paste(resgroup,".ModelsProb_dimnames", 2, sep = "/"),
+                                 rownames = paste(resgroup,".ModelsProb_dimnames", 1, sep = "/")
+                                 )
+            message("Model probabilites has been computed")
         }
         
     } else {
