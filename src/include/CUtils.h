@@ -21,5 +21,6 @@
    void splitAllBinaryStrings( Rcpp::StringVector *combs, int nSNP, char symbol );
 
    bool All_Elements_Zero( Rcpp::RObject obj);
+   Rcpp::NumericVector testNAIndex( Rcpp::NumericVector testnavect, Rcpp::NumericVector index);
       
 #endif

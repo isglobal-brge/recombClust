@@ -34,6 +34,20 @@ inline bool ResFileExist (const std::string& name) {
 
 
 
+// Remove file if exists
+bool RemoveFile(std::string filename) 
+{
+  
+      if( std::remove( filename.c_str() ) != 0 )
+         return 0;
+      else 
+         Rcpp::Rcout << "Failed to delete '" << filename << "': " << strerror(errno) << '\n';
+      
+      return 0;
+
+}
+
+
 // Return file extension
 std::string getFileExtension(std::string filePath)
 {

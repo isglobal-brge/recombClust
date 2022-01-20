@@ -69,7 +69,7 @@ Rcpp::RObject get_graph_matrix_data( Rcpp::RObject OCM, int hrstParam )
 
 // Get a resume of local cores in a vector
 //..// Rcpp::RObject get_local_cores(NumericVector cores, int hrst)
-std::map<int, std::vector<int>> get_local_cores(NumericVector cores, int hrst)
+std::map<int, std::vector<int>> get_local_cores(Rcpp::NumericVector cores, int hrst)
 {
    
    //..// NumericVector local_c;

@@ -3,12 +3,11 @@
 #' @param Resp Numerical with the responsibilities for linkage population
 #' @param Block Character with the blocks genotypes
 #' @return Numerical with the new block frequencies for linkage population
-linkageFreq <-function(Resp, Block)
-{
-  nSNP <- (nchar(Block[1]) - 1)/2
+linkageFreq <- function(Resp, Block) {
+  nSNP <- (nchar(Block[1]) - 1) / 2
 
   ## Compute blocks frequency
-  freqs <-tapply(Resp, Block, sum)
+  freqs <- tapply(Resp, Block, sum)
 
   # Get all possible left and right levels
   ## Make all combination with 0 and 1
@@ -20,11 +19,11 @@ linkageFreq <-function(Resp, Block)
   sfreqs <- sort(freqs, decreasing = TRUE)
   leftLevsvec <- rightLevsvec <- leftLevs
   selAlleles <- character()
-  while(length(sfreqs) > 0 & length(leftLevsvec) > 0){
+  while (length(sfreqs) > 0 & length(leftLevsvec) > 0) {
     allele <- names(sfreqs)[1]
     leftp <- strsplit(allele, "+", fixed = TRUE)[[1]][1]
     rigthp <- strsplit(allele, "+", fixed = TRUE)[[1]][2]
-    if (leftp %in% leftLevsvec & rigthp %in% rightLevsvec){
+    if (leftp %in% leftLevsvec & rigthp %in% rightLevsvec) {
       selAlleles <- c(selAlleles, allele)
       leftLevsvec <- leftLevsvec[leftLevsvec != leftp]
       rightLevsvec <- rightLevsvec[rightLevsvec != rigthp]
@@ -32,8 +31,8 @@ linkageFreq <-function(Resp, Block)
     sfreqs <- sfreqs[-1]
   }
 
-  if (length(leftLevsvec) > 0){
-    selAlleles <- c(selAlleles, paste(leftLevsvec,rightLevsvec, sep = "+" ))
+  if (length(leftLevsvec) > 0) {
+    selAlleles <- c(selAlleles, paste(leftLevsvec, rightLevsvec, sep = "+"))
   }
 
   props <- freqs[selAlleles]
@@ -41,9 +40,9 @@ linkageFreq <-function(Resp, Block)
   names(props)[is.na(names(props))] <- selAlleles[!selAlleles %in% names(props)]
   props <- sort(props, decreasing = TRUE)
 
-  #solve linear algebra to find new frequency values
+  # solve linear algebra to find new frequency values
   AA <- diag(2^nSNP)
-  AA[,1] <- -props/max(props)
+  AA[, 1] <- -props / max(props)
   AA[1, ] <- 1
 
   bb <- rep(0, nrow(AA))
@@ -58,8 +57,8 @@ linkageFreq <-function(Resp, Block)
 
   res <- c(res, rep(0, length(namesVec) - length(props)))
   res[res < 1e-5] <- 1e-5
-  res <- res/sum(res)
-  names(res)[(length(props) +1):length(res)] <-
+  res <- res / sum(res)
+  names(res)[(length(props) + 1):length(res)] <-
     namesVec[!namesVec %in% names(res)]
   return(res)
 }
