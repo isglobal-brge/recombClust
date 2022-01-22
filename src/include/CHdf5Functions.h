@@ -3,9 +3,10 @@
 
    #include <RcppEigen.h>
    #include <fstream>
-    #include <sys/stat.h>
-   #include <boost/algorithm/string.hpp>
+   #include <sys/stat.h>
+   //#include <boost/algorithm/string.hpp>
    #include "H5Cpp.h"
+   #include "CUtils_str.h"
     
    
    // [[Rcpp::depends(RcppEigen)]]

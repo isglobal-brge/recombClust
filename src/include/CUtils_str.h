@@ -5,6 +5,7 @@
 
    using namespace Rcpp;
 
+   char *convert(const std::string & s);
    bool in_array(const std::string &value, const std::vector<std::string> &array);
 
 

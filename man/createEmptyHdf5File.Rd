@@ -4,19 +4,17 @@
 \alias{createEmptyHdf5File}
 \title{Create File}
 \usage{
-createEmptyHdf5File(filename, overwrite = FALSE)
+createEmptyHdf5File(filename, force = FALSE)
 }
 \arguments{
-\item{filename}{string, path and file name to search element.}
+\item{filename}{string, path and file name to be created.}
 
-\item{overwrite}{boolean, if true this function overwrites existing group.}
-
-\item{element}{string, group name to be created inside the hdf5 data file.}
+\item{force}{boolean, if true this function overwrites existing group.}
 }
 \value{
 integer, if 0 the process was successful and group was created in 
 the file
 }
 \description{
-Create a group inside Hdf5 data file
+Create an empty Hdf5 data file
 }

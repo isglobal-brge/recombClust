@@ -107,14 +107,14 @@ BEGIN_RCPP
 END_RCPP
 }
 // createEmptyHdf5File
-bool createEmptyHdf5File(std::string filename, Rcpp::Nullable<bool> overwrite);
-RcppExport SEXP _recombClust_createEmptyHdf5File(SEXP filenameSEXP, SEXP overwriteSEXP) {
+bool createEmptyHdf5File(std::string filename, Rcpp::Nullable<bool> force);
+RcppExport SEXP _recombClust_createEmptyHdf5File(SEXP filenameSEXP, SEXP forceSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< std::string >::type filename(filenameSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type overwrite(overwriteSEXP);
-    rcpp_result_gen = Rcpp::wrap(createEmptyHdf5File(filename, overwrite));
+    Rcpp::traits::input_parameter< Rcpp::Nullable<bool> >::type force(forceSEXP);
+    rcpp_result_gen = Rcpp::wrap(createEmptyHdf5File(filename, force));
     return rcpp_result_gen;
 END_RCPP
 }

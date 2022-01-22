@@ -132,32 +132,45 @@ int create_HDF5_groups_ptr( H5File* file, const H5std_string mGroup)
    {
       Exception::dontPrint();
 
+      char * pch;
       std::string strgroup = mGroup;
+      char*  cpgroup = &strgroup[0];
       std::string results = "";
-      std::vector<std::string> result;
 
-      boost::split(result, mGroup, boost::is_any_of("/"));
-
-      for (int i = 0; i < result.size(); i++) {
-         if(!pathExists( file->getId(), results + result[i]))
-            file->createGroup(results + result[i]);
-
-         results = result[i] + "/";
-      }
-
+      pch = strtok(cpgroup, "/"); 
+      
+      while (pch != NULL)  
+      {  
+         if( results.compare("") == 0 ) {
+            results = pch;
+         } else {
+            results = results + "/" + pch;
+         }
+         
+         if(!pathExists( file->getId(), results )) {
+            file->createGroup(results);
+         }
+         pch = strtok (NULL, "/");  
+      }  
+      
    } catch(H5::FileIException& error) { // catch failure caused by the H5File operations
+      file->close();
       ::Rf_error( "c++ exception create_HDF5_groups_ptr (File IException)" );
       return -1;
    } catch(H5::DataSetIException& error) { // catch failure caused by the DataSet operations
+      file->close();
       ::Rf_error( "c++ exception create_HDF5_groups_ptr (DataSet IException)" );
       return -1;
    } catch(H5::GroupIException& error) { // catch failure caused by the Group operations
+      file->close();
       ::Rf_error( "c++ exception create_HDF5_groups_ptr (Group IException)" );
       return -1;
    } catch(H5::DataSpaceIException& error) { // catch failure caused by the DataSpace operations
+      file->close();
       ::Rf_error( "c++ exception create_HDF5_groups_ptr (DataSpace IException)" );
       return -1;
    } catch(H5::DataTypeIException& error) { // catch failure caused by the DataSpace operations
+      file->close();
       ::Rf_error( "c++ exception create_HDF5_groups_ptr (Data TypeIException)" );
       return -1;
    }

@@ -3,6 +3,7 @@
 
   #include <RcppEigen.h>
   #include "CHdf5Functions.h"
+  #include "CFileUtils.h"
   #include "H5Cpp.h"
 
   bool exist_FileGroupDataset(std::string filename, std::string group, std::string dataset);

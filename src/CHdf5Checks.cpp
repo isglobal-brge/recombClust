@@ -6,8 +6,7 @@ bool exist_FileGroupDataset(std::string filename, std::string group, std::string
 {
    
    H5File* file;
-   DataSet* pdataset = nullptr;
-   
+
    try {
       
       if( ResFileExist_filestream(filename) ) {
@@ -212,6 +211,7 @@ bool setHdf5Group(std::string filename, std::string element, bool overwrite)
     H5File* file = new H5File( filename, H5F_ACC_RDWR ); 
     
     if( exists_HDF5_element_ptr(file, element) == 0 ) {
+        Rcpp::Rcout<<"\nEstem per a crear";
         res = create_HDF5_groups_ptr(file, element );
     } else {
         
@@ -231,26 +231,38 @@ bool setHdf5Group(std::string filename, std::string element, bool overwrite)
 
 //' Create File
 //' 
-//' Create a group inside Hdf5 data file
+//' Create an empty Hdf5 data file
 //'
-//' @param filename string, path and file name to search element.
-//' @param element string, group name to be created inside the hdf5 data file.
-//' @param overwrite boolean, if true this function overwrites existing group.
+//' @param filename string, path and file name to be created.
+//' @param force boolean, if true this function overwrites existing group.
 //' @return integer, if 0 the process was successful and group was created in 
 //' the file
 //' @export
 // [[Rcpp::export]]
-bool createEmptyHdf5File(std::string filename, Rcpp::Nullable<bool> overwrite = false)
+bool createEmptyHdf5File(std::string filename, Rcpp::Nullable<bool> force = false)
 {
     H5File* file; //  = new H5File( filename, H5F_ACC_RDWR ); 
     int res;
+    bool overwrite;
+    
+    if(force.isNull()) { overwrite = false; } 
+    else {   overwrite = Rcpp::as<bool>(force); } 
+    
     
     res = exist_File(filename);
     
     if( res == 0 ) {
         file = new H5File( filename, H5F_ACC_EXCL ); 
         file->close();
-    } 
+    } else {
+      if( overwrite == true) {
+        RemoveFile(filename);
+        file = new H5File( filename, H5F_ACC_EXCL ); 
+        file->close();
+      } else {
+        Rcpp::Rcout<<"File also exists, please set force = true if you want to overwrite file"; 
+      }
+    }
     
     return(res);
 }

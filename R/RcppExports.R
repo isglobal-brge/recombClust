@@ -126,16 +126,15 @@ setHdf5Group <- function(filename, element, overwrite) {
 
 #' Create File
 #' 
-#' Create a group inside Hdf5 data file
+#' Create an empty Hdf5 data file
 #'
-#' @param filename string, path and file name to search element.
-#' @param element string, group name to be created inside the hdf5 data file.
-#' @param overwrite boolean, if true this function overwrites existing group.
+#' @param filename string, path and file name to be created.
+#' @param force boolean, if true this function overwrites existing group.
 #' @return integer, if 0 the process was successful and group was created in 
 #' the file
 #' @export
-createEmptyHdf5File <- function(filename, overwrite = FALSE) {
-    .Call('_recombClust_createEmptyHdf5File', PACKAGE = 'recombClust', filename, overwrite)
+createEmptyHdf5File <- function(filename, force = FALSE) {
+    .Call('_recombClust_createEmptyHdf5File', PACKAGE = 'recombClust', filename, force)
 }
 
 #' Get dataset dimensions
