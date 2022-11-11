@@ -47,7 +47,7 @@ getRecombProb_hdf5 <- function(filename, group, range, samples, window = 500) {
         }
         
         datasetname <- runValue(seqnames(chunks[chunk]))
-        getProbs_hdf5(filename, group, "22", sel, hdf5Dims[1] - 4)
+        getProbs_hdf5(filename, group, as.character(unique(seqnames(range))), sel, hdf5Dims[1] - 4)
         
         return(chunk) 
         

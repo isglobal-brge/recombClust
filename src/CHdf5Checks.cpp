@@ -142,7 +142,6 @@ double prepare_outDataset(H5File* file, std::string outDataset, bool bforce)
             //..// throw std::range_error("Output dataset exists, please set force = true if you want to rewrite data");
         } else if ( exists_HDF5_element_ptr(file, outDataset) !=0 && bforce == true) {
           
-          Rcpp::Rcout<<"\n Hem entrat a la destrucció\n"<< exists_HDF5_element_ptr(file, outDataset)<<"\n Bforce = "<<bforce<<"\n Element"<<outDataset<<"\n";
             res = remove_HDF5_element_ptr(file, outDataset);
         }
         
@@ -211,7 +210,6 @@ bool setHdf5Group(std::string filename, std::string element, bool overwrite)
     H5File* file = new H5File( filename, H5F_ACC_RDWR ); 
     
     if( exists_HDF5_element_ptr(file, element) == 0 ) {
-        Rcpp::Rcout<<"\nEstem per a crear";
         res = create_HDF5_groups_ptr(file, element );
     } else {
         
