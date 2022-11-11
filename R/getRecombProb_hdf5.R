@@ -27,7 +27,8 @@ getRecombProb_hdf5 <- function(filename, group, range, samples, window = 500) {
 
   hdf5Dims <- NULL
   
-  chunkUsed <- sapply(seq( from = min(from(overLaps)), to = length(chunks)), function(chunk) {
+  chunkUsed <- sapply(seq( from = min(which(from(overLaps)== min(from(overLaps)))), 
+                           to = length(chunks)), function(chunk) {
     sel <- to(overLaps)[from(overLaps) == chunk]
     
     if (length(sel) == 0) {
