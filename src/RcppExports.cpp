@@ -6,6 +6,145 @@
 
 using namespace Rcpp;
 
+#ifdef RCPP_USE_GLOBAL_ROSTREAM
+Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
+Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
+#endif
+
+// hdf5omics_subset_cols
+List hdf5omics_subset_cols(std::string filename, std::string in_group, std::string in_dataset, std::string out_group, std::string out_dataset, IntegerVector keep);
+RcppExport SEXP _recombClust_hdf5omics_subset_cols(SEXP filenameSEXP, SEXP in_groupSEXP, SEXP in_datasetSEXP, SEXP out_groupSEXP, SEXP out_datasetSEXP, SEXP keepSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::string >::type filename(filenameSEXP);
+    Rcpp::traits::input_parameter< std::string >::type in_group(in_groupSEXP);
+    Rcpp::traits::input_parameter< std::string >::type in_dataset(in_datasetSEXP);
+    Rcpp::traits::input_parameter< std::string >::type out_group(out_groupSEXP);
+    Rcpp::traits::input_parameter< std::string >::type out_dataset(out_datasetSEXP);
+    Rcpp::traits::input_parameter< IntegerVector >::type keep(keepSEXP);
+    rcpp_result_gen = Rcpp::wrap(hdf5omics_subset_cols(filename, in_group, in_dataset, out_group, out_dataset, keep));
+    return rcpp_result_gen;
+END_RCPP
+}
+// hdf5omics_filter_maf_hdf5
+List hdf5omics_filter_maf_hdf5(std::string filename, std::string in_group, std::string in_dataset, std::string out_group, std::string out_dataset, double threshold);
+RcppExport SEXP _recombClust_hdf5omics_filter_maf_hdf5(SEXP filenameSEXP, SEXP in_groupSEXP, SEXP in_datasetSEXP, SEXP out_groupSEXP, SEXP out_datasetSEXP, SEXP thresholdSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::string >::type filename(filenameSEXP);
+    Rcpp::traits::input_parameter< std::string >::type in_group(in_groupSEXP);
+    Rcpp::traits::input_parameter< std::string >::type in_dataset(in_datasetSEXP);
+    Rcpp::traits::input_parameter< std::string >::type out_group(out_groupSEXP);
+    Rcpp::traits::input_parameter< std::string >::type out_dataset(out_datasetSEXP);
+    Rcpp::traits::input_parameter< double >::type threshold(thresholdSEXP);
+    rcpp_result_gen = Rcpp::wrap(hdf5omics_filter_maf_hdf5(filename, in_group, in_dataset, out_group, out_dataset, threshold));
+    return rcpp_result_gen;
+END_RCPP
+}
+// hdf5omics_impute_hdf5
+List hdf5omics_impute_hdf5(std::string filename, std::string in_group, std::string in_dataset, std::string out_group, std::string out_dataset, std::string method, int k, int L);
+RcppExport SEXP _recombClust_hdf5omics_impute_hdf5(SEXP filenameSEXP, SEXP in_groupSEXP, SEXP in_datasetSEXP, SEXP out_groupSEXP, SEXP out_datasetSEXP, SEXP methodSEXP, SEXP kSEXP, SEXP LSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::string >::type filename(filenameSEXP);
+    Rcpp::traits::input_parameter< std::string >::type in_group(in_groupSEXP);
+    Rcpp::traits::input_parameter< std::string >::type in_dataset(in_datasetSEXP);
+    Rcpp::traits::input_parameter< std::string >::type out_group(out_groupSEXP);
+    Rcpp::traits::input_parameter< std::string >::type out_dataset(out_datasetSEXP);
+    Rcpp::traits::input_parameter< std::string >::type method(methodSEXP);
+    Rcpp::traits::input_parameter< int >::type k(kSEXP);
+    Rcpp::traits::input_parameter< int >::type L(LSEXP);
+    rcpp_result_gen = Rcpp::wrap(hdf5omics_impute_hdf5(filename, in_group, in_dataset, out_group, out_dataset, method, k, L));
+    return rcpp_result_gen;
+END_RCPP
+}
+// clqd
+IntegerVector clqd(Eigen::MatrixXd OCM, NumericVector SNPbps, double CLQcut, double clstgap, std::string hrstType, int hrstParam, std::string CLQmode);
+RcppExport SEXP _recombClust_clqd(SEXP OCMSEXP, SEXP SNPbpsSEXP, SEXP CLQcutSEXP, SEXP clstgapSEXP, SEXP hrstTypeSEXP, SEXP hrstParamSEXP, SEXP CLQmodeSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Eigen::MatrixXd >::type OCM(OCMSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type SNPbps(SNPbpsSEXP);
+    Rcpp::traits::input_parameter< double >::type CLQcut(CLQcutSEXP);
+    Rcpp::traits::input_parameter< double >::type clstgap(clstgapSEXP);
+    Rcpp::traits::input_parameter< std::string >::type hrstType(hrstTypeSEXP);
+    Rcpp::traits::input_parameter< int >::type hrstParam(hrstParamSEXP);
+    Rcpp::traits::input_parameter< std::string >::type CLQmode(CLQmodeSEXP);
+    rcpp_result_gen = Rcpp::wrap(clqd(OCM, SNPbps, CLQcut, clstgap, hrstType, hrstParam, CLQmode));
+    return rcpp_result_gen;
+END_RCPP
+}
+// constructldblock
+IntegerMatrix constructldblock(List clstlist);
+RcppExport SEXP _recombClust_constructldblock(SEXP clstlistSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< List >::type clstlist(clstlistSEXP);
+    rcpp_result_gen = Rcpp::wrap(constructldblock(clstlist));
+    return rcpp_result_gen;
+END_RCPP
+}
+// bigld
+DataFrame bigld(Eigen::MatrixXd OCM, NumericVector win_start, NumericVector win_end, double CLQcut, double clstgap, std::string hrstType, int hrstParam, std::string CLQmode, std::string chrN);
+RcppExport SEXP _recombClust_bigld(SEXP OCMSEXP, SEXP win_startSEXP, SEXP win_endSEXP, SEXP CLQcutSEXP, SEXP clstgapSEXP, SEXP hrstTypeSEXP, SEXP hrstParamSEXP, SEXP CLQmodeSEXP, SEXP chrNSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Eigen::MatrixXd >::type OCM(OCMSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type win_start(win_startSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type win_end(win_endSEXP);
+    Rcpp::traits::input_parameter< double >::type CLQcut(CLQcutSEXP);
+    Rcpp::traits::input_parameter< double >::type clstgap(clstgapSEXP);
+    Rcpp::traits::input_parameter< std::string >::type hrstType(hrstTypeSEXP);
+    Rcpp::traits::input_parameter< int >::type hrstParam(hrstParamSEXP);
+    Rcpp::traits::input_parameter< std::string >::type CLQmode(CLQmodeSEXP);
+    Rcpp::traits::input_parameter< std::string >::type chrN(chrNSEXP);
+    rcpp_result_gen = Rcpp::wrap(bigld(OCM, win_start, win_end, CLQcut, clstgap, hrstType, hrstParam, CLQmode, chrN));
+    return rcpp_result_gen;
+END_RCPP
+}
+// recombFreq
+NumericVector recombFreq(NumericVector Resp, StringVector Block, int nSNP);
+RcppExport SEXP _recombClust_recombFreq(SEXP RespSEXP, SEXP BlockSEXP, SEXP nSNPSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type Resp(RespSEXP);
+    Rcpp::traits::input_parameter< StringVector >::type Block(BlockSEXP);
+    Rcpp::traits::input_parameter< int >::type nSNP(nSNPSEXP);
+    rcpp_result_gen = Rcpp::wrap(recombFreq(Resp, Block, nSNP));
+    return rcpp_result_gen;
+END_RCPP
+}
+// linkageFreq
+NumericVector linkageFreq(NumericVector Resp, StringVector Block, int nSNP);
+RcppExport SEXP _recombClust_linkageFreq(SEXP RespSEXP, SEXP BlockSEXP, SEXP nSNPSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type Resp(RespSEXP);
+    Rcpp::traits::input_parameter< StringVector >::type Block(BlockSEXP);
+    Rcpp::traits::input_parameter< int >::type nSNP(nSNPSEXP);
+    rcpp_result_gen = Rcpp::wrap(linkageFreq(Resp, Block, nSNP));
+    return rcpp_result_gen;
+END_RCPP
+}
+// updateModel
+List updateModel(List par);
+RcppExport SEXP _recombClust_updateModel(SEXP parSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< List >::type par(parSEXP);
+    rcpp_result_gen = Rcpp::wrap(updateModel(par));
+    return rcpp_result_gen;
+END_RCPP
+}
 // LDmixtureModel
 List LDmixtureModel(RObject dat, Nullable<int> maxSteps, Nullable<double> prob0, Nullable<int> blocksize);
 RcppExport SEXP _recombClust_LDmixtureModel(SEXP datSEXP, SEXP maxStepsSEXP, SEXP prob0SEXP, SEXP blocksizeSEXP) {
@@ -20,9 +159,175 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// getProbs
+NumericVector getProbs(RObject mat, RObject sel);
+RcppExport SEXP _recombClust_getProbs(SEXP matSEXP, SEXP selSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< RObject >::type mat(matSEXP);
+    Rcpp::traits::input_parameter< RObject >::type sel(selSEXP);
+    rcpp_result_gen = Rcpp::wrap(getProbs(mat, sel));
+    return rcpp_result_gen;
+END_RCPP
+}
+// block_pairs
+IntegerMatrix block_pairs(NumericVector positions, int blockSize, double distance);
+RcppExport SEXP _recombClust_block_pairs(SEXP positionsSEXP, SEXP blockSizeSEXP, SEXP distanceSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type positions(positionsSEXP);
+    Rcpp::traits::input_parameter< int >::type blockSize(blockSizeSEXP);
+    Rcpp::traits::input_parameter< double >::type distance(distanceSEXP);
+    rcpp_result_gen = Rcpp::wrap(block_pairs(positions, blockSize, distance));
+    return rcpp_result_gen;
+END_RCPP
+}
+// pca_hdf5
+List pca_hdf5(std::string filename, std::string group, std::string dataset, int ncomp);
+RcppExport SEXP _recombClust_pca_hdf5(SEXP filenameSEXP, SEXP groupSEXP, SEXP datasetSEXP, SEXP ncompSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::string >::type filename(filenameSEXP);
+    Rcpp::traits::input_parameter< std::string >::type group(groupSEXP);
+    Rcpp::traits::input_parameter< std::string >::type dataset(datasetSEXP);
+    Rcpp::traits::input_parameter< int >::type ncomp(ncompSEXP);
+    rcpp_result_gen = Rcpp::wrap(pca_hdf5(filename, group, dataset, ncomp));
+    return rcpp_result_gen;
+END_RCPP
+}
+// run_region
+List run_region(std::string filename, std::string hap_group, std::string hap_dataset, NumericVector positions, std::string out_group, std::string out_dataset, int blockSize, double distance, int maxSteps, double prob0);
+RcppExport SEXP _recombClust_run_region(SEXP filenameSEXP, SEXP hap_groupSEXP, SEXP hap_datasetSEXP, SEXP positionsSEXP, SEXP out_groupSEXP, SEXP out_datasetSEXP, SEXP blockSizeSEXP, SEXP distanceSEXP, SEXP maxStepsSEXP, SEXP prob0SEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::string >::type filename(filenameSEXP);
+    Rcpp::traits::input_parameter< std::string >::type hap_group(hap_groupSEXP);
+    Rcpp::traits::input_parameter< std::string >::type hap_dataset(hap_datasetSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type positions(positionsSEXP);
+    Rcpp::traits::input_parameter< std::string >::type out_group(out_groupSEXP);
+    Rcpp::traits::input_parameter< std::string >::type out_dataset(out_datasetSEXP);
+    Rcpp::traits::input_parameter< int >::type blockSize(blockSizeSEXP);
+    Rcpp::traits::input_parameter< double >::type distance(distanceSEXP);
+    Rcpp::traits::input_parameter< int >::type maxSteps(maxStepsSEXP);
+    Rcpp::traits::input_parameter< double >::type prob0(prob0SEXP);
+    rcpp_result_gen = Rcpp::wrap(run_region(filename, hap_group, hap_dataset, positions, out_group, out_dataset, blockSize, distance, maxSteps, prob0));
+    return rcpp_result_gen;
+END_RCPP
+}
+// cor_hdf5
+List cor_hdf5(std::string filename, std::string group, std::string dataset, std::string out_group, std::string out_dataset, bool absval, double minNonNA);
+RcppExport SEXP _recombClust_cor_hdf5(SEXP filenameSEXP, SEXP groupSEXP, SEXP datasetSEXP, SEXP out_groupSEXP, SEXP out_datasetSEXP, SEXP absvalSEXP, SEXP minNonNASEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::string >::type filename(filenameSEXP);
+    Rcpp::traits::input_parameter< std::string >::type group(groupSEXP);
+    Rcpp::traits::input_parameter< std::string >::type dataset(datasetSEXP);
+    Rcpp::traits::input_parameter< std::string >::type out_group(out_groupSEXP);
+    Rcpp::traits::input_parameter< std::string >::type out_dataset(out_datasetSEXP);
+    Rcpp::traits::input_parameter< bool >::type absval(absvalSEXP);
+    Rcpp::traits::input_parameter< double >::type minNonNA(minNonNASEXP);
+    rcpp_result_gen = Rcpp::wrap(cor_hdf5(filename, group, dataset, out_group, out_dataset, absval, minNonNA));
+    return rcpp_result_gen;
+END_RCPP
+}
+// bigld_hdf5
+DataFrame bigld_hdf5(std::string filename, std::string group, std::string dataset, NumericVector win_start, NumericVector win_end, double CLQcut, double clstgap, std::string hrstType, int hrstParam, std::string CLQmode, std::string chrN);
+RcppExport SEXP _recombClust_bigld_hdf5(SEXP filenameSEXP, SEXP groupSEXP, SEXP datasetSEXP, SEXP win_startSEXP, SEXP win_endSEXP, SEXP CLQcutSEXP, SEXP clstgapSEXP, SEXP hrstTypeSEXP, SEXP hrstParamSEXP, SEXP CLQmodeSEXP, SEXP chrNSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::string >::type filename(filenameSEXP);
+    Rcpp::traits::input_parameter< std::string >::type group(groupSEXP);
+    Rcpp::traits::input_parameter< std::string >::type dataset(datasetSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type win_start(win_startSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type win_end(win_endSEXP);
+    Rcpp::traits::input_parameter< double >::type CLQcut(CLQcutSEXP);
+    Rcpp::traits::input_parameter< double >::type clstgap(clstgapSEXP);
+    Rcpp::traits::input_parameter< std::string >::type hrstType(hrstTypeSEXP);
+    Rcpp::traits::input_parameter< int >::type hrstParam(hrstParamSEXP);
+    Rcpp::traits::input_parameter< std::string >::type CLQmode(CLQmodeSEXP);
+    Rcpp::traits::input_parameter< std::string >::type chrN(chrNSEXP);
+    rcpp_result_gen = Rcpp::wrap(bigld_hdf5(filename, group, dataset, win_start, win_end, CLQcut, clstgap, hrstType, hrstParam, CLQmode, chrN));
+    return rcpp_result_gen;
+END_RCPP
+}
+// stream_models
+List stream_models(std::string filename, std::string group, std::string dataset, List pairs, int maxSteps, double prob0, int blocksize);
+RcppExport SEXP _recombClust_stream_models(SEXP filenameSEXP, SEXP groupSEXP, SEXP datasetSEXP, SEXP pairsSEXP, SEXP maxStepsSEXP, SEXP prob0SEXP, SEXP blocksizeSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::string >::type filename(filenameSEXP);
+    Rcpp::traits::input_parameter< std::string >::type group(groupSEXP);
+    Rcpp::traits::input_parameter< std::string >::type dataset(datasetSEXP);
+    Rcpp::traits::input_parameter< List >::type pairs(pairsSEXP);
+    Rcpp::traits::input_parameter< int >::type maxSteps(maxStepsSEXP);
+    Rcpp::traits::input_parameter< double >::type prob0(prob0SEXP);
+    Rcpp::traits::input_parameter< int >::type blocksize(blocksizeSEXP);
+    rcpp_result_gen = Rcpp::wrap(stream_models(filename, group, dataset, pairs, maxSteps, prob0, blocksize));
+    return rcpp_result_gen;
+END_RCPP
+}
+// stream_matrix
+List stream_matrix(std::string filename, std::string group, std::string dataset, Rcpp::NumericMatrix M);
+RcppExport SEXP _recombClust_stream_matrix(SEXP filenameSEXP, SEXP groupSEXP, SEXP datasetSEXP, SEXP MSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::string >::type filename(filenameSEXP);
+    Rcpp::traits::input_parameter< std::string >::type group(groupSEXP);
+    Rcpp::traits::input_parameter< std::string >::type dataset(datasetSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type M(MSEXP);
+    rcpp_result_gen = Rcpp::wrap(stream_matrix(filename, group, dataset, M));
+    return rcpp_result_gen;
+END_RCPP
+}
+// windows_hdf5
+List windows_hdf5(std::string filename, std::string models_group, std::string models_dataset, NumericVector positions, IntegerMatrix pairs, double range_start, double range_end, double window, std::string out_group, std::string out_dataset);
+RcppExport SEXP _recombClust_windows_hdf5(SEXP filenameSEXP, SEXP models_groupSEXP, SEXP models_datasetSEXP, SEXP positionsSEXP, SEXP pairsSEXP, SEXP range_startSEXP, SEXP range_endSEXP, SEXP windowSEXP, SEXP out_groupSEXP, SEXP out_datasetSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::string >::type filename(filenameSEXP);
+    Rcpp::traits::input_parameter< std::string >::type models_group(models_groupSEXP);
+    Rcpp::traits::input_parameter< std::string >::type models_dataset(models_datasetSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type positions(positionsSEXP);
+    Rcpp::traits::input_parameter< IntegerMatrix >::type pairs(pairsSEXP);
+    Rcpp::traits::input_parameter< double >::type range_start(range_startSEXP);
+    Rcpp::traits::input_parameter< double >::type range_end(range_endSEXP);
+    Rcpp::traits::input_parameter< double >::type window(windowSEXP);
+    Rcpp::traits::input_parameter< std::string >::type out_group(out_groupSEXP);
+    Rcpp::traits::input_parameter< std::string >::type out_dataset(out_datasetSEXP);
+    rcpp_result_gen = Rcpp::wrap(windows_hdf5(filename, models_group, models_dataset, positions, pairs, range_start, range_end, window, out_group, out_dataset));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
+    {"_recombClust_hdf5omics_subset_cols", (DL_FUNC) &_recombClust_hdf5omics_subset_cols, 6},
+    {"_recombClust_hdf5omics_filter_maf_hdf5", (DL_FUNC) &_recombClust_hdf5omics_filter_maf_hdf5, 6},
+    {"_recombClust_hdf5omics_impute_hdf5", (DL_FUNC) &_recombClust_hdf5omics_impute_hdf5, 8},
+    {"_recombClust_clqd", (DL_FUNC) &_recombClust_clqd, 7},
+    {"_recombClust_constructldblock", (DL_FUNC) &_recombClust_constructldblock, 1},
+    {"_recombClust_bigld", (DL_FUNC) &_recombClust_bigld, 9},
+    {"_recombClust_recombFreq", (DL_FUNC) &_recombClust_recombFreq, 3},
+    {"_recombClust_linkageFreq", (DL_FUNC) &_recombClust_linkageFreq, 3},
+    {"_recombClust_updateModel", (DL_FUNC) &_recombClust_updateModel, 1},
     {"_recombClust_LDmixtureModel", (DL_FUNC) &_recombClust_LDmixtureModel, 4},
+    {"_recombClust_getProbs", (DL_FUNC) &_recombClust_getProbs, 2},
+    {"_recombClust_block_pairs", (DL_FUNC) &_recombClust_block_pairs, 3},
+    {"_recombClust_pca_hdf5", (DL_FUNC) &_recombClust_pca_hdf5, 4},
+    {"_recombClust_run_region", (DL_FUNC) &_recombClust_run_region, 10},
+    {"_recombClust_cor_hdf5", (DL_FUNC) &_recombClust_cor_hdf5, 7},
+    {"_recombClust_bigld_hdf5", (DL_FUNC) &_recombClust_bigld_hdf5, 11},
+    {"_recombClust_stream_models", (DL_FUNC) &_recombClust_stream_models, 7},
+    {"_recombClust_stream_matrix", (DL_FUNC) &_recombClust_stream_matrix, 4},
+    {"_recombClust_windows_hdf5", (DL_FUNC) &_recombClust_windows_hdf5, 10},
     {NULL, NULL, 0}
 };
 

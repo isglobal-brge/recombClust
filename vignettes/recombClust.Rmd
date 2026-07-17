@@ -1,0 +1,319 @@
+---
+title: "recombClust: classifying chromosomes by their recombination history"
+subtitle: "Dolors Pelegrí-Sisó, Carlos Ruiz-Arenas, Alejandro Cáceres and Juan R. González"
+author: |
+   Institute for Global Health (ISGlobal), Barcelona, Spain
+   Bioinformatics Research Group in Epidemiology (BRGE)
+   https://brge.isglobal.org
+date: "`r Sys.Date()`"
+package: "`r BiocStyle::pkg_ver('recombClust')`"
+abstract: |
+  This vignette is a practical guide to `recombClust`. It explains the question the
+  package answers, walks through a complete analysis on a small example, and — at
+  each step — describes the options you can set, what each one changes, and how to
+  read and interpret the results.
+output:
+  BiocStyle::html_document:
+    number_sections: true
+    toc: yes
+    toc_float: yes
+    fig_caption: yes
+vignette: >
+  %\VignetteIndexEntry{recombClust: classifying chromosomes by their recombination history}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>", message = FALSE,
+                      warning = FALSE, fig.width = 6.2, fig.height = 5,
+                      fig.align = "center")
+set.seed(1)
+```
+
+# The question: recombination history
+
+Population-genetics data usually describe chromosomes by *which* alleles they carry.
+But two chromosomes with the same alleles can still differ in their **history**: one
+may descend from an ancestral haplotype that has not recombined across a region, while
+another is a mosaic assembled by recombination. That difference is invisible to a
+single-SNP frequency, yet it is biologically meaningful — the clearest example is a
+**chromosomal inversion**, where the inverted orientation suppresses recombination with
+the standard one, so the two orientations accumulate distinct recombination histories.
+
+When you have the phased genotypes of a region and suspect that this kind of hidden
+structure is present, two natural questions arise:
+
+1. *Are there groups of chromosomes with different recombination histories here?*
+2. *Which part of the region is responsible for that difference?*
+
+`recombClust` answers both. The rest of this vignette shows how, and — more importantly
+— how to choose its options and read what it returns.
+
+## How it works, in one paragraph
+
+You do not need the details to use the package, but the intuition helps interpret the
+output. `recombClust` looks at **pairs of nearby SNP-blocks**. For each pair it asks, on
+every chromosome, a single question: do these two blocks look *linked* (they travel
+together, as if no recombination separated them) or *independent* (recombination has
+shuffled them)? The answers to many such pairs form a **recombination profile** for each
+chromosome; chromosomes with a similar history end up with similar profiles, and
+clustering the profiles reveals the sub-populations. The intermediate matrices are kept
+in an HDF5 file rather than in memory, so the same workflow runs unchanged on large
+cohorts.
+
+```{r lib}
+library(recombClust)
+```
+
+# The data you provide
+
+`recombClust` works on a **haplotype matrix**: rows are chromosomes (phased, so each
+individual contributes two rows) and columns are biallelic SNPs coded `0/1`. You would
+normally build it from a VCF/GDS/BED file with `hdf5omics_import()`, which writes the
+matrix to an HDF5 file and returns the SNP positions.
+
+Here we *simulate* a region instead, for two reasons: the vignette stays self-contained,
+and — because we set up the answer ourselves — you can check the output against a known
+truth and learn to recognise it in your own data. We simulate 140 chromosomes over 60
+SNPs with an inversion in the middle (SNPs 21-45): half of the chromosomes carry a
+conserved haplotype there (recombination suppressed), the other half have recombined
+freely; outside the inversion all chromosomes are equivalent.
+
+```{r simulate}
+simulate_region <- function(n = 140, nSNP = 60, inv = 21:45, mut = 0.01) {
+  H <- matrix(sample(0:1, n * nSNP, replace = TRUE), n, nSNP)   # background
+  label <- rep("standard", n)
+  for (i in seq_len(n / 2)) {                                   # inverted chromosomes
+    allele <- sample(0:1, 1)                                    # conserved haplotype
+    v <- rep(allele, length(inv))
+    flip <- runif(length(inv)) < mut
+    v[flip] <- 1 - v[flip]
+    H[i, inv] <- v
+    label[i] <- "inverted"
+  }
+  positions <- sort(sample(seq_len(nSNP * 300), nSNP))          # bp coordinates
+  list(H = H, label = label, positions = positions)
+}
+
+sim <- simulate_region()
+dim(sim$H)               # chromosomes x SNPs
+table(sim$label)         # the truth, hidden from the analysis
+
+hdf5 <- tempfile(fileext = ".hdf5")
+BigDataStatMeth::hdf5_create_matrix(hdf5, "haplotypes/H", data = sim$H, overwrite = TRUE)
+BigDataStatMeth::hdf5_close_all()
+```
+
+`sim$label` is the answer we are pretending not to know; we will come back to it to
+confirm that the analysis recovers it.
+
+# Preparing the data: missing genotypes
+
+Phased reference panels are usually complete, so you can often skip this step. But a
+missing call cannot enter the model, and discarding SNPs or chromosomes throws away
+information, so if your matrix has gaps you should fill them first with
+`hdf5omics_impute()`.
+
+The choice that matters is the **method**:
+
+| `method`  | What it does | When to use it |
+|:----------|:-------------|:---------------|
+| `"ldknni"` (default) | LD-aware nearest neighbours: each missing allele is read off the most correlated SNPs and the most similar chromosomes | almost always — it respects the local haplotype structure recombClust depends on |
+| `"mode"`  | the commonest allele of the SNP | a quick baseline; it ignores structure and biases allele frequencies |
+
+`ldknni` also takes `L` (how many correlated SNPs to look at) and `k` (how many
+neighbouring chromosomes to average); the defaults are sensible and rarely need
+changing. Because imputation only works where there *is* linkage disequilibrium, we
+demonstrate it on a matrix with realistic LD blocks, hide 5 % of the calls, and check
+how many come back:
+
+```{r impute}
+ld_blocks <- do.call(cbind, lapply(rep(6, 8), function(b) {
+  hap <- sample(0:1, 120, replace = TRUE)
+  vapply(seq_len(b), function(j) {
+    v <- hap; f <- runif(120) < 0.03; v[f] <- 1 - v[f]; v
+  }, numeric(120))
+}))
+truth <- ld_blocks
+with_missing <- ld_blocks
+gaps <- sample(length(with_missing), round(0.05 * length(with_missing)))
+with_missing[gaps] <- NA
+
+fqc <- tempfile(fileext = ".hdf5")
+BigDataStatMeth::hdf5_create_matrix(fqc, "hap/H", data = with_missing, overwrite = TRUE)
+BigDataStatMeth::hdf5_close_all()
+
+hdf5omics_impute(fqc, "hap", "H", out_dataset = "H_imputed", method = "ldknni")
+imputed <- as.matrix(BigDataStatMeth::hdf5_matrix(fqc, "hap/H_imputed"))
+BigDataStatMeth::hdf5_close_all()
+
+mean(imputed[gaps] == truth[gaps])          # fraction recovered
+```
+
+Almost all of the hidden calls are recovered, because LD-kNNi borrows them from
+correlated neighbours. In practice you would impute your haplotype file and then use the
+completed matrix in the analysis below.
+
+# Classifying chromosomes
+
+`recombClust()` is the main entry point. You give it the haplotype file and the SNP
+positions; it fits the model to every block pair, summarises the profiles with a
+principal component analysis, and groups the chromosomes with k-means.
+
+```{r pathA}
+res <- recombClust(hdf5, sim$positions, clusters = 2, PCs = 3, seed = 1)
+res
+```
+
+## The options and what they change
+
+A handful of arguments let you match the analysis to your region:
+
+| Argument     | Default | What it controls |
+|:-------------|:--------|:-----------------|
+| `blockSize`  | 2       | SNPs per block. Larger blocks describe longer local haplotypes but need more data per block. |
+| `distance`   | 1e4     | the largest gap (bp) between the two blocks of a pair — i.e. the physical scale of linkage the model probes. Widen it to look across a larger region, narrow it to stay local. |
+| `clusters`   | 2       | how many sub-populations k-means looks for. Two is the natural choice for an inversion (two orientations); raise it if you expect more groups. |
+| `PCs`        | 3       | principal components kept for clustering. A few is usually enough because one dominant signal drives most of the variance. |
+| `seed`       | `NULL`  | fixes the k-means start so the labelling is reproducible. |
+
+## Reading the result
+
+The `print` above already gives the shape of the analysis (chromosomes, number of block
+pairs, cluster sizes, and the leading standard deviations — how much variance each PC
+carries). The result, though, is best read as a picture:
+
+```{r pathA-plot, fig.cap = "Each point is a chromosome, placed by its recombination profile and coloured by cluster."}
+plot(res)
+```
+
+The reading is simple: **two well-separated clouds mean two distinct recombination
+histories**. Here the separation is almost entirely along the first component (its
+percentage in the axis label is large), which is what you expect when a single
+polymorphism dominates. A single diffuse cloud, by contrast, would mean the region has
+no strong recombination-history structure.
+
+Because this is a simulation we can confirm the clusters against the truth we hid
+earlier — in a real study, this labelling *is* the discovery:
+
+```{r pathA-check}
+table(truth = sim$label, cluster = res$class)
+```
+
+The clusters recover the inverted and standard chromosomes exactly. The cluster
+assignment lives in `res$class` and is what you carry forward (e.g. to test association
+with a phenotype).
+
+# Locating the region
+
+Knowing *that* the chromosomes differ, `define_Regions()` tells you *where*. It works in
+two steps: `recomb_probabilities()` slides windows along the region and summarises the
+recombination signal in each (kept on disk as `ModelsProb`), and `define_Regions()`
+groups the windows that behave alike into blocks.
+
+```{r pathB}
+probs <- recomb_probabilities(hdf5, sim$positions, window = 800)
+regions <- define_Regions(probs, CLQcut = 0.5)
+regions
+```
+
+The options here control the resolution and the stringency:
+
+| Argument    | Default | What it controls |
+|:------------|:--------|:-----------------|
+| `window`    | 1000    | window width (bp) in `recomb_probabilities()`. Smaller windows locate the region more finely but are noisier. |
+| `CLQcut`    | 0.5     | how strong the correlation between two windows must be for them to join the same block. Raise it to report only the dominant signal, lower it to be more inclusive. |
+| `clstgap`   | 40000   | a physical gap (bp) larger than this splits a block, so distant windows are not merged. |
+| `minLength` | 1       | drops blocks made of fewer than this many windows. |
+
+## Reading the result
+
+Two complementary views help you interpret the blocks. The first is the window-by-window
+correlation of the recombination signal, with the detected blocks outlined:
+
+```{r pathB-plot, fig.cap = "Windows sharing a recombination history light up as blocks; each outline is a reported region."}
+plot(regions)
+```
+
+The large block on the diagonal is the inversion: those windows share a history and are
+reported as one region, whose `start`/`end` columns give its coordinates. Faint colour
+off the blocks is background; smaller blocks are weaker local correlations that `CLQcut`
+lets you keep or discard.
+
+The second view places the signal on the genomic axis. Passing the cluster labels from
+`recombClust()`, `plotRecombTracks()` draws the recombination proportion of each cluster
+along the region and, below it, their difference; the detected regions appear as a strip:
+
+```{r tracks, fig.height = 6, fig.cap = "Recombination proportion per cluster, their difference, and the detected region along the genomic axis."}
+plotRecombTracks(probs, class = res$class, regions = regions)
+```
+
+Where the two cluster lines pull apart and the difference departs from zero is exactly
+the inversion — the same conclusion as the heat map, now anchored to base-pair position.
+With real coordinates the per-window values feed directly into a
+[Gviz](https://bioconductor.org/packages/Gviz/) `DataTrack`, so you can stack the
+recombination signal against ideograms and gene models.
+
+# A complete run from a VCF file
+
+The walkthrough above used a simulated matrix so we could check the answer against a
+known truth. In practice you start from a genotype file. The package ships a small
+example VCF (a ~85 kb region of chromosome 7 for 30 individuals); `hdf5omics_import()`
+turns it into an HDF5 haplotype matrix in a single call — reading, phasing and,
+optionally, filtering by minor allele frequency — where earlier versions required a
+chain of `VariantAnnotation`/`SnpMatrix` preprocessing:
+
+```{r vcf}
+vcf <- system.file("extdata", "example.vcf", package = "recombClust")
+h <- hdf5omics_import(vcf, out_file = tempfile(fileext = ".h5"), minmaf = 0.1)
+c(chromosomes = h$nchrom, SNPs = h$nsnp)
+```
+
+The returned `h` carries the HDF5 file, the dataset and the SNP positions — exactly the
+inputs `recombClust()` expects:
+
+```{r vcf-run}
+fit <- recombClust(h$file, h$positions, clusters = 2, distance = 3000, seed = 1)
+table(fit$class)
+```
+
+This is a small test region with no known inversion, so treat it as a demonstration of
+the workflow rather than a biological finding. On a region that does carry structure,
+`plot(fit)` and `define_Regions()` are read exactly as in the sections above.
+
+# Coming from an earlier version
+
+If you used recombClust before the 2.0 rewrite, the analysis is the same; a few entry
+points were renamed or merged into cleaner ones. The table points to the current
+function for each task:
+
+| Task | Earlier versions | Now |
+|:-----|:-----------------|:----|
+| Load phased genotypes | `getData()` | `hdf5omics_import()` |
+| Classify chromosomes | `runRecombClust()` | `recombClust()` |
+| Windowed recombination probabilities | `getRecombProb()`, `computeRecombProbabilities()` | `recomb_probabilities()` |
+| Detect regions | `define_Regions()` | `define_Regions()` (unchanged) |
+
+The core model functions keep their names — `recombFreq()`, `linkageFreq()`,
+`updateModel()`, `LDmixtureModel()`, `getProbs()`. The hand-written HDF5 helpers of the
+older versions (creating files/groups/datasets, querying dimensions, …) are no longer
+part of the package: that layer is now provided by
+[BigDataStatMeth](https://github.com/isglobal-brge/BigDataStatMeth), which is what lets
+the analysis run out-of-core.
+
+# Reference
+
+The mixture model underlying `recombClust`, and its application to real chromosomal
+inversions and recombination hotspots, are described in:
+
+> Ruiz-Arenas C, Cáceres A, Pelegrí-Sisó D, González JR (2020). *recombClust:
+> characterization of chromosomes based on their recombination history.*
+> **Genome Research** 30:1802-1814.
+> doi:[10.1101/gr.258301.119](https://doi.org/10.1101/gr.258301.119)
+
+# Session information
+
+```{r sessioninfo}
+sessionInfo()
+```

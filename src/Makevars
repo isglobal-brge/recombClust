@@ -1,14 +1,14 @@
-## With Rcpp 0.11.0 and later, we no longer need to set PKG_LIBS as there is
-## no user-facing library. The include path to headers is already set by R.
-#PKG_LIBS = 
+# recombClust links against the BigDataStatMeth C++ headers, which require HDF5
+# (Rhdf5lib), BLAS/LAPACK and OpenMP. Flags mirror BigDataStatMeth's Makevars.
 
-# OMP
-PKG_CXXFLAGS += $(SHLIB_OPENMP_CXXFLAGS) 
-PKG_LIBS += `$(R_HOME)/bin/Rscript -e "Rcpp:::LdFlags()"` $(FLIBS) 
+CXX_STD = CXX17
 
-# Blas i Lapack
-PKG_LIBS += $(LAPACK_LIBS) $(BLAS_LIBS) $(FLIBS) 
+PKG_CXXFLAGS = $(SHLIB_OPENMP_CXXFLAGS) -DBOOST_NO_CONCEPT_CHECKING -DSTRICT_R_HEADERS
 
-## With R 3.1.0 or later, you can uncomment the following line to tell R to 
-## enable compilation with C++11 (or even C++14) where available
-CXX_STD = CXX11
+# OpenMP + BLAS/LAPACK + Fortran runtime
+PKG_LIBS = $(SHLIB_OPENMP_CXXFLAGS) $(LAPACK_LIBS) $(BLAS_LIBS) $(FLIBS)
+
+# Rhdf5lib (static HDF5 C/C++ libs)
+RHDF5_LIBS = $(shell echo 'Rhdf5lib::pkgconfig("PKG_CXX_LIBS")' | \
+    "${R_HOME}/bin/R" --vanilla --slave)
+PKG_LIBS += $(RHDF5_LIBS)
