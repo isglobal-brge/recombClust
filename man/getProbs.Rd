@@ -2,18 +2,19 @@
 % Please edit documentation in R/RcppExports.R
 \name{getProbs}
 \alias{getProbs}
-\title{Compute cluster Recomb freq by mean of voting}
+\title{Windowed reduction: mean over selected model columns}
 \usage{
 getProbs(mat, sel)
 }
 \arguments{
-\item{mat}{with initial probabilities}
+\item{mat}{Chromosomes x models responsibility matrix.}
 
-\item{sel}{overlap ranges}
+\item{sel}{1-based column indices of the models within a window.}
 }
 \value{
-NumericVector with recombination probabilites
+Per-chromosome mean recomb probability for the window.
 }
 \description{
-Compute cluster Recomb freq by mean of voting
+Windowed reduction: mean over selected model columns
 }
+\keyword{internal}

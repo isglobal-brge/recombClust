@@ -28,11 +28,8 @@
 .Rproj.user
 inst/doc
 *.Rproj
-test
 # Compiled files
 *.o
 *.so
 .DS_Store
 *.old
-*.dll
-

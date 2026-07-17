@@ -1,2 +1,7 @@
+^docs$
+^CLAUDE\.md$
+^tests/harness$
 ^.*\.Rproj$
 ^\.Rproj\.user$
+^\.git$
+^\.DS_Store$

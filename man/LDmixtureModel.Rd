@@ -2,57 +2,23 @@
 % Please edit documentation in R/RcppExports.R
 \name{LDmixtureModel}
 \alias{LDmixtureModel}
-\title{LDmixture model to a pair of SNP-blocks}
+\title{In-memory LD mixture model for a pair of SNP-blocks}
 \usage{
-LDmixtureModel(
-  dat,
-  resfilename,
-  resgroup,
-  grchr,
-  grstart,
-  grend,
-  maxSteps = NULL,
-  prob0 = NULL,
-  blocksize = NULL
-)
+LDmixtureModel(dat, maxSteps = NULL, prob0 = NULL, blocksize = NULL)
 }
 \arguments{
-\item{dat}{Matrix with the genotype data}
+\item{dat}{Character matrix, 2 columns (left/right allele strings), one row per chromosome.}
 
-\item{resfilename}{string, path and file name to store results. By default
-this runLDmixture stores data in recombClustResults.hdf5, if resfilename 
-is empty then function works on memory. To work with big regions it is 
-recommended to work with data on disk. Only use resfilename = "" when regions 
-are small in order to prevent memory overflows and low performance.}
+\item{maxSteps}{Maximum EM iterations (default 100).}
 
-\item{resgroup}{string, folder inside a file where we want to store results. By default
-runLDmixture stores data inside group "AllModels" in resfilename file.}
+\item{prob0}{Initial mixture probability (default 0.5).}
 
-\item{grstart}{Numerical genomic region start}
-
-\item{grend}{Numerical genomic region end}
-
-\item{maxSteps}{Numerical with the maximum number of iterations run by the EM algorithm}
-
-\item{prob0}{Initial mixture probability.}
-
-\item{overwrite}{boolean, (optional) either a logical value indicating whether
-the output file can be overwritten or not, by default files are not overwritten.}
+\item{blocksize}{SNPs per block (default 2).}
 }
 \value{
-A list with the LDmixture results 
-\itemize{
- \item{"logMix"}{Log-likelihood of mixture model}
- \item{"logLD"}{Log-likelihood of linkage model}
- \item{"logNoLD"}{Log-likelihood of recomb model}
- \item{"BIC"}{BIC of the mixture vs the base model}
- \item{"prob"}{Proportion of chromosomes belonging to recomb model}
- \item{"steps"}{Number of iterations until converge of the EM algorithm}
- \item{"pval"}{P-value of the Chi-square test}
- \item{"r1"}{Responsibilities for recomb population of each chromosomes. It is
- only available for selected models (BIC > 10, pval > 0.05)}
-}
+list(logNoLD, prob, r1).
 }
 \description{
-Runs LDmixture model to a pair of SNP-blocks
+In-memory LD mixture model for a pair of SNP-blocks
 }
+\keyword{internal}

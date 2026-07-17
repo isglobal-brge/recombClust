@@ -1,38 +1,33 @@
 Package: recombClust
-Title: Group chromosomes by recombination history
-Version: 0.2.2.3
-Authors@R: c(person("Carlos", "Ruiz-Arenas", , "carlos.ruiz@isglobal.org", role = c("aut", "cre")),
-  person("Dolors", "Pelegri-Siso", , "dolors.pelegri@isglobal.org", role = "aut"),
-  person("Alejandro", "Caceres", ,"alejandro.caceres@isglobal.org", role = "aut"),
-  person("Juan R.", "Gonzalez", ,"juanr.gonzalez@isglobal.org", role = "aut"))
-Description: Recombination history is based on a mixture model that, given a pair
-  of SNP-blocks, separates chromosomes in two populations, one with high Linkage Disequilibrium (LD)
-  and low recombination (linkage) and another with low LD and high recombination. The 
-  method use the classification of several SNP-block pairs in a region to group chromosomes
-  in clusters with different recombination history. This package takes as input genotype phased data. 
-Depends: R (>= 3.3.0), igraph
-License: Artistic-2.0
+Type: Package
+Title: Group Chromosomes by Their Recombination History
+Version: 2.0.0
+Date: 2026-07-12
+Authors@R: c(
+    person("Carlos", "Ruiz-Arenas", email = "carlos.ruiz@isglobal.org", role = "aut"),
+    person("Dolors", "Pelegri-Siso", email = "dolors.pelegri@isglobal.org",
+           role = c("aut", "cre"), comment = c(ORCID = "0000-0002-5993-3003")),
+    person("Alejandro", "Caceres", email = "alejandro.caceres@isglobal.org", role = "aut"),
+    person("Juan R.", "Gonzalez", email = "juanr.gonzalez@isglobal.org",
+           role = "aut", comment = c(ORCID = "0000-0003-3267-2146")))
+Description: Infers the recombination history of chromosomes from phased genotypes.
+    A mixture model classifies, for each pair of SNP-blocks, chromosomes into a
+    linked (low-recombination) and a recombined population; aggregating many pairs
+    over a region groups the chromosomes into sub-populations with different
+    recombination histories -- for example the two orientations of a chromosomal
+    inversion -- and locates the region responsible. From version 2.0.0 the
+    computational core runs in C++ on HDF5 files through the BigDataStatMeth API, so
+    the analysis scales out-of-core to large cohorts. Method: Ruiz-Arenas et al.
+    (2020) <doi:10.1101/gr.258301.119>.
+Depends: R (>= 3.6.0), BigDataStatMeth
+Imports: Rcpp (>= 1.0.6), SeqArray, gdsfmt, igraph, stats, utils
+LinkingTo: Rcpp, RcppEigen, Rhdf5lib, BigDataStatMeth, BH
+SystemRequirements: GNU make, C++17
+License: MIT + file LICENSE
 Encoding: UTF-8
-LazyData: true
-RoxygenNote: 7.1.2
-Imports:
-    GenomicRanges,
-    BiocParallel,
-    GenomeInfoDb,
-    S4Vectors,
-    gtools,
-    stats,
-    Rcpp,
-    SeqVarTools
-LinkingTo: 
-    Rcpp, 
-    RcppEigen, 
-    Rhdf5lib
-SystemRequirements: C++11
-Suggests: 
-    HDF5Array,
-    knitr,
-    rhdf5,
-    BiocStyle,
-    rmarkdown
+RoxygenNote: 7.3.3
+Suggests: testthat (>= 3.0.0), knitr, rmarkdown, BiocStyle
 VignetteBuilder: knitr
+Config/testthat/edition: 3
+URL: https://github.com/isglobal-brge/recombClust
+BugReports: https://github.com/isglobal-brge/recombClust/issues
