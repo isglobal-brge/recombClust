@@ -16,7 +16,12 @@ recombClust(
   distance = 10000,
   maxSteps = 100,
   prob0 = 0.5,
-  seed = NULL
+  seed = NULL,
+  compression = 0L,
+  svd_k = 2L,
+  svd_q = NULL,
+  svd_target_block = 1e+07,
+  threads = NULL
 )
 }
 \arguments{
@@ -42,12 +47,43 @@ column of the haplotype matrix.}
 \item{maxSteps, prob0}{EM parameters passed to the mixture model.}
 
 \item{seed}{Optional integer seed for reproducible k-means.}
+
+\item{compression}{gzip level (0-9) for the on-disk models matrix (the one
+dataset this function creates); \code{NULL} defers to BigDataStatMeth's own
+default (6). The package default is 0 (no compression): the responsibility
+matrix compresses to a measured ratio of ~0.96 (\code{docs/BENCHMARK.md}
+\S13.3), so deflating it costs CPU on the hot write path for essentially no
+space — with the rewritten EM core that cost would dominate the pipeline.
+Datasets that do compress well (the imported haplotypes) have their own
+\code{compression} argument in \code{\link{hdf5omics_import}} (default 1).}
+
+\item{svd_k, svd_q}{Blocking of the hierarchical SVD used for the PCA: the models
+matrix is split into \code{svd_k^svd_q} blocks. \code{svd_q = NULL} (default)
+selects it automatically from the matrix dimensions and
+\code{svd_target_block}. Keep \code{svd_k = 2}: raising the branching factor
+costs both memory and accuracy (BENCHMARK \S10.5).}
+
+\item{svd_target_block}{Target number of matrix elements per SVD block
+(default 1e7). The automatic selection picks the *smallest* block count whose
+blocks fit this target, i.e. the most accurate configuration that stays within
+the memory budget. The target is an absolute, machine-independent constant on
+purpose: making it depend on detected RAM would make results differ between
+machines, since the trailing components' accuracy depends on the block count.}
+
+\item{threads}{Number of OpenMP threads; \code{NULL} (default) uses all
+available cores (\code{OMP_NUM_THREADS} is respected). **Scope:** affects
+the two compute-heavy stages — the per-pair EM fits (each pair is an
+independent, deterministic fit, so the result is bit-identical for any
+thread count) and the PCA/SVD on the BigDataStatMeth backend. The final
+k-means runs in R, single-threaded. All published benchmark figures were
+measured with 1 thread.}
 }
 \value{
 An object of class \code{"recombClust"}: a list with \code{class}
   (chromosome cluster assignments), \code{sdev} (PCA standard deviations),
   \code{scores} (chromosomes x PCs), \code{models} (descriptor of the on-disk
-  models matrix) and \code{params}.
+  models matrix) and \code{params} (including the effective \code{svd_k},
+  \code{svd_q}, \code{svd_M} and \code{compression}).
 }
 \description{
 Runs the recombClust pipeline on a haplotype matrix stored in an HDF5 file: the
@@ -60,3 +96,14 @@ BigDataStatMeth, and the chromosomes are grouped with k-means on the leading PCs
 The heavy computation runs on the BigDataStatMeth C++/HDF5 backend; only the small
 final k-means (chromosomes x PCs) runs in R.
 }
+\section{Accuracy under blocking}{
+
+  Above roughly 5.4e7 matrix elements BigDataStatMeth switches to an approximate
+  hierarchical SVD, and the approximation grows with the block count. The leading
+  component stays accurate (measured error <= 1.3\%) and recombClust's clustering
+  is invariant to this (BENCHMARK \S10.5.1), but \code{sdev} and \code{scores}
+  beyond the first component should not be interpreted quantitatively without
+  checking. Set \code{svd_q = 1} to get the most accurate (and most
+  memory-hungry) configuration.
+}
+

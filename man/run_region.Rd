@@ -14,7 +14,9 @@ run_region(
   blockSize = 2L,
   distance = 10000,
   maxSteps = 100L,
-  prob0 = 0.5
+  prob0 = 0.5,
+  compression = -1L,
+  threads = 0L
 )
 }
 \arguments{
@@ -31,6 +33,13 @@ run_region(
 \item{distance}{Max bp between paired blocks' starts (default 1e4).}
 
 \item{maxSteps, prob0}{EM parameters.}
+
+\item{compression}{gzip level (0-9) for the on-disk models matrix; -1 keeps
+BigDataStatMeth's default (6).}
+
+\item{threads}{Number of OpenMP threads for the per-pair EM fits; 0 (default)
+uses all available cores (respects \code{OMP_NUM_THREADS}). The result is
+identical for any thread count: pairs are independent, deterministic fits.}
 }
 \value{
 List: filename, group, dataset, nrow (chromosomes), ncol (models), and

@@ -193,11 +193,19 @@ block_pairs <- function(positions, blockSize = 2L, distance = 1e4) {
 #' @param filename HDF5 file.
 #' @param group,dataset Location of the matrix (rows = observations).
 #' @param ncomp Number of principal components.
+#' @param svd_k,svd_q Blocking of BigDataStatMeth's hierarchical SVD: the matrix
+#'   is split into \code{svd_k^svd_q} blocks. Peak memory falls as the block count
+#'   grows, but the trailing components lose accuracy (see docs/BENCHMARK.md
+#'   \S10.5). Prefer raising \code{svd_q} over \code{svd_k}: the branching factor
+#'   controls how many sub-results are merged at once and drives memory up.
+#' @param threads Number of OpenMP threads for the SVD; \code{NULL} defers to
+#'   BigDataStatMeth's own default (all available cores). This is the only stage
+#'   of the recombClust pipeline that runs multithreaded.
 #' @return List with \code{scores} (observations x ncomp) and \code{sdev} (length ncomp).
 #' @keywords internal
 #' @export
-pca_hdf5 <- function(filename, group, dataset, ncomp) {
-    .Call(`_recombClust_pca_hdf5`, filename, group, dataset, ncomp)
+pca_hdf5 <- function(filename, group, dataset, ncomp, svd_k, svd_q, threads = NULL) {
+    .Call(`_recombClust_pca_hdf5`, filename, group, dataset, ncomp, svd_k, svd_q, threads)
 }
 
 #' Run the recombClust region core (block pairing + EM + streamed models matrix)
@@ -209,12 +217,17 @@ pca_hdf5 <- function(filename, group, dataset, ncomp) {
 #' @param blockSize SNPs per block (default 2).
 #' @param distance Max bp between paired blocks' starts (default 1e4).
 #' @param maxSteps,prob0 EM parameters.
+#' @param compression gzip level (0-9) for the on-disk models matrix; -1 keeps
+#'   BigDataStatMeth's default (6).
+#' @param threads Number of OpenMP threads for the per-pair EM fits; 0 (default)
+#'   uses all available cores (respects \code{OMP_NUM_THREADS}). The result is
+#'   identical for any thread count: pairs are independent, deterministic fits.
 #' @return List: filename, group, dataset, nrow (chromosomes), ncol (models), and
 #'   \code{pairs} (integer matrix of 1-based block-index pairs, one row per model).
 #' @keywords internal
 #' @export
-run_region <- function(filename, hap_group, hap_dataset, positions, out_group, out_dataset, blockSize = 2L, distance = 1e4, maxSteps = 100L, prob0 = 0.5) {
-    .Call(`_recombClust_run_region`, filename, hap_group, hap_dataset, positions, out_group, out_dataset, blockSize, distance, maxSteps, prob0)
+run_region <- function(filename, hap_group, hap_dataset, positions, out_group, out_dataset, blockSize = 2L, distance = 1e4, maxSteps = 100L, prob0 = 0.5, compression = -1L, threads = 0L) {
+    .Call(`_recombClust_run_region`, filename, hap_group, hap_dataset, positions, out_group, out_dataset, blockSize, distance, maxSteps, prob0, compression, threads)
 }
 
 #' Windowed correlation matrix of ModelsProb (out-of-core, BigDataStatMeth)

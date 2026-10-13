@@ -4,7 +4,7 @@
 \alias{pca_hdf5}
 \title{PCA of an HDF5 matrix via BigDataStatMeth's C++ SVD}
 \usage{
-pca_hdf5(filename, group, dataset, ncomp)
+pca_hdf5(filename, group, dataset, ncomp, svd_k, svd_q, threads = NULL)
 }
 \arguments{
 \item{filename}{HDF5 file.}
@@ -12,6 +12,16 @@ pca_hdf5(filename, group, dataset, ncomp)
 \item{group, dataset}{Location of the matrix (rows = observations).}
 
 \item{ncomp}{Number of principal components.}
+
+\item{svd_k, svd_q}{Blocking of BigDataStatMeth's hierarchical SVD: the matrix
+is split into \code{svd_k^svd_q} blocks. Peak memory falls as the block count
+grows, but the trailing components lose accuracy (see docs/BENCHMARK.md
+\S10.5). Prefer raising \code{svd_q} over \code{svd_k}: the branching factor
+controls how many sub-results are merged at once and drives memory up.}
+
+\item{threads}{Number of OpenMP threads for the SVD; \code{NULL} defers to
+BigDataStatMeth's own default (all available cores). This is the only stage
+of the recombClust pipeline that runs multithreaded.}
 }
 \value{
 List with \code{scores} (observations x ncomp) and \code{sdev} (length ncomp).

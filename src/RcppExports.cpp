@@ -185,8 +185,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // pca_hdf5
-List pca_hdf5(std::string filename, std::string group, std::string dataset, int ncomp);
-RcppExport SEXP _recombClust_pca_hdf5(SEXP filenameSEXP, SEXP groupSEXP, SEXP datasetSEXP, SEXP ncompSEXP) {
+List pca_hdf5(std::string filename, std::string group, std::string dataset, int ncomp, int svd_k, int svd_q, Nullable<int> threads);
+RcppExport SEXP _recombClust_pca_hdf5(SEXP filenameSEXP, SEXP groupSEXP, SEXP datasetSEXP, SEXP ncompSEXP, SEXP svd_kSEXP, SEXP svd_qSEXP, SEXP threadsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -194,13 +194,16 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< std::string >::type group(groupSEXP);
     Rcpp::traits::input_parameter< std::string >::type dataset(datasetSEXP);
     Rcpp::traits::input_parameter< int >::type ncomp(ncompSEXP);
-    rcpp_result_gen = Rcpp::wrap(pca_hdf5(filename, group, dataset, ncomp));
+    Rcpp::traits::input_parameter< int >::type svd_k(svd_kSEXP);
+    Rcpp::traits::input_parameter< int >::type svd_q(svd_qSEXP);
+    Rcpp::traits::input_parameter< Nullable<int> >::type threads(threadsSEXP);
+    rcpp_result_gen = Rcpp::wrap(pca_hdf5(filename, group, dataset, ncomp, svd_k, svd_q, threads));
     return rcpp_result_gen;
 END_RCPP
 }
 // run_region
-List run_region(std::string filename, std::string hap_group, std::string hap_dataset, NumericVector positions, std::string out_group, std::string out_dataset, int blockSize, double distance, int maxSteps, double prob0);
-RcppExport SEXP _recombClust_run_region(SEXP filenameSEXP, SEXP hap_groupSEXP, SEXP hap_datasetSEXP, SEXP positionsSEXP, SEXP out_groupSEXP, SEXP out_datasetSEXP, SEXP blockSizeSEXP, SEXP distanceSEXP, SEXP maxStepsSEXP, SEXP prob0SEXP) {
+List run_region(std::string filename, std::string hap_group, std::string hap_dataset, NumericVector positions, std::string out_group, std::string out_dataset, int blockSize, double distance, int maxSteps, double prob0, int compression, int threads);
+RcppExport SEXP _recombClust_run_region(SEXP filenameSEXP, SEXP hap_groupSEXP, SEXP hap_datasetSEXP, SEXP positionsSEXP, SEXP out_groupSEXP, SEXP out_datasetSEXP, SEXP blockSizeSEXP, SEXP distanceSEXP, SEXP maxStepsSEXP, SEXP prob0SEXP, SEXP compressionSEXP, SEXP threadsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -214,7 +217,9 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< double >::type distance(distanceSEXP);
     Rcpp::traits::input_parameter< int >::type maxSteps(maxStepsSEXP);
     Rcpp::traits::input_parameter< double >::type prob0(prob0SEXP);
-    rcpp_result_gen = Rcpp::wrap(run_region(filename, hap_group, hap_dataset, positions, out_group, out_dataset, blockSize, distance, maxSteps, prob0));
+    Rcpp::traits::input_parameter< int >::type compression(compressionSEXP);
+    Rcpp::traits::input_parameter< int >::type threads(threadsSEXP);
+    rcpp_result_gen = Rcpp::wrap(run_region(filename, hap_group, hap_dataset, positions, out_group, out_dataset, blockSize, distance, maxSteps, prob0, compression, threads));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -321,8 +326,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_recombClust_LDmixtureModel", (DL_FUNC) &_recombClust_LDmixtureModel, 4},
     {"_recombClust_getProbs", (DL_FUNC) &_recombClust_getProbs, 2},
     {"_recombClust_block_pairs", (DL_FUNC) &_recombClust_block_pairs, 3},
-    {"_recombClust_pca_hdf5", (DL_FUNC) &_recombClust_pca_hdf5, 4},
-    {"_recombClust_run_region", (DL_FUNC) &_recombClust_run_region, 10},
+    {"_recombClust_pca_hdf5", (DL_FUNC) &_recombClust_pca_hdf5, 7},
+    {"_recombClust_run_region", (DL_FUNC) &_recombClust_run_region, 12},
     {"_recombClust_cor_hdf5", (DL_FUNC) &_recombClust_cor_hdf5, 7},
     {"_recombClust_bigld_hdf5", (DL_FUNC) &_recombClust_bigld_hdf5, 11},
     {"_recombClust_stream_models", (DL_FUNC) &_recombClust_stream_models, 7},

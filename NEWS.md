@@ -1,3 +1,14 @@
+# recombClust 2.1.0
+
+* The EM model core is reimplemented in pure C++ (block-pair models no longer
+  round-trip through R), and the block-pair model stage is parallelised with OpenMP:
+  at the largest benchmarked problem (2,000 chromosomes; 159,080 block-pair models)
+  the serial run takes 1,122 s and the 8-thread run 187 s, with identical clustering.
+* Corrected default execution parameters: the number of blocks is selected
+  automatically from the problem's dimensions (the shallowest blocking with at most
+  1e7 elements per block), and intermediate HDF5 datasets default to gzip level 1.
+  Explicit arguments override both, as before.
+
 # recombClust 2.0.0
 
 * Computational core reimplemented in C++ on HDF5 files through the

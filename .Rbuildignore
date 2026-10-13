@@ -1,5 +1,4 @@
 ^docs$
-^CLAUDE\.md$
 ^tests/harness$
 ^.*\.Rproj$
 ^\.Rproj\.user$

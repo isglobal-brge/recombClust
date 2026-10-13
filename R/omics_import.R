@@ -43,6 +43,10 @@
 #'   in sync automatically. (BigDataStatMeth's \code{filter_maf} assumes 0/1/2 dosage
 #'   coding and is not applicable to the 0/1 haplotype matrix; see docs/DESIGN.md 6.3.)
 #' @param overwrite Overwrite an existing output dataset (default TRUE).
+#' @param compression gzip level (0-9) for the haplotype matrix; \code{NULL} defers
+#'   to BigDataStatMeth's own default (6). The package default is 1: it keeps files
+#'   within ~10\% of level 6 at about 40\% less time (\code{docs/BENCHMARK.md}
+#'   \S13.3). Use 0 for maximum throughput at the cost of larger files.
 #' @return A list descriptor: \code{file}, \code{group}, \code{dataset},
 #'   \code{positions}, \code{chromosome}, \code{samples} (haplotype row names),
 #'   \code{nchrom} (= 2 x samples), \code{nsnp}.
@@ -50,7 +54,8 @@
 hdf5omics_import <- function(file, out_file,
                              out_group = "haplotypes", out_dataset = "H",
                              range = NULL, samples = NULL,
-                             snv_only = TRUE, minmaf = NULL, overwrite = TRUE) {
+                             snv_only = TRUE, minmaf = NULL, overwrite = TRUE,
+                             compression = 1L) {
   gds_file <- .omics_to_gds(file)
   f <- SeqArray::seqOpen(gds_file, readonly = TRUE)
   on.exit(SeqArray::seqClose(f), add = TRUE)
@@ -97,7 +102,8 @@ hdf5omics_import <- function(file, out_file,
 
   BigDataStatMeth::hdf5_create_matrix(
     out_file, paste0(out_group, "/", out_dataset),
-    data = haplos, dtype = "double", overwrite = overwrite)
+    data = haplos, dtype = "double", overwrite = overwrite,
+    compression = compression)
   BigDataStatMeth::hdf5_close_all()
 
   list(file = out_file, group = out_group, dataset = out_dataset,

@@ -13,7 +13,8 @@ hdf5omics_import(
   samples = NULL,
   snv_only = TRUE,
   minmaf = NULL,
-  overwrite = TRUE
+  overwrite = TRUE,
+  compression = 1L
 )
 }
 \arguments{
@@ -36,6 +37,11 @@ in sync automatically. (BigDataStatMeth's \code{filter_maf} assumes 0/1/2 dosage
 coding and is not applicable to the 0/1 haplotype matrix; see docs/DESIGN.md 6.3.)}
 
 \item{overwrite}{Overwrite an existing output dataset (default TRUE).}
+
+\item{compression}{gzip level (0-9) for the haplotype matrix; \code{NULL} defers
+to BigDataStatMeth's own default (6). The package default is 1: it keeps files
+within ~10\% of level 6 at about 40\% less time (\code{docs/BENCHMARK.md}
+\S13.3). Use 0 for maximum throughput at the cost of larger files.}
 }
 \value{
 A list descriptor: \code{file}, \code{group}, \code{dataset},

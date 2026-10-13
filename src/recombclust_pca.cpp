@@ -43,20 +43,30 @@ Eigen::MatrixXd read_rview(const std::string& fn, const std::string& grp,
 //' @param filename HDF5 file.
 //' @param group,dataset Location of the matrix (rows = observations).
 //' @param ncomp Number of principal components.
+//' @param svd_k,svd_q Blocking of BigDataStatMeth's hierarchical SVD: the matrix
+//'   is split into \code{svd_k^svd_q} blocks. Peak memory falls as the block count
+//'   grows, but the trailing components lose accuracy (see docs/BENCHMARK.md
+//'   \S10.5). Prefer raising \code{svd_q} over \code{svd_k}: the branching factor
+//'   controls how many sub-results are merged at once and drives memory up.
+//' @param threads Number of OpenMP threads for the SVD; \code{NULL} defers to
+//'   BigDataStatMeth's own default (all available cores). This is the only stage
+//'   of the recombClust pipeline that runs multithreaded.
 //' @return List with \code{scores} (observations x ncomp) and \code{sdev} (length ncomp).
 //' @keywords internal
 //' @export
 // [[Rcpp::export]]
-List pca_hdf5(std::string filename, std::string group, std::string dataset, int ncomp) {
+List pca_hdf5(std::string filename, std::string group, std::string dataset, int ncomp,
+              int svd_k, int svd_q, Nullable<int> threads = R_NilValue) {
     try {
         H5::Exception::dontPrint();
 
         // Centered, unscaled SVD on the BigDataStatMeth C++ API.
         BigDataStatMeth::RcppbdSVD_hdf5(filename, group, dataset,
-                                        /*k*/ 2, /*q*/ 1, /*nev*/ ncomp,
+                                        /*k*/ svd_k, /*q*/ svd_q, /*nev*/ ncomp,
                                         /*bcenter*/ true, /*bscale*/ false,
                                         /*dthreshold*/ 0.0, /*bforce*/ true,
-                                        /*asRowMajor*/ false, R_NilValue, R_NilValue);
+                                        /*asRowMajor*/ false, /*method*/ R_NilValue,
+                                        /*ithreads*/ threads);
 
         const std::string svd_group = "SVD/" + dataset;
         Eigen::MatrixXd U = read_rview(filename, svd_group, "u");   // n x r
